@@ -1,0 +1,140 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# IDE/Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.sublime-workspace
+*.sublime-project
+.history/
+.ionide/
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.ai/rules-test/00-core-agent.mdc
+.ai/rules-test/01-project-context.mdc
+.ai/rules-test/02-common-errors.mdc
+.ai/rules-test/03-mcp-configuration.mdc
+.ai/rules-test/languages/JavaScript-Modern.mdc
+.ai/rules-wizard-test/00-core-agent.mdc
+.ai/rules-wizard-test/01-project-context.mdc
+.ai/rules-wizard-test/02-common-errors.mdc
+.ai/rules-wizard-test/03-mcp-configuration.mdc
+.ai/rules-wizard-test/languages/JavaScript-Modern.mdc
+.ai/rules-wizard-test2/00-core-agent.mdc
+.ai/rules-wizard-test2/01-project-context.mdc
+.ai/rules-wizard-test2/02-common-errors.mdc
+.ai/rules-wizard-test2/03-mcp-configuration.mdc
+.ai/rules-wizard-test2/languages/JavaScript-Modern.mdc
+
+src/scanner/.ai/rules/00-core-agent.mdc
+src/scanner/.ai/rules/01-project-context.mdc
+src/scanner/.ai/rules/02-common-errors.mdc
+src/scanner/.ai/rules/03-mcp-configuration.mdc
+src/scanner/.ai/rules/languages/JavaScript-Modern.mdc
+.env.example
+ide and mcp paths.md
+PUBLISHING.md
+\# VDK Complete Rebranding Guide.md
+vdk.config.json
+test/basic-functionality.test.js
+src/utils/health-check.js
+ECOSYSTEM_STATUS.md
+docs/VibeKit VDK Hub docs/OLD-MARKETING_MESSAGING.md
+docs/VibeKit VDK Hub docs/MULTI_IDE_SUPPORT.md
+docs/VibeKit VDK Ecosystem Details/vibekit_marketing_strategy.md
+docs/VibeKit VDK Ecosystem Details/vibekit_integration_matrix.md
+docs/VibeKit VDK Ecosystem Details/vibekit_ecosystem_analysis.md
+docs/VibeKit VDK Ecosystem Details/messaging_comparison.md
+docs/VibeKit VDK CLI General docs/VDK_OVERVIEW.md
+docs/VibeKit VDK CLI General docs/ROADMAP.md
+docs/VibeKit VDK CLI General docs/README.md
+docs/VibeKit VDK CLI General docs/GUIDE.md
+docs/VibeKit VDK CLI General docs/CONTRIBUTING.md
+docs/VibeKit VDK CLI docs/Troubleshooting-Guide.md
+docs/VibeKit VDK CLI docs/Task-System-Guide.md
+docs/VibeKit VDK CLI docs/SYNC-SYSTEM.md
+docs/VibeKit VDK CLI docs/Rule-Authoring-Guide.md
+docs/VibeKit VDK CLI docs/Project-History-Attribution.md
+docs/VibeKit VDK CLI docs/Memory-Management-Guide.md
+docs/VibeKit VDK CLI docs/MDC-Schema-Documentation.md
+docs/VibeKit VDK CLI docs/Master-Documentation-Index.md
+docs/VibeKit VDK CLI docs/Hub-Integration.md
+docs/VibeKit VDK CLI docs/Getting-Started-Guide.md
+docs/VibeKit VDK CLI docs/Editor-Path-Integration-Guide.md
+docs/VibeKit VDK CLI docs/CLI-Reference.md
+docs/VibeKit VDK AI Rules Docs/RULES-SPEC.md
+docs/VibeKit VDK AI Rules Docs/README.md
+docs/VibeKit VDK AI Rules Docs/cursor-rules.md
+docs/VibeKit VDK AI Rules Docs/CONTRIBUTING.md
+docs/VibeKit VDK AI Rules Docs/CHANGELOG.md
+docs/Troubleshooting-Guide.md
+docs/Task-System-Guide.md
+docs/SYNC-SYSTEM.md
+docs/Rule-Authoring-Guide.md
+docs/Project-History-Attribution.md
+docs/Memory-Management-Guide.md
+docs/MDC-Schema-Documentation.md
+docs/Master-Documentation-Index.md
+docs/Hub-Integration.md
+docs/Getting-Started-Guide.md
+docs/Editor-Path-Integration-Guide.md
+docs/CLI-Reference.md

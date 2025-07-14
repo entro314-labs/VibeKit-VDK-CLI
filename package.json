@@ -1,0 +1,64 @@
+{
+  "name": "@vdk/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Advanced Command-line toolkit that analyzes your codebase and deploys project-aware rules to any AI coding assistant - VDK is the world's first Vibe Development Kit",
+  "main": "cli.js",
+  "bin": {
+    "vdk": "./cli.js"
+  },
+  "files": [
+    ".ai/",
+    "templates/",
+    "src/",
+    "*.sh",
+    "cli.js"
+  ],
+  "scripts": {
+    "validate": "node src/validation/validate-rules.js",
+    "check-duplicates": "node src/validation/check-duplicates.js",
+    "health-check": "node src/utils/health-check.js",
+    "update-mcp-config": "node src/utils/update-mcp-config.js",
+    "insights": "node src/utils/project-insights.js",
+    "lint": "eslint .",
+    "test": "node test/basic-functionality.test.js",
+    "build": "echo 'No build step required'",
+    "prepublishOnly": "npm run validate"
+  },
+  "keywords": [
+    "ai-assistant",
+    "developer-tools",
+    "cli",
+    "vibe-coding",
+    "context-aware",
+    "vdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idominikosgr/VDK-CLI.git"
+  },
+  "author": "Dominikos Pritis",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "^8.15.0",
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "dotenv": "^17.1.0",
+    "glob": "^11.0.3",
+    "glob-to-regexp": "^0.4.1",
+    "handlebars": "^4.7.8",
+    "inquirer": "^12.7.0",
+    "jscodeshift": "^17.3.0",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.30.1",
+    "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
