@@ -6,7 +6,7 @@
  * This is the main entry point for the VDK command-line interface.
  * It orchestrates commands for initializing projects, managing rules, and deploying to the VDK Hub.
  *
- * Repository: https://github.com/idominikosgr/VDK-CLI
+ * Repository: https://github.com/entro314-labs/VDK-CLI
  */
 
 import dotenv from 'dotenv';

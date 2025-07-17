@@ -3,49 +3,50 @@
 # 🚀 VibeKit VDK CLI Overview
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Stars](https://img.shields.io/github/stars/idominikosgr/VibeKit-VDK-CLI?style=social)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
-[![Last Updated](https://img.shields.io/badge/Last%20Updated-July%202025-brightgreen)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
+[![GitHub Stars](https://img.shields.io/github/stars/entro314-labs/VibeKit-VDK-CLI?style=social)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Last Updated](https://img.shields.io/badge/Last%20Updated-July%202025-brightgreen)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
 
-**An enhanced framework for generating intelligent, project-aware context for AI coding assistants.**
+**A sophisticated developer tool for making AI coding assistants project-aware.**
 
 </div>
 
 ## 📋 Overview
 
-The VibeKit VDK CLI is a command-line tool designed to analyze your project's structure, dependencies, and coding patterns to generate a set of tailored rule files. These rules provide your AI assistant with the deep context it needs to offer more accurate, relevant, and helpful suggestions.
+The VibeKit VDK CLI is a command-line tool that analyzes your software projects to generate customized "rules." These rules provide deep, project-specific context to AI coding assistants, enabling them to deliver more accurate, consistent, and contextually relevant suggestions.
+
+By understanding your project's unique technology stack, architecture, and coding patterns, the VDK-CLI bridges the gap between generic AI assistance and the specific needs of your codebase.
 
 ### ✨ Key Features
 
-- **🔧 Interactive Setup Wizard**: The `vdk init` command walks you through a simple setup process to configure your project.
-- **🧠 Intelligent Project Analysis**: Automatically detects your project's language, framework, and key dependencies.
-- **📝 Custom Rule Generation**: Creates a `.vdk/` directory with rule files tailored to your specific project.
-- **🤖 Enhanced AI Assistance**: Provides your AI with the context it needs to understand your code at a deeper level.
+- **🚀 Intelligent Project Scanning**: The `vdk init` command analyzes your codebase to detect languages, frameworks, and architectural patterns.
+- **📝 Automated Rule Generation**: Creates a set of tailored AI rules based on the project analysis.
+- **🔄 Hub Integration**: Use `vdk status` to check for updates from the VDK Hub (with `vdk update` coming soon).
+- **🔧 IDE Integration**: Configures your development environment to seamlessly connect the generated rules with your AI assistant.
+- **✅ Status Checks**: The `vdk status` command helps you verify your setup and check for rule updates.
 
 ## 🏗️ Project Structure
 
-After running `vdk init`, the CLI will create a `.vdk` directory in your project root:
+After running `vdk init`, the CLI generates the following structure in your project root:
 
 ```
 my-project/
+├── .ai/
+│   └── rules/
+│       └── ... (generated rule files)
 ├── .vdk/
-│   ├── rules/
-│   │   ├── 00-core-rules.md
-│   │   └── ... (other generated rule files)
-│   └── vdk.config.json
+│   └── config.json
 ├── src/
 └── package.json
 ```
 
-- **`.vdk/rules/`**: Contains the generated markdown rule files for the AI assistant.
-- **`vdk.config.json`**: Stores the configuration and metadata for your project.
+- **`.ai/rules/`**: Contains the generated markdown rule files that provide context to the AI assistant.
+- **`.vdk/config.json`**: Stores the configuration, metadata, and analysis results for your project.
 
-## 📚 Documentation
+## 📚 Next Steps
 
-All documentation has been consolidated and updated to reflect the new branding and command structure.
-
-- **[📖 Main Guide](GUIDE.md)**: The primary guide for installation, usage, and commands.
-- **[🤝 Contribution Guide](CONTRIBUTING.md)**: Instructions for contributing to the project.
-- **[🗺️ Project Roadmap](ROADMAP.md)**: The long-term vision and feature plan.
+- **[🚀 Getting Started](GUIDE.md)**: A step-by-step guide to installing the CLI and generating your first set of rules.
+- **[📖 CLI Reference](docs/cli/reference.mdx)**: Detailed documentation for all available commands and their options.
+- **[🤝 Contribution Guide](CONTRIBUTING.md)**: Instructions for contributing to the VibeKit VDK ecosystem.
 
 ## 🔮 Future Plans
 
@@ -62,7 +63,7 @@ Check out our detailed roadmap here: [**ROADMAP.md**](ROADMAP.md)
 <div align="center">
 
 © Original DevRules: Seth Rose - [GitHub](https://github.com/TheSethRose)
-© VibeKit VDK CLI Enhancements: Dominikos Pritis - [GitHub](https://github.com/idominikosgr)
+© VibeKit VDK CLI Enhancements: Dominikos Pritis - [GitHub](https://github.com/entro314-labs)
 © 2025 VibeKit VDK CLI
 
 </div>

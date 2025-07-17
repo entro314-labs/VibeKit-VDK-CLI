@@ -137,4 +137,4 @@ other
 
 ---
 
-*Generated using [ai-github-changelog-generator-cli-mcp](https://github.com/idominikosgr/AI-github-changelog-generator-cli-mcp) - AI-powered changelog generation for Git repositories*
+*Generated using [ai-github-changelog-generator-cli-mcp](https://github.com/entro314-labs/AI-github-changelog-generator-cli-mcp) - AI-powered changelog generation for Git repositories*

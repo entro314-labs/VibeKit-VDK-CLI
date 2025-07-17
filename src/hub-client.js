@@ -9,7 +9,7 @@ import https from 'https';
 import ora from 'ora';
 import chalk from 'chalk';
 
-const HUB_REPO_API_URL = 'https://api.github.com/repos/idominikosgr/VibeKit-VDK-AI-rules/contents/.ai/rules?ref=main';
+const HUB_REPO_API_URL = 'https://api.github.com/repos/entro314-labs/VibeKit-VDK-AI-rules/contents/.ai/rules?ref=main';
 
 /**
  * Fetches the list of available rules from the VDK Hub.

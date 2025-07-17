@@ -1,8 +1,8 @@
 # VibeKit VDK CLI
 
-[![Status: Active Development](https://img.shields.io/badge/Status-Active%20Development-brightgreen)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
+[![Status: Active Development](https://img.shields.io/badge/Status-Active%20Development-brightgreen)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22%2B-green)](https://nodejs.org/)
 [![Homepage](https://img.shields.io/badge/Homepage-vdk.tools/cli-blue)](https://vdk.tools/cli)
 
 > **Stop Training Your AI Assistant Every Day**
@@ -22,14 +22,14 @@
 **Get your AI assistant project-aware in 5 minutes:**
 
 ```bash
-# 1. Install VDK CLI
+# Install globally
 npm install -g @vdk/cli
+# or
+pnpm add -g @vdk/cli
 
-# 2. Run setup wizard in your project
+# Initialize in your project
 cd your-project
 vdk init
-
-# 3. Your AI assistant now understands your project!
 ```
 
 **Before VDK**: "Create a React component" → Generic component  
@@ -206,7 +206,7 @@ export class CustomAnalyzer {
 
 ## 🌐 Community
 
-- **[GitHub Repository](https://github.com/idominikosgr/VibeKit-VDK-CLI)** - Source code and issues
+- **[GitHub Repository](https://github.com/entro314-labs/VibeKit-VDK-CLI)** - Source code and issues
 - **[VDK Hub](https://vdk.tools)** - Browse, customize, and generate VDK rules
 - **[Contributing Guidelines](CONTRIBUTING.md)** - How to get involved
 
@@ -232,6 +232,6 @@ We gratefully acknowledge all contributors who have helped evolve this project f
 
 **Made with ❤️ by the VibeKit VDK community**
 
-[⭐ Star on GitHub](https://github.com/idominikosgr/VibeKit-VDK-CLI) • [🐛 Report Bug](https://github.com/idominikosgr/VibeKit-VDK-CLI/issues) • [💡 Request Feature](https://github.com/idominikosgr/VibeKit-VDK-CLI/issues)
+[⭐ Star on GitHub](https://github.com/entro314-labs/VibeKit-VDK-CLI) • [🐛 Report Bug](https://github.com/entro314-labs/VibeKit-VDK-CLI/issues) • [💡 Request Feature](https://github.com/entro314-labs/VibeKit-VDK-CLI/issues)
 
 </div>

@@ -3,8 +3,8 @@
 # 🔍 Project Scanner
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
+[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
 
 **Automatically analyzes codebases to generate custom VibeKit VDK CLI tailored to your project**
 
@@ -131,7 +131,7 @@ Contributions are welcome! Please check the [CONTRIBUTING.md](../../CONTRIBUTING
 
 ```bash
 # Clone the repository
-git clone https://github.com/idominikosgr/VibeKit-VDK-CLI.git
+git clone https://github.com/entro314-labs/VibeKit-VDK-CLI.git
 cd VibeKit-VDK-CLI
 
 # Install dependencies
@@ -149,6 +149,6 @@ This project is licensed under the MIT License - see the [LICENSE](../../LICENSE
 
 <div align="center">
 
-**Made with ❤️ by [VibeKit VDK CLI Team](https://github.com/idominikosgr/VibeKit-VDK-CLI)**
+**Made with ❤️ by [VibeKit VDK CLI Team](https://github.com/entro314-labs/VibeKit-VDK-CLI)**
 
 </div>

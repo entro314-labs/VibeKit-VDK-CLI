@@ -1,8 +1,8 @@
 # 🗺️ VibeKit VDK CLI - Roadmap & Feature Plan
 
-[![Development Status](https://img.shields.io/badge/Development-Active-brightgreen)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
-[![Version](https://img.shields.io/badge/Version-1.0.0-blue)](https://github.com/idominikosgr/VibeKit-VDK-CLI)
-[![Next Milestone](https://img.shields.io/badge/Next%20Milestone-Q3%202025-orange)](https://github.com/idominikosgr/VibeKit-VDK-CLI/milestones)
+[![Development Status](https://img.shields.io/badge/Development-Active-brightgreen)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Next Milestone](https://img.shields.io/badge/Next%20Milestone-Q3%202025-orange)](https://github.com/entro314-labs/VibeKit-VDK-CLI/milestones)
 
 > **A roadmap for transforming AI-assisted development through intelligent, project-aware context.**
 
@@ -26,6 +26,7 @@ This document outlines the development roadmap, feature priorities, and future d
 **Status**: 🔄 In Progress
 - **`vdk deploy`**: Build out the logic to deploy the generated rules to various AI assistants.
 - **`vdk update`**: Implement the functionality to update the CLI and its rule templates from a central repository.
+- ✅ **`vdk status`**: Implemented functionality to check the status of local rules compared to the VDK Hub.
 
 #### 2. Enhance Rule Generation
 **Status**: 📋 Planned
@@ -59,7 +60,7 @@ This roadmap will be reviewed and updated quarterly to reflect progress and adap
 
 <div align="center">
 
-**Stay Updated**: [Watch the Repository](https://github.com/idominikosgr/VibeKit-VDK-CLI) • [Join Discussions](https://github.com/idominikosgr/VibeKit-VDK-CLI/discussions)
+**Stay Updated**: [Watch the Repository](https://github.com/entro314-labs/VibeKit-VDK-CLI) • [Join Discussions](https://github.com/entro314-labs/VibeKit-VDK-CLI/discussions)
 
 *Roadmap last updated: July 2025* 
 

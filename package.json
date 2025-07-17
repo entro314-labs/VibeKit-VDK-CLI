@@ -35,7 +35,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/idominikosgr/VDK-CLI.git"
+    "url": "git+https://github.com/entro314-labs/VDK-CLI.git"
   },
   "author": "Dominikos Pritis",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "acorn": "^8.15.0",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
-    "dotenv": "^17.1.0",
+    "dotenv": "^17.2.0",
     "glob": "^11.0.3",
     "glob-to-regexp": "^0.4.1",
     "handlebars": "^4.7.8",
@@ -52,7 +52,7 @@
     "ora": "^8.2.0"
   },
   "devDependencies": {
-    "eslint": "^9.30.1",
+    "eslint": "^9.31.0",
     "ts-node": "^10.9.2"
   },
   "engines": {

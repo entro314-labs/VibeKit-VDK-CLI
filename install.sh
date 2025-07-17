@@ -1,12 +1,12 @@
 #!/bin/sh
 # VibeKit VDK CLI Installer
 # A universal shell script to install VibeKit VDK CLI into any project with interactive setup
-# Usage: curl -fsSL https://raw.githubusercontent.com/idominikosgr/VibeKit-VDK-CLI/main/install.sh | sh
+# Usage: curl -fsSL https://raw.githubusercontent.com/entro314-labs/VibeKit-VDK-CLI/main/install.sh | sh
 
 set -e
 
 # Default values
-REPO_URL="https://github.com/idominikosgr/VibeKit-VDK-CLI"
+REPO_URL="https://github.com/entro314-labs/VibeKit-VDK-CLI"
 TEMP_DIR="/tmp/vibekit-vdk-cli-$(date +%s)"
 BRANCH="main"
 METHOD="git"
@@ -265,5 +265,5 @@ echo "3. Configure MCP paths with the update tool: ./update-mcp-config.sh"
 echo "4. Start using the specialized rules in your development"
 echo ""
 echo "For updates, run:"
-echo "curl -fsSL https://raw.githubusercontent.com/idominikosgr/VibeKit-VDK-CLI/main/install.sh | sh -s -- --upgrade"
+echo "curl -fsSL https://raw.githubusercontent.com/entro314-labs/VibeKit-VDK-CLI/main/install.sh | sh -s -- --upgrade"
 echo "====================================="
