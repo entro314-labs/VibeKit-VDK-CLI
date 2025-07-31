@@ -1,0 +1,178 @@
+name: 📖 Documentation Issue
+description: Report issues with documentation or suggest improvements
+title: "[Docs]: "
+labels: ["documentation"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve our documentation! Clear and accurate docs are essential for a great developer experience.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation issue is this?
+      options:
+        - Missing documentation
+        - Incorrect information
+        - Unclear instructions
+        - Outdated content
+        - Broken links
+        - Typo or grammar
+        - Formatting issue
+        - Missing examples
+        - Better organization needed
+        - Translation issue
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc-section
+    attributes:
+      label: Documentation Section
+      description: Which section of the documentation is affected?
+      options:
+        - README.md
+        - Getting Started
+        - CLI Reference
+        - Integration Guides
+        - Configuration
+        - Blueprints
+        - API Documentation
+        - Contributing Guide
+        - Troubleshooting
+        - Examples
+        - FAQ
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: doc-location
+    attributes:
+      label: Specific Location
+      description: Provide the specific file path or URL where the issue is located
+      placeholder: "e.g., wikidocs/getting-started/installation.mdx, section 'Installing on Windows'"
+
+  - type: textarea
+    id: current-content
+    attributes:
+      label: Current Content
+      description: What is the current content that has issues? (Copy/paste the relevant section)
+      placeholder: |
+        Current documentation says:
+        
+        ```
+        Copy the problematic content here
+        ```
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: Describe what's wrong or missing
+      placeholder: |
+        The issue is:
+        - Information is incorrect because...
+        - Instructions are unclear when...
+        - Example doesn't work in scenario...
+        - Missing information about...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested Improvement
+      description: How should the documentation be improved?
+      placeholder: |
+        Suggested changes:
+        - Add explanation about...
+        - Clarify the step where...
+        - Include example for...
+        - Update outdated information...
+        
+        Proposed content:
+        ```
+        New or corrected content here
+        ```
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-level
+    attributes:
+      label: Target User Level
+      description: Which user level would benefit most from this improvement?
+      options:
+        - Beginner - New to VDK CLI
+        - Intermediate - Some experience with VDK
+        - Advanced - Power users and contributors
+        - All levels
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Provide any additional context that would help improve the documentation
+      placeholder: |
+        Additional context:
+        - What were you trying to accomplish?
+        - What environment were you using?
+        - How did you find the current documentation?
+        - What would have made it easier to understand?
+
+  - type: checkboxes
+    id: doc-quality
+    attributes:
+      label: Documentation Quality Issues
+      description: Check any quality issues you noticed
+      options:
+        - label: Hard to find the information I needed
+        - label: Instructions are too technical
+        - label: Not enough examples provided
+        - label: Examples don't work as described
+        - label: Missing prerequisites or assumptions
+        - label: Poor formatting or structure
+        - label: Inconsistent terminology
+        - label: Missing screenshots or visuals
+
+  - type: textarea
+    id: related-docs
+    attributes:
+      label: Related Documentation
+      description: Are there other sections that should be updated or cross-referenced?
+      placeholder: |
+        Related sections:
+        - Should link to integration guide
+        - Conflicts with information in CLI reference
+        - Missing from troubleshooting guide
+        - Should be mentioned in getting started
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to help improve this documentation?
+      options:
+        - label: I can submit a pull request with the fix
+        - label: I can provide more detailed examples
+        - label: I can help review proposed changes
+        - label: I can test updated instructions
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is fixing this documentation issue?
+      options:
+        - High - Blocks users from completing essential tasks
+        - Medium - Causes confusion but workarounds exist
+        - Low - Minor improvement that would be nice to have
+    validations:
+      required: true

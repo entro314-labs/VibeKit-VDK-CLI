@@ -1,0 +1,175 @@
+name: 🐛 Bug Report
+description: Report a bug or issue with VDK CLI
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill out the form below with as much detail as possible.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting a bug report
+      options:
+        - label: I have searched existing issues to ensure this bug hasn't been reported before
+          required: true
+        - label: I am using the latest version of VDK CLI
+          required: true
+        - label: I have read the documentation and troubleshooting guides
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Run command '...'
+        2. Navigate to '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen
+      placeholder: What should have happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: A clear and concise description of what actually happened
+      placeholder: What actually happened?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: VDK CLI Version
+      description: What version of VDK CLI are you running?
+      options:
+        - 1.0.0 (latest)
+        - 0.9.0
+        - 0.8.0
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you running?
+      placeholder: "22.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - macOS
+        - Windows
+        - Linux (Ubuntu)
+        - Linux (Other)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ai-assistant
+    attributes:
+      label: AI Assistant
+      description: Which AI assistant are you using (if applicable)?
+      options:
+        - Claude Code
+        - Cursor
+        - Windsurf
+        - GitHub Copilot
+        - Multiple
+        - Not applicable
+        - Other
+
+  - type: dropdown
+    id: project-type
+    attributes:
+      label: Project Type
+      description: What type of project are you working with?
+      options:
+        - Next.js
+        - React
+        - Vue
+        - Angular
+        - Node.js/Express
+        - Python
+        - Monorepo
+        - Other
+        - Not applicable
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs
+      description: Please include any relevant error messages or logs
+      placeholder: |
+        Paste error logs here...
+        
+        Run with --verbose flag for detailed logs:
+        vdk command --verbose
+      render: shell
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Please share your VDK configuration (remove any sensitive information)
+      placeholder: |
+        Run: vdk config list --format json
+        
+        Paste configuration here...
+      render: json
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here
+      placeholder: |
+        - Screenshots
+        - Related issues
+        - Workarounds you've tried
+        - Any other relevant information
+
+  - type: checkboxes
+    id: troubleshooting
+    attributes:
+      label: Troubleshooting
+      description: Have you tried the following troubleshooting steps?
+      options:
+        - label: Ran `vdk doctor` to diagnose issues
+        - label: Tried with `--verbose` flag for detailed output
+        - label: Cleared cache with `vdk clean --cache`
+        - label: Validated configuration with `vdk validate`
+        - label: Checked file permissions and access rights

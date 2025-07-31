@@ -202,30 +202,55 @@ export class TechnologyAnalyzer {
       const packageAnalysis = await PackageAnalyzer.analyzeDependencies(projectRoot);
       
       // Update tech stacks from the analysis
-      if (packageAnalysis) {
-        // Add libraries
-        if (packageAnalysis.libraries && packageAnalysis.libraries.length > 0) {
-          this.libraries.push(...packageAnalysis.libraries);
+      if (packageAnalysis && packageAnalysis.technologies) {
+        // Add libraries from different categories
+        if (packageAnalysis.technologies.ui && packageAnalysis.technologies.ui.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.ui);
+        }
+        if (packageAnalysis.technologies.backend_services && packageAnalysis.technologies.backend_services.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.backend_services);
+        }
+        if (packageAnalysis.technologies.databases && packageAnalysis.technologies.databases.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.databases);
+        }
+        if (packageAnalysis.technologies.stateManagement && packageAnalysis.technologies.stateManagement.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.stateManagement);
+        }
+        if (packageAnalysis.technologies.dataFetching && packageAnalysis.technologies.dataFetching.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.dataFetching);
+        }
+        if (packageAnalysis.technologies.forms && packageAnalysis.technologies.forms.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.forms);
+        }
+        if (packageAnalysis.technologies.styling && packageAnalysis.technologies.styling.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.styling);
+        }
+        if (packageAnalysis.technologies.api && packageAnalysis.technologies.api.length > 0) {
+          this.libraries.push(...packageAnalysis.technologies.api);
         }
         
         // Add frameworks
-        if (packageAnalysis.frameworks && packageAnalysis.frameworks.length > 0) {
-          this.frameworks.push(...packageAnalysis.frameworks);
+        if (packageAnalysis.technologies.frontend && packageAnalysis.technologies.frontend.length > 0) {
+          this.frameworks.push(...packageAnalysis.technologies.frontend);
+        }
+        if (packageAnalysis.technologies.backend && packageAnalysis.technologies.backend.length > 0) {
+          this.frameworks.push(...packageAnalysis.technologies.backend);
+        }
+        if (packageAnalysis.technologies.serverless && packageAnalysis.technologies.serverless.length > 0) {
+          this.frameworks.push(...packageAnalysis.technologies.serverless);
+        }
+        if (packageAnalysis.technologies.mobile && packageAnalysis.technologies.mobile.length > 0) {
+          this.frameworks.push(...packageAnalysis.technologies.mobile);
         }
         
         // Add build tools
-        if (packageAnalysis.buildTools && packageAnalysis.buildTools.length > 0) {
-          this.buildTools.push(...packageAnalysis.buildTools);
-        }
-        
-        // Add linters
-        if (packageAnalysis.linters && packageAnalysis.linters.length > 0) {
-          this.linters.push(...packageAnalysis.linters);
+        if (packageAnalysis.technologies.buildTools && packageAnalysis.technologies.buildTools.length > 0) {
+          this.buildTools.push(...packageAnalysis.technologies.buildTools);
         }
         
         // Add testing frameworks
-        if (packageAnalysis.testingFrameworks && packageAnalysis.testingFrameworks.length > 0) {
-          this.testingFrameworks.push(...packageAnalysis.testingFrameworks);
+        if (packageAnalysis.technologies.testing && packageAnalysis.technologies.testing.length > 0) {
+          this.testingFrameworks.push(...packageAnalysis.technologies.testing);
         }
       }
     } catch (error) {
@@ -626,6 +651,33 @@ export class TechnologyAnalyzer {
           }
         } catch (error) {
           // Ignore errors reading files
+        }
+      }
+    }
+    
+    // Check for Tailwind CSS
+    const hasTailwindDependencies = [
+      'tailwindcss',
+      '@tailwindcss/forms',
+      '@tailwindcss/typography', 
+      '@tailwindcss/aspect-ratio',
+      '@tailwindcss/container-queries',
+      'tailwind-merge',
+      'tailwindcss-animate'
+    ].some(dep => this.libraries.includes(dep));
+    
+    const hasTailwindConfig = projectStructure.files.some(file => 
+      file.name === 'tailwind.config.js' || 
+      file.name === 'tailwind.config.ts' ||
+      file.name === 'tailwind.config.cjs' ||
+      file.name === 'tailwind.config.mjs'
+    );
+    
+    if (hasTailwindDependencies || hasTailwindConfig) {
+      if (!this.frameworks.includes('Tailwind CSS')) {
+        this.frameworks.push('Tailwind CSS');
+        if (this.verbose) {
+          console.log(chalk.gray('  - Tailwind CSS detected'));
         }
       }
     }

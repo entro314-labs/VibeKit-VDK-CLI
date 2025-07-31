@@ -16,7 +16,7 @@ import {
   getIDEConfigById,
   getIDEConfigPaths,
   ensureRuleDirectory
-} from '../utils/ide-configuration.js';
+} from '../../shared/ide-configuration.js';
 
 /**
  * IDE Integration Manager class

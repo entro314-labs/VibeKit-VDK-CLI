@@ -6,10 +6,10 @@
  * This script checks for duplicate rule IDs across the repository.
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const glob = require('fast-glob');
-const chalk = require('chalk');
+import fs from 'fs/promises';
+import path from 'path';
+import glob from 'fast-glob';
+import chalk from 'chalk';
 
 // Rule repository paths
 const rulesRootDir = path.join(__dirname, '../..');

@@ -24,25 +24,63 @@ export async function analyzeTypeScript(content, filePath) {
       return await analyzeJavaScript(content, filePath);
     }
     
-    // For TypeScript files, first try with our TypeScript parser
-    const parseResult = await TypeScriptParser.parseFile(filePath);
+    // For TypeScript files, use regex-based parsing instead of AST parsing
+    // This avoids the issue with acorn parser not understanding TypeScript syntax
+    let jsAnalysis = {
+      variables: [],
+      functions: [],
+      classes: [],
+      components: [],
+      patterns: []
+    };
     
-    // If TypeScript parsing failed, or if content was empty, use content provided
-    const tsContent = parseResult.success ? parseResult.content : content;
-    
-    // Use JavaScript analyzer as a base - with safer approach for TypeScript
-    let jsAnalysis;
+    // Use regex patterns to extract TypeScript constructs safely
     try {
-      jsAnalysis = await analyzeJavaScript(tsContent, filePath);
-    } catch (jsError) {
-      // If JavaScript analyzer fails, create a basic structure
-      jsAnalysis = {
-        variables: [],
-        functions: [],
-        classes: [],
-        components: [],
-        patterns: []
-      };
+      // Extract variable declarations
+      const varPattern = /(?:const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
+      let match;
+      while ((match = varPattern.exec(content)) !== null) {
+        if (match[1]) {
+          jsAnalysis.variables.push(match[1]);
+        }
+      }
+      
+      // Extract function declarations  
+      const funcPattern = /(?:function\s+([a-zA-Z_$][a-zA-Z0-9_$]*)|(?:const|let)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*(?:async\s+)?(?:\([^)]*\)\s*=>|\([^)]*\)\s*:\s*[^=]*\s*=>))/g;
+      while ((match = funcPattern.exec(content)) !== null) {
+        const funcName = match[1] || match[2];
+        if (funcName) {
+          jsAnalysis.functions.push(funcName);
+        }
+      }
+      
+      // Extract class declarations
+      const classPattern = /class\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
+      while ((match = classPattern.exec(content)) !== null) {
+        if (match[1]) {
+          jsAnalysis.classes.push(match[1]);
+        }
+      }
+      
+      // Extract React components (functional components)
+      const componentPattern = /(?:const|let|var|function)\s+([A-Z][a-zA-Z0-9_$]*)/g;
+      while ((match = componentPattern.exec(content)) !== null) {
+        if (match[1] && (content.includes('JSX.Element') || content.includes('React.FC') || content.includes('</'))) {
+          jsAnalysis.components.push(match[1]);
+        }
+      }
+      
+      // Detect common patterns
+      if (content.includes('useState') || content.includes('useEffect')) {
+        jsAnalysis.patterns.push('React Hooks');
+      }
+      if (content.includes('async/await') || content.includes('async ')) {
+        jsAnalysis.patterns.push('Async/Await');
+      }
+      
+    } catch (regexError) {
+      // If regex parsing fails, just continue with empty analysis
+      console.warn(`Warning: Regex parsing failed for ${filePath}: ${regexError.message}`);
     }
     
     // Extend with TypeScript-specific analysis

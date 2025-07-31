@@ -277,3 +277,14 @@ rules/technologies/Vue3.mdc
 rules/tools/Code-Search.mdc
 rules/tools/Command-Execution.mdc
 rules/tools/File-Operations.mdc
+.claude/settings.local.json
+CLAUDE.local.md
+.claude/vdk.config.json
+docs/VDK-BLUEPRINTS-NAMING-REPORT.md
+docs/VDK-BLUEPRINTS-PARADIGM-DESCRIPTION.md
+docs/VDK-BLUEPRINTS-TECHNICAL-DESCRIPTION.md
+docs/VDK-REASSESSMENT-EXECUTIVE-SUMMARY.md
+docs/VDK-REVIEW-JOURNAL.md
+docs/VibeKit VDK Ecosystem Integration Matrix.md
+vdk-cli-2.0.0.tgz
+VDK CLI Technical Review.md

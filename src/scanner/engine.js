@@ -13,9 +13,14 @@ import { PatternDetector } from './core/PatternDetector.js';
 import { TechnologyAnalyzer } from './core/TechnologyAnalyzer.js';
 import { RuleGenerator } from './core/RuleGenerator.js';
 import { RuleValidator } from './utils/validator.js';
-import { IDEIntegrationManager } from './integrations/ide-integration.js';
+import { createIntegrationManager } from '../integrations/index.js';
 import { getVersion } from './utils/version.js';
 import { GitIgnoreParser } from './utils/gitignore-parser.js';
+import { 
+  selectCategoriesInteractively, 
+  getCategoryFilter, 
+  displaySelectionSummary 
+} from '../utils/category-selector.js';
 
 /**
  * Orchestrates the project scanning process.
@@ -36,21 +41,22 @@ export async function runScanner(options) {
 
   try {
     const projectPath = path.resolve(options.projectPath);
-    const outputPath = path.resolve(options.outputPath);
+    const outputPath = path.resolve(projectPath, options.outputPath);
 
     spinner.text = 'Parsing ignore patterns...';
     let ignorePatterns = options.ignorePattern || [];
     if (options.useGitignore) {
-      const gitignorePath = path.join(projectPath, '.gitignore');
       try {
-        const parser = new GitIgnoreParser(gitignorePath);
-        const gitignorePatterns = await parser.parse();
+        const gitignorePatterns = await GitIgnoreParser.parseGitIgnore(projectPath);
         ignorePatterns = [...ignorePatterns, ...gitignorePatterns];
-        if (options.verbose) {
-          spinner.info('Successfully parsed .gitignore file.');
+        if (options.verbose && gitignorePatterns.length > 0) {
+          spinner.info(`Successfully parsed .gitignore file with ${gitignorePatterns.length} patterns.`);
         }
       } catch (error) {
         spinner.warn('Could not parse .gitignore file. Proceeding without it.');
+        if (options.verbose) {
+          console.warn(`GitIgnore parse error: ${error.message}`);
+        }
       }
     }
 
@@ -92,33 +98,102 @@ export async function runScanner(options) {
     spinner.succeed('Code patterns detected.');
 
     spinner.text = 'Generating AI rules...';
-    const ruleGenerator = new RuleGenerator(outputPath, options.template, options.overwrite);
-    const context = {
-      technologies: techData,
+    const ruleGenerator = new RuleGenerator(outputPath, options.template, options.overwrite, { 
+      verbose: options.verbose,
+      projectPath: projectPath 
+    });
+    const analysisData = {
+      projectStructure: { 
+        root: projectPath,
+        files: files,
+        directories: projectData.directories,
+        fileCount: files.length,
+        directoryCount: projectData.directories?.length || 0,
+        fileTypes: projectData.fileTypes
+      },
+      technologyData: techData,
       patterns,
-      projectName: path.basename(projectPath),
-      fileList: files.map(f => path.relative(projectPath, f.path)),
-      version: getVersion(),
+      outputPath: outputPath
     };
-    const generatedFiles = await ruleGenerator.generateRules(context);
-    spinner.succeed('AI rules generated successfully.');
 
-    spinner.text = 'Validating generated rules...';
-    const validator = new RuleValidator({ verbose: options.verbose });
-    await validator.validateRuleDirectory(outputPath);
-    spinner.succeed('All generated rules are valid.');
+    // Handle category selection for command fetching
+    let categoryFilter = null;
+    if (options.interactive) {
+      spinner.stop(); // Stop spinner for interactive input
+      categoryFilter = await selectCategoriesInteractively(analysisData);
+      displaySelectionSummary(categoryFilter, analysisData);
+      spinner.start('Generating AI rules with selected categories...');
+    } else {
+      categoryFilter = getCategoryFilter(options, analysisData);
+      if (categoryFilter && options.verbose) {
+        console.log(chalk.cyan(`🎯 Using category filter: ${categoryFilter.preset || 'custom'}`));
+      }
+    }
+
+    const ruleResults = await ruleGenerator.generateIDESpecificRules(analysisData, categoryFilter);
+    spinner.succeed('AI rules generated successfully.');
+    
+    // Extract file paths from the results for display
+    let generatedFiles = [];
+    if (ruleResults && ruleResults.generatedRules) {
+      for (const [integrationName, rules] of Object.entries(ruleResults.generatedRules)) {
+        if (rules && rules.files) {
+          generatedFiles = generatedFiles.concat(rules.files);
+        }
+      }
+    }
+
+    // Only validate traditional rule files if they were generated
+    const rulesDirectoryExists = await fs.access(outputPath).then(() => true).catch(() => false);
+    if (rulesDirectoryExists) {
+      spinner.text = 'Validating generated rules...';
+      const validator = new RuleValidator({ verbose: options.verbose });
+      await validator.validateRuleDirectory(outputPath);
+      spinner.succeed('All generated rules are valid.');
+    } else {
+      // Skip validation for IDE-specific file generation (like Claude Code memory files)
+      if (options.verbose) {
+        console.log(chalk.gray('Skipping traditional rule validation - using IDE-specific file generation'));
+      }
+    }
 
     let initializedIDEs = [];
     let ideIntegration = null;
 
+
     if (options.ideIntegration) {
       spinner.text = 'Setting up IDE integration...';
       try {
-        ideIntegration = new IDEIntegrationManager({
-          watchMode: options.watch,
-          verbose: options.verbose,
-        });
-        initializedIDEs = await ideIntegration.initialize(projectPath);
+        ideIntegration = createIntegrationManager(projectPath);
+        
+        // Discover and register integrations
+        await ideIntegration.discoverIntegrations({ verbose: options.verbose });
+        
+        // Scan for active integrations
+        await ideIntegration.scanAll({ verbose: options.verbose });
+        
+        // Initialize active integrations
+        const initResults = await ideIntegration.initializeActive({ verbose: options.verbose });
+        
+        // Get the list of successfully initialized integrations
+        initializedIDEs = initResults.successful.map(result => result.name);
+        
+        if (initializedIDEs.length > 0) {
+          console.log(chalk.green(`IDE integrations initialized: ${initializedIDEs.join(', ')}`));
+          
+          // Provide user guidance for Claude Code integration
+          if (initializedIDEs.includes('Claude Code') && !options.interactive && !options.categories && options.preset === 'auto') {
+            console.log(chalk.cyan('\n💡 Claude Code detected! You can customize command selection:'));
+            console.log(chalk.gray('   • Use --interactive for guided category selection'));
+            console.log(chalk.gray('   • Use --preset development for development-focused commands'));
+            console.log(chalk.gray('   • Use --categories development,quality for specific categories'));
+            console.log(chalk.gray('   • Use --help to see all options'));
+          }
+        } else {
+          console.log(chalk.yellow('No IDE integrations detected, using generic setup'));
+          initializedIDEs = ['generic'];
+        }
+        
         spinner.succeed('IDE integration setup complete.');
       } catch (error) {
         spinner.fail(`IDE integration setup failed: ${error.message}`);
@@ -129,19 +204,19 @@ export async function runScanner(options) {
     }
 
     console.log('\n' + chalk.green('✅ Project scanning completed successfully!'));
-    console.log(chalk.green('Generated rule files:'));
+    console.log(chalk.green('Generated blueprint files:'));
     if (generatedFiles && Array.isArray(generatedFiles)) {
       generatedFiles.forEach(file => {
         console.log(chalk.green(`- ${file}`));
       });
     } else {
-      console.log(chalk.green(`- Rules saved to ${outputPath}`));
+      console.log(chalk.green(`- Blueprints saved to ${outputPath}`));
     }
 
     console.log('\n' + chalk.cyan('Next steps:'));
-    console.log(chalk.cyan('1. Review the generated rules in your editor'));
+    console.log(chalk.cyan('1. Review the generated blueprints in your editor'));
     console.log(chalk.cyan('2. Customize any specific details as needed'));
-    console.log(chalk.cyan('3. Activate the rules in your AI assistant\n'));
+    console.log(chalk.cyan('3. Activate the blueprints in your AI assistant\n'));
 
     return {
       projectName: path.basename(projectPath),

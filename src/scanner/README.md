@@ -3,7 +3,7 @@
 # 🔍 Project Scanner
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.0.0-green.svg)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Version](https://img.shields.io/badge/Version-2.0.0-green.svg)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
 
 **Automatically analyzes codebases to generate custom VibeKit VDK CLI tailored to your project**
@@ -32,8 +32,10 @@ The Project Scanner is an intelligent utility that analyzes your codebase to aut
 The scanner is included with VibeKit VDK CLI and requires no separate installation:
 
 ```bash
-# From the VibeKit VDK CLI root directory
-npm install
+# Install VDK CLI globally
+npm install -g @vdk/cli
+# or
+pnpm add -g @vdk/cli
 ```
 
 ## 📊 Usage
@@ -41,33 +43,36 @@ npm install
 ### Via CLI Command
 
 ```bash
-# Basic usage - scans the current directory
-npm run scan
+# Basic usage - initialize VDK in current directory
+vdk init
 
-# Scan a specific project directory
-npm run scan -- --path /path/to/your/project
+# Interactive mode with project scanning
+vdk init --interactive
 
-# Advanced usage with all options
-npm run scan -- --path /path/to/your/project --output /custom/output/path --deep --ignorePattern "**/node_modules/**" --verbose
+# Scan and generate rules for specific directory
+vdk scan --path /path/to/your/project
+
+# Update existing rules
+vdk update
 ```
 
-### Via Setup Wizard
+### Via Interactive Mode
 
 ```bash
 # Interactive setup with scanner integration
-npm run wizard
+vdk init --interactive
 ```
 
-### Available Options
+### Available Commands
 
-| Option | Description |
-|--------|-------------|
-| `--path`, `-p` | Path to the project to scan (default: current directory) |
-| `--output`, `-o` | Path where generated rules should be saved (default: `./.ai/rules`) |
-| `--deep`, `-d` | Enable deep scanning for more thorough pattern detection |
-| `--ignorePattern`, `-i` | Glob patterns to ignore (can be used multiple times) |
-| `--verbose`, `-v` | Enable verbose output for debugging |
-| `--help`, `-h` | Display help information |
+| Command | Description |
+|---------|-------------|
+| `vdk init` | Initialize VDK in current directory with automatic scanning |
+| `vdk init --interactive` | Interactive setup with project scanning |
+| `vdk scan` | Analyze project and generate/update rules |
+| `vdk update` | Update rules from VDK Hub |
+| `vdk status` | Check project and integration status |
+| `vdk validate` | Validate generated rules |
 
 ## 🧩 How It Works
 

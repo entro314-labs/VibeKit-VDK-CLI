@@ -650,9 +650,11 @@ export class PackageAnalyzer {
         }
         // Then try matching by prefix (for scoped packages)
         else {
-          const scopedMatches = Object.keys(techMap).filter(key => 
-            dep.startsWith(key) || key.startsWith(basePackageName)
-          );
+          const scopedMatches = Object.keys(techMap).filter(key => {
+            // Only match if the dependency starts with the key (for scoped packages like @angular/core)
+            // Avoid reverse matching that would make 'react' match 'react-native'
+            return dep.startsWith(key + '/') || (key.startsWith('@') && dep === key);
+          });
           
           for (const match of scopedMatches) {
             detectedInCategory.push(techMap[match]);
