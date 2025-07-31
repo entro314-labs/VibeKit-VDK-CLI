@@ -68,9 +68,9 @@ body:
       label: VDK CLI Version
       description: What version of VDK CLI are you running?
       options:
-        - 1.0.0 (latest)
+        - 2.0.0 (latest)
+        - 1.0.0
         - 0.9.0
-        - 0.8.0
         - Other (please specify in additional context)
     validations:
       required: true
