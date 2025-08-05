@@ -30,6 +30,18 @@ The world's first Vibe Development Kit - Train any AI coding assistant to unders
 
 VDK CLI revolutionizes AI-assisted development by generating intelligent rules that make AI suggestions 60% faster and perfectly matched to your codebase patterns. This tool helps developers create project-aware AI assistants and provides seamless integration across all major coding platforms.
 
+## Demo
+
+<div align="center">
+
+### Interactive Setup & Features
+![VDK CLI Interactive Demo](docs/media/demo-interactive.gif)
+
+### Quick Start Workflow  
+![VDK CLI Quick Demo](docs/media/demo-quick-real.gif)
+
+</div>
+
 ## Features
 
 <table>
