@@ -1069,7 +1069,7 @@ ${await this.generateExternalServices(rules, projectContext)}
   }
 
   /**
-   * Fetch commands from VDK-Blueprints repository (LEGACY - will be removed)  
+   * Fetch commands from VDK-Blueprints repository
    */
   async fetchRemoteCommands(platform = 'claude-code', projectContext) {
     const VDK_RULES_REPO_API_URL = 'https://api.github.com/repos/entro314-labs/VDK-Blueprints';

@@ -14,7 +14,7 @@ Release latest includes 2 commits (1 docs, 1 feature). Complexity: high. Affecte
 **Complexity**: high
 
 ### Added
-- Complete codebase and project structure for VibeKit VDK CLI
+- Complete codebase and project structure for VDK CLI
 - 189 new files totaling 40,860 lines including CLI source code (cli.js)
 - Installation and release scripts (install.sh, release.sh)
 - Comprehensive documentation (README.md, GUIDE.md, ROADMAP.md, VDK_OVERVIEW.md, CONTRIBUTING.md)
@@ -87,7 +87,7 @@ Release includes 4 new features, 1 bug fix, extensive refactoring
 - Introduced new roadmap and publishing workflow
 
 #### Branding Evolution
-- Complete rebranding from 'Vibe Coding Rules' to 'VibeKit VDK CLI'
+- Complete rebranding from 'Vibe Coding Rules' to 'VDK CLI'
 - Updated environment variables, configuration, and project metadata
 - Added new documentation (CLI Reference, Getting Started)
 

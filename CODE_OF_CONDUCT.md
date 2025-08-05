@@ -72,7 +72,7 @@ This includes:
 
 ### How to Report
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **conduct@vdk.dev**.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **conduct@vdk.tools**.
 
 All complaints will be reviewed and investigated promptly and fairly.
 
@@ -122,7 +122,7 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 If you believe you have been wrongly accused or that the enforcement action was inappropriate, you may appeal by:
 
-1. **Contacting the enforcement team** at conduct@vdk.dev within 30 days
+1. **Contacting the enforcement team** at conduct@vdk.tools within 30 days
 2. **Providing a detailed explanation** of why you believe the action was inappropriate
 3. **Including any additional context** or evidence that supports your case
 
@@ -181,7 +181,7 @@ For answers to common questions about this code of conduct, see the FAQ at [http
 
 ---
 
-**Last Updated**: January 2024  
-**Next Review**: January 2025
+**Last Updated**: July 2025
+**Next Review**: July 2026
 
-For questions about this Code of Conduct, please contact conduct@vdk.dev.
+For questions about this Code of Conduct, please contact conduct@vdk.tools.

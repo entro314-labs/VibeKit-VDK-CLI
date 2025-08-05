@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * VibeKit VDK CLI
+ * VDK CLI
  * -----------------------
  * This is the main entry point for the VDK command-line interface.
  * It orchestrates commands for initializing projects, managing rules, and deploying to the VDK Hub.

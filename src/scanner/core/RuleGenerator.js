@@ -32,12 +32,10 @@ import { applyLightTemplating, prepareTemplateVariables } from '../utils/light-t
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Note: Schema validation now uses centralized schema-validator.js
-// with blueprint-schema.json and command-schema.json
 
 export class RuleGenerator {
   constructor(outputPath = './.ai/rules', template = 'default', overwrite = false, options = {}) {
-    // Support both legacy (outputPath, template, overwrite) and new (options) constructor signatures
+    // Support both (outputPath, template, overwrite) and (options) constructor signatures
     if (typeof outputPath === 'object') {
       options = outputPath;
       outputPath = options.outputPath || './.ai/rules';
@@ -584,7 +582,7 @@ export class RuleGenerator {
   }
 
   /**
-   * Legacy method for backward compatibility
+   * Fetch rules from repository
    */
   async fetchFromRulesRepository(analysisData) {
     return this.fetchFromRepository(analysisData, 'rules');

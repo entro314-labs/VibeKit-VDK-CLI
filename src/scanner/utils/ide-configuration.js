@@ -45,7 +45,7 @@ export const IDE_CONFIGURATIONS = [
   },
   {
     id: 'windsurf',
-    name: 'Windsurf (formerly Codeium)',
+    name: 'Windsurf',
     configFolder: '.windsurf',
     rulesFolder: '.windsurf/rules',
     configFiles: ['.windsurf/config.json'],

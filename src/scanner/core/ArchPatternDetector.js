@@ -1,11 +1,8 @@
 /**
- * AdvancedPatternDetector-ArchitecturalPatterns.js
- *
- * Implementation of architectural pattern detection methods for AdvancedPatternDetector.
- * This file will be imported and used by the main AdvancedPatternDetector.
+ * ArchPatternDetector.js
+ * Detects architectural patterns in project codebases
  */
 
-import fs from 'fs/promises';
 import path from 'path';
 
 /**
@@ -17,7 +14,7 @@ export async function detectArchitecturalPatterns(projectStructure) {
   const patterns = [];
   
   // Get relevant data structures
-  const { files, directories, fileTypes } = projectStructure;
+  const { files, directories } = projectStructure;
   
   // Check for MVC pattern
   const mvcConfidence = detectMVCPattern(projectStructure);
@@ -98,7 +95,9 @@ function detectMVCPattern(projectStructure) {
   const { directories, files } = projectStructure;
   
   // Check for explicit MVC folders
-  const dirNames = directories.map(dir => path.basename(dir).toLowerCase());
+  const dirNames = Array.isArray(directories) 
+    ? directories.map(dir => path.basename(typeof dir === 'string' ? dir : dir.path || dir.name || '').toLowerCase())
+    : Object.keys(directories || {});
   const hasMvcFolders = 
     dirNames.includes('models') && 
     (dirNames.includes('views') || dirNames.includes('templates')) && 
@@ -138,7 +137,7 @@ function detectMVVMPattern(projectStructure) {
   const { directories, files } = projectStructure;
   
   // Check for explicit MVVM folders
-  const dirNames = directories.map(dir => path.basename(dir).toLowerCase());
+  const dirNames = directories.map(dir => path.basename(typeof dir === 'string' ? dir : dir.path || dir.name || '').toLowerCase());
   const hasMvvmFolders = 
     dirNames.includes('models') && 
     (dirNames.includes('views') || dirNames.includes('templates')) && 
@@ -177,7 +176,7 @@ function detectMVVMPattern(projectStructure) {
 function detectCleanArchitecture(projectStructure) {
   let score = 0;
   const { directories } = projectStructure;
-  const dirNames = directories.map(dir => path.basename(dir).toLowerCase());
+  const dirNames = directories.map(dir => path.basename(typeof dir === 'string' ? dir : dir.path || dir.name || '').toLowerCase());
   
   // Check for Clean Architecture layers
   const hasEntities = dirNames.includes('entities') || dirNames.includes('domain');
@@ -205,7 +204,7 @@ function detectMicroservices(projectStructure) {
   
   // Check for service directories
   const serviceDirectories = directories.filter(dir => {
-    const name = path.basename(dir).toLowerCase();
+    const name = (typeof dir === 'string' ? path.basename(dir) : dir.name || path.basename(dir.path || '')).toLowerCase();
     return name.includes('service') || name.endsWith('-svc');
   });
   
@@ -237,7 +236,7 @@ function detectMicroservices(projectStructure) {
 function detectHexagonalArchitecture(projectStructure) {
   let score = 0;
   const { directories, files } = projectStructure;
-  const dirNames = directories.map(dir => path.basename(dir).toLowerCase());
+  const dirNames = directories.map(dir => path.basename(typeof dir === 'string' ? dir : dir.path || dir.name || '').toLowerCase());
   
   // Check for hexagonal architecture directories
   const hasDomain = dirNames.includes('domain');
@@ -272,7 +271,7 @@ function detectEventDrivenArchitecture(projectStructure) {
   const { directories, files } = projectStructure;
   
   // Check for event-driven directories
-  const dirNames = directories.map(dir => path.basename(dir).toLowerCase());
+  const dirNames = directories.map(dir => path.basename(typeof dir === 'string' ? dir : dir.path || dir.name || '').toLowerCase());
   const hasEvents = dirNames.includes('events');
   const hasHandlers = dirNames.includes('handlers') || dirNames.includes('listeners');
   const hasPublishers = dirNames.includes('publishers') || dirNames.includes('dispatchers');
@@ -304,7 +303,6 @@ function detectEventDrivenArchitecture(projectStructure) {
  */
 function checkForMvcFrameworks(projectStructure) {
   const { files } = projectStructure;
-  const fileContents = files.map(file => file.path);
   
   // List of common MVC frameworks
   const mvcFrameworks = [
@@ -314,11 +312,32 @@ function checkForMvcFrameworks(projectStructure) {
   
   // Check for package files
   const packageJsonFiles = files.filter(file => path.basename(file.path) === 'package.json');
-  const pyprojectFiles = files.filter(file => path.basename(file.path) === 'pyproject.toml');
-  const gemfileFiles = files.filter(file => path.basename(file.path) === 'Gemfile');
   
-  // TODO: Implement actual file content checking
-  return false;
+  // Check package.json files for MVC framework dependencies
+  for (const packageFile of packageJsonFiles) {
+    try {
+      if (packageFile.content) {
+        const packageData = JSON.parse(packageFile.content);
+        const dependencies = { ...packageData.dependencies, ...packageData.devDependencies };
+        
+        for (const framework of mvcFrameworks) {
+          if (dependencies[framework]) {
+            return true;
+          }
+        }
+      }
+    } catch {
+      // Skip invalid JSON files
+    }
+  }
+  
+  // Check for framework-specific directory patterns
+  const hasControllers = files.some(file => file.path.includes('/controllers/'));
+  const hasModels = files.some(file => file.path.includes('/models/'));
+  const hasViews = files.some(file => file.path.includes('/views/') || file.path.includes('/templates/'));
+  
+  // Basic MVC pattern detection based on directory structure
+  return hasControllers && hasModels && hasViews;
 }
 
 /**
@@ -328,7 +347,6 @@ function checkForMvcFrameworks(projectStructure) {
  */
 function checkForMvvmFrameworks(projectStructure) {
   const { files } = projectStructure;
-  const fileContents = files.map(file => file.path);
   
   // List of common MVVM frameworks
   const mvvmFrameworks = [
@@ -339,8 +357,33 @@ function checkForMvvmFrameworks(projectStructure) {
   // Check for package files
   const packageJsonFiles = files.filter(file => path.basename(file.path) === 'package.json');
   
-  // TODO: Implement actual file content checking
-  return false;
+  // Check package.json files for MVVM framework dependencies
+  for (const packageFile of packageJsonFiles) {
+    try {
+      if (packageFile.content) {
+        const packageData = JSON.parse(packageFile.content);
+        const dependencies = { ...packageData.dependencies, ...packageData.devDependencies };
+        
+        for (const framework of mvvmFrameworks) {
+          if (dependencies[framework]) {
+            return true;
+          }
+        }
+      }
+    } catch {
+      // Skip invalid JSON files
+    }
+  }
+  
+  // Check for MVVM-specific directory patterns
+  const hasViewModels = files.some(file => 
+    file.path.includes('/viewmodel') || 
+    file.path.includes('/view-model') ||
+    file.path.toLowerCase().includes('viewmodel')
+  );
+  const hasViews = files.some(file => file.path.includes('/views/') || file.path.includes('/components/'));
+  
+  return hasViewModels && hasViews;
 }
 
 /**
@@ -349,11 +392,12 @@ function checkForMvvmFrameworks(projectStructure) {
  * @returns {Object} Component locations
  */
 function findMVCComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    models: [],
-    views: [],
-    controllers: []
+    models: files.filter(file => file.path.includes('/models/')),
+    views: files.filter(file => file.path.includes('/views/') || file.path.includes('/templates/')),
+    controllers: files.filter(file => file.path.includes('/controllers/'))
   };
 }
 
@@ -363,11 +407,15 @@ function findMVCComponents(projectStructure) {
  * @returns {Object} Component locations
  */
 function findMVVMComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    models: [],
-    views: [],
-    viewModels: []
+    models: files.filter(file => file.path.includes('/models/')),
+    views: files.filter(file => file.path.includes('/views/') || file.path.includes('/components/')),
+    viewModels: files.filter(file => 
+      file.path.includes('/viewmodel') || 
+      file.path.includes('/view-model') ||
+      file.path.toLowerCase().includes('viewmodel'))
   };
 }
 
@@ -377,12 +425,13 @@ function findMVVMComponents(projectStructure) {
  * @returns {Object} Component locations
  */
 function findCleanArchComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    entities: [],
-    useCases: [],
-    adapters: [],
-    frameworks: []
+    entities: files.filter(file => file.path.includes('/entities/') || file.path.includes('/domain/')),
+    useCases: files.filter(file => file.path.includes('/usecases/') || file.path.includes('/application/')),
+    adapters: files.filter(file => file.path.includes('/adapters/') || file.path.includes('/interfaces/')),
+    frameworks: files.filter(file => file.path.includes('/frameworks/') || file.path.includes('/infrastructure/'))
   };
 }
 
@@ -392,11 +441,17 @@ function findCleanArchComponents(projectStructure) {
  * @returns {Object} Component locations
  */
 function findMicroserviceComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    services: [],
-    infrastructure: [],
-    gateway: []
+    services: files.filter(file => file.path.includes('service')),
+    infrastructure: files.filter(file => 
+      file.path.includes('docker') || 
+      file.path.includes('kubernetes') ||
+      file.path.includes('k8s')),
+    gateway: files.filter(file => 
+      file.path.includes('gateway') || 
+      file.path.includes('proxy'))
   };
 }
 
@@ -406,11 +461,12 @@ function findMicroserviceComponents(projectStructure) {
  * @returns {Object} Component locations
  */
 function findHexagonalComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    domain: [],
-    ports: [],
-    adapters: []
+    domain: files.filter(file => file.path.includes('/domain/')),
+    ports: files.filter(file => file.path.includes('/ports/') || file.path.includes('port')),
+    adapters: files.filter(file => file.path.includes('/adapters/') || file.path.includes('adapter'))
   };
 }
 
@@ -420,10 +476,16 @@ function findHexagonalComponents(projectStructure) {
  * @returns {Object} Component locations
  */
 function findEventDrivenComponents(projectStructure) {
-  // Implementation will be added in a future version
+  const { files } = projectStructure;
+  
   return {
-    events: [],
-    publishers: [],
-    subscribers: []
+    events: files.filter(file => file.path.includes('/events/')),
+    publishers: files.filter(file => 
+      file.path.includes('/publishers/') || 
+      file.path.includes('/dispatchers/')),
+    subscribers: files.filter(file => 
+      file.path.includes('/subscribers/') || 
+      file.path.includes('/consumers/') ||
+      file.path.includes('/listeners/'))
   };
 }

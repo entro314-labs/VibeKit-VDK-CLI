@@ -27,7 +27,6 @@ const ruleDirectories = [
   '.ai/rules/tasks',
   '.ai/rules/technologies',
   '.ai/rules/tools'
-  // Note: Excluding 'templates/.ai/rules' since templates are meant to be duplicates
 ];
 
 // Track all rule IDs to check for duplicates

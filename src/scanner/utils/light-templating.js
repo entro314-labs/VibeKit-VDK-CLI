@@ -169,8 +169,7 @@ function findDocsDirectory(projectStructure) {
 }
 
 /**
- * Legacy Handlebars helpers converted to simple functions
- * These can be used in template variables for backward compatibility
+ * Template helper functions for processing template variables
  */
 export const templateHelpers = {
   capitalize: (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : '',

@@ -1,7 +1,7 @@
 /**
  * Windsurf Integration Module
  * ---------------------------
- * Provides enhanced integration with Windsurf AI Editor (formerly Codeium),
+ * Provides enhanced integration with Windsurf AI Editor,
  * including Codeium AI features, Windsurf-specific configurations, and optimized workflows.
  */
 

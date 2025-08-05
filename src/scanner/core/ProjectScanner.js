@@ -213,7 +213,6 @@ export class ProjectScanner {
     // Implementation would involve parsing files for import statements,
     // require() calls, etc., and creating a dependency graph
     
-    // This is a simplified placeholder implementation
     for (const file of this.files) {
       file.imports = [];
       file.importedBy = [];
