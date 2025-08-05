@@ -16,7 +16,7 @@ import {
   getIDEConfigById,
   getIDEConfigPaths,
   ensureRuleDirectory
-} from '../utils/ide-configuration.js';
+} from '../../shared/ide-configuration.js';
 
 /**
  * IDE Integration Manager class
@@ -118,7 +118,6 @@ class IDEIntegrationManager {
    * @param {string} ideId - IDE identifier
    * @param {string} projectPath - Path to the project
    * @returns {string} - Path to the IDE configuration
-   * @deprecated Use the centralized getIDEConfigPaths utility instead
    */
   getConfigPath(ideId, projectPath) {
     const paths = getIDEConfigPaths(ideId, projectPath);
@@ -130,7 +129,6 @@ class IDEIntegrationManager {
    * @param {string} ideId - IDE identifier
    * @param {string} projectPath - Path to the project
    * @returns {string} - Path to the IDE rules
-   * @deprecated Use the centralized getIDEConfigPaths utility instead
    */
   getRulePath(ideId, projectPath) {
     const paths = getIDEConfigPaths(ideId, projectPath);

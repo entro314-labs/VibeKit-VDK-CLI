@@ -98,34 +98,34 @@ vdk.config.json
 test/basic-functionality.test.js
 src/utils/health-check.js
 ECOSYSTEM_STATUS.md
-docs/VibeKit VDK Hub docs/OLD-MARKETING_MESSAGING.md
-docs/VibeKit VDK Hub docs/MULTI_IDE_SUPPORT.md
-docs/VibeKit VDK Ecosystem Details/vibekit_marketing_strategy.md
-docs/VibeKit VDK Ecosystem Details/vibekit_integration_matrix.md
-docs/VibeKit VDK Ecosystem Details/vibekit_ecosystem_analysis.md
-docs/VibeKit VDK Ecosystem Details/messaging_comparison.md
-docs/VibeKit VDK CLI General docs/VDK_OVERVIEW.md
-docs/VibeKit VDK CLI General docs/ROADMAP.md
-docs/VibeKit VDK CLI General docs/README.md
-docs/VibeKit VDK CLI General docs/GUIDE.md
-docs/VibeKit VDK CLI General docs/CONTRIBUTING.md
-docs/VibeKit VDK CLI docs/Troubleshooting-Guide.md
-docs/VibeKit VDK CLI docs/Task-System-Guide.md
-docs/VibeKit VDK CLI docs/SYNC-SYSTEM.md
-docs/VibeKit VDK CLI docs/Rule-Authoring-Guide.md
-docs/VibeKit VDK CLI docs/Project-History-Attribution.md
-docs/VibeKit VDK CLI docs/Memory-Management-Guide.md
-docs/VibeKit VDK CLI docs/MDC-Schema-Documentation.md
-docs/VibeKit VDK CLI docs/Master-Documentation-Index.md
-docs/VibeKit VDK CLI docs/Hub-Integration.md
-docs/VibeKit VDK CLI docs/Getting-Started-Guide.md
-docs/VibeKit VDK CLI docs/Editor-Path-Integration-Guide.md
-docs/VibeKit VDK CLI docs/CLI-Reference.md
-docs/VibeKit VDK AI Rules Docs/RULES-SPEC.md
-docs/VibeKit VDK AI Rules Docs/README.md
-docs/VibeKit VDK AI Rules Docs/cursor-rules.md
-docs/VibeKit VDK AI Rules Docs/CONTRIBUTING.md
-docs/VibeKit VDK AI Rules Docs/CHANGELOG.md
+docs/VDK Hub docs/OLD-MARKETING_MESSAGING.md
+docs/VDK Hub docs/MULTI_IDE_SUPPORT.md
+docs/VDK Ecosystem Details/vibekit_marketing_strategy.md
+docs/VDK Ecosystem Details/vibekit_integration_matrix.md
+docs/VDK Ecosystem Details/vibekit_ecosystem_analysis.md
+docs/VDK Ecosystem Details/messaging_comparison.md
+docs/VDK CLI General docs/VDK_OVERVIEW.md
+docs/VDK CLI General docs/ROADMAP.md
+docs/VDK CLI General docs/README.md
+docs/VDK CLI General docs/GUIDE.md
+docs/VDK CLI General docs/CONTRIBUTING.md
+docs/VDK CLI docs/Troubleshooting-Guide.md
+docs/VDK CLI docs/Task-System-Guide.md
+docs/VDK CLI docs/SYNC-SYSTEM.md
+docs/VDK CLI docs/Rule-Authoring-Guide.md
+docs/VDK CLI docs/Project-History-Attribution.md
+docs/VDK CLI docs/Memory-Management-Guide.md
+docs/VDK CLI docs/MDC-Schema-Documentation.md
+docs/VDK CLI docs/Master-Documentation-Index.md
+docs/VDK CLI docs/Hub-Integration.md
+docs/VDK CLI docs/Getting-Started-Guide.md
+docs/VDK CLI docs/Editor-Path-Integration-Guide.md
+docs/VDK CLI docs/CLI-Reference.md
+docs/VDK AI Rules Docs/RULES-SPEC.md
+docs/VDK AI Rules Docs/README.md
+docs/VDK AI Rules Docs/cursor-rules.md
+docs/VDK AI Rules Docs/CONTRIBUTING.md
+docs/VDK AI Rules Docs/CHANGELOG.md
 docs/Troubleshooting-Guide.md
 docs/Task-System-Guide.md
 docs/SYNC-SYSTEM.md
@@ -277,3 +277,28 @@ rules/technologies/Vue3.mdc
 rules/tools/Code-Search.mdc
 rules/tools/Command-Execution.mdc
 rules/tools/File-Operations.mdc
+.claude/settings.local.json
+CLAUDE.local.md
+.claude/vdk.config.json
+docs/VDK-BLUEPRINTS-NAMING-REPORT.md
+docs/VDK-BLUEPRINTS-PARADIGM-DESCRIPTION.md
+docs/VDK-BLUEPRINTS-TECHNICAL-DESCRIPTION.md
+docs/VDK-REASSESSMENT-EXECUTIVE-SUMMARY.md
+docs/VDK-REVIEW-JOURNAL.md
+docs/VDK Ecosystem Integration Matrix.md
+vdk-cli-2.0.0.tgz
+VDK CLI Technical Review.md
+docs/GITHUB_COPILOT_SETUP.md
+docs/ROADMAP.md
+docs/SECURITY.md
+docs/TEMPLATE_README.md
+docs/VDK_DOCUMENTATION.md
+docs/VDK_OVERVIEW.md
+docs/VDK CLI Complete Guide.md
+GITHUB_COPILOT_SETUP.md
+ROADMAP.md
+SECURITY.md
+TEMPLATE_README.md
+VDK_DOCUMENTATION.md
+VDK_OVERVIEW.md
+VDK CLI Complete Guide.md

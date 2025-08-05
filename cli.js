@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * VibeKit VDK CLI
+ * VDK CLI
  * -----------------------
  * This is the main entry point for the VDK command-line interface.
  * It orchestrates commands for initializing projects, managing rules, and deploying to the VDK Hub.
@@ -10,15 +10,22 @@
  */
 
 import dotenv from 'dotenv';
-dotenv.config();
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Get the directory where cli.js is located (VDK CLI directory)
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Try loading .env.local first from CLI directory, then fall back to .env
+dotenv.config({ path: path.join(__dirname, '.env.local') });
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { createRequire } from 'module';
 import { runScanner } from './src/scanner/index.js';
-import { fetchRuleList, downloadRule } from './src/hub-client.js';
+import { fetchRuleList, downloadRule } from './src/blueprints-client.js';
 import fs from 'fs/promises';
-import path from 'path';
 
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
@@ -43,6 +50,9 @@ program
   .option('--ide-integration', 'Enable IDE integration setup', true)
   .option('--watch', 'Enable watch mode for continuous IDE integration updates', false)
   .option('-v, --verbose', 'Enable verbose output for debugging', false)
+  .option('--categories <categories...>', 'Specific command categories to fetch (e.g., development, testing, workflow)')
+  .option('--preset <preset>', 'Preset command collection (minimal, full, development, production)', 'auto')
+  .option('--interactive', 'Enable interactive category selection', false)
   .action(async (options) => {
     try {
       const results = await runScanner(options);
@@ -87,11 +97,11 @@ program
 
 program
   .command('update')
-  .description('Update VDK rules from the VDK Hub')
+  .description('Update VDK blueprints from the VDK-Blueprints repository')
   .option('-o, --outputPath <path>', 'Path to the rules directory', './.ai/rules')
   .action(async (options) => {
     const rulesDir = path.resolve(options.outputPath);
-    console.log(chalk.blue(`Checking for updates in VDK Hub...`));
+    console.log(chalk.blue(`Checking for updates in VDK-Blueprints repository...`));
 
     try {
       // Ensure local rules directory exists
@@ -99,7 +109,7 @@ program
 
       const remoteRules = await fetchRuleList();
       if (remoteRules.length === 0) {
-        console.log(chalk.yellow('No rules found in the VDK Hub or failed to connect.'));
+        console.log(chalk.yellow('No blueprints found in the VDK-Blueprints repository or failed to connect.'));
         return;
       }
 
@@ -107,7 +117,7 @@ program
       let updatedCount = 0;
       let newCount = 0;
 
-      console.log(chalk.blue(`Found ${remoteRules.length} rules in the Hub. Comparing with local rules...`));
+      console.log(chalk.blue(`Found ${remoteRules.length} blueprints in the repository. Comparing with local rules...`));
 
       for (const remoteRule of remoteRules) {
         const localPath = path.join(rulesDir, remoteRule.name);

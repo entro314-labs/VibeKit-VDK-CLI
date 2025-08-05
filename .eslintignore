@@ -1,0 +1,20 @@
+node_modules/
+*.min.js
+dist/
+build/
+.next/
+.nuxt/
+coverage/
+.nyc_output/
+test-package/
+remote repo/
+ignore/
+.claude/
+.vdk/
+test-fix/
+test-init/
+test-path-issue/
+test-vdk-final/
+test-vdk/
+debug-yaml.js
+vdk-cli-*.tgz

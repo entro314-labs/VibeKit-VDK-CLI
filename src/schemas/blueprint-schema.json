@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VDK Blueprint Schema",
+  "description": "Schema for validating AI Blueprint frontmatter and structure",
+  "type": "object",
+  "required": ["id", "title", "description", "version", "category", "platforms"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique identifier in kebab-case"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Human-readable title"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Detailed description of the Blueprint"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version number"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO date format (YYYY-MM-DD)"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["core", "language", "technology", "stack", "task", "assistant", "tool"],
+      "description": "Primary categorization"
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Optional fine-grained grouping"
+    },
+    "framework": {
+      "type": "string",
+      "description": "Specific technology framework"
+    },
+    "language": {
+      "type": "string",
+      "description": "Programming language"
+    },
+    "stack": {
+      "type": "string",
+      "description": "Technology stack"
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["simple", "medium", "complex"],
+      "description": "Blueprint complexity level"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["file", "component", "feature", "project", "system"],
+      "description": "Scope of impact"
+    },
+    "audience": {
+      "type": "string",
+      "enum": ["developer", "architect", "team-lead", "junior"],
+      "description": "Target audience"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["experimental", "beta", "stable", "deprecated"],
+      "description": "Blueprint maturity level"
+    },
+    "platforms": {
+      "type": "object",
+      "properties": {
+        "claude-code": { "$ref": "#/definitions/claudePlatform" },
+        "cursor": { "$ref": "#/definitions/cursorPlatform" },
+        "windsurf": { "$ref": "#/definitions/windsurfPlatform" },
+        "github-copilot": { "$ref": "#/definitions/copilotPlatform" }
+      },
+      "additionalProperties": false
+    },
+    "requires": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Hard dependencies"
+    },
+    "suggests": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Soft dependencies/recommendations"
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Incompatible Blueprints"
+    },
+    "supersedes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Blueprints this replaces"
+    },
+    "contentSections": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Content organization sections"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author identifier"
+    },
+    "contributors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of contributors"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags"
+    },
+    "discussionUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Community discussion URL"
+    }
+  },
+  "definitions": {
+    "claudePlatform": {
+      "type": "object",
+      "required": ["compatible"],
+      "properties": {
+        "compatible": {
+          "type": "boolean",
+          "description": "Can this Blueprint work with Claude Code?"
+        },
+        "command": {
+          "type": "boolean",
+          "description": "Can become a slash command?"
+        },
+        "memory": {
+          "type": "boolean",
+          "description": "Should be included in memory files?"
+        },
+        "namespace": {
+          "type": "string",
+          "enum": ["project", "user"],
+          "description": "Command namespace"
+        },
+        "allowedTools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Claude-specific tool permissions"
+        },
+        "mcpIntegration": {
+          "type": "boolean",
+          "description": "Uses MCP servers?"
+        }
+      }
+    },
+    "cursorPlatform": {
+      "type": "object",
+      "required": ["compatible"],
+      "properties": {
+        "compatible": {
+          "type": "boolean",
+          "description": "Can this Blueprint work with Cursor?"
+        },
+        "activation": {
+          "type": "string",
+          "enum": ["auto-attached", "agent-requested", "manual", "always"],
+          "description": "How the Blueprint is activated"
+        },
+        "globs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "File patterns for auto-attachment"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Blueprint priority"
+        }
+      }
+    },
+    "windsurfPlatform": {
+      "type": "object",
+      "required": ["compatible"],
+      "properties": {
+        "compatible": {
+          "type": "boolean",
+          "description": "Can this Blueprint work with Windsurf?"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["global", "workspace"],
+          "description": "Blueprint application mode"
+        },
+        "xmlTag": {
+          "type": "string",
+          "description": "XML tag for Windsurf formatting"
+        },
+        "characterLimit": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated character usage"
+        }
+      }
+    },
+    "copilotPlatform": {
+      "type": "object",
+      "required": ["compatible"],
+      "properties": {
+        "compatible": {
+          "type": "boolean",
+          "description": "Can this Blueprint work with GitHub Copilot?"
+        },
+        "priority": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Priority for guideline selection"
+        },
+        "reviewType": {
+          "type": "string",
+          "enum": ["security", "performance", "code-quality", "style"],
+          "description": "Type of review focus"
+        }
+      }
+    }
+  }
+}

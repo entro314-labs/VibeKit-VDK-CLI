@@ -31,11 +31,7 @@ export async function getVersionAsync() {
  * @returns {string} Package version
  */
 export function getVersion() {
-  try {
-    // For simplicity in the synchronous version, we'll just return the current version
-    // This could be enhanced to use fs.readFileSync if needed
-    return '0.1.0';
-  } catch (error) {
-    return '0.0.0';
-  }
+  // For simplicity in the synchronous version, we'll just return the current version
+  // This could be enhanced to use fs.readFileSync if needed
+  return '2.0.0';
 }

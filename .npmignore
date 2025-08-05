@@ -1,0 +1,73 @@
+# Development files
+debug-yaml.js
+eslint.config.js
+.eslintignore
+.eslintignore.bak
+vdk-refactor-report.md
+
+# Test directories and files
+test/
+test-package/
+test-fix/
+test-init/
+test-path-issue/
+test-vdk-final/
+test-vdk/
+*.test.js
+
+# Documentation drafts and reports
+AI_CHANGELOG.md
+AI_CHANGELOG1.md
+VDK*.md
+*.report.md
+rebranding.md
+vdk-refactor-report.md
+
+# Development artifacts
+remote repo/
+ignore/
+.claude/
+.vdk/
+node_modules/
+*.tgz
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Build and dist (if any)
+dist/
+build/
+coverage/
+
+# Package manager files
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Workspace configuration
+pnpm-workspace.yaml
+
+# Development scripts not needed for users
+install.sh
+release.sh

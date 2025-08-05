@@ -1,7 +1,7 @@
 /**
- * IDE Configuration for Setup Wizard
+ * IDE Configuration for VDK CLI
  * -----------------------
- * ES module to share IDE configurations between project-scanner and setup-wizard.
+ * ES module to share IDE configurations between project-scanner and CLI commands.
  * This module centralizes IDE configuration information.
  */
 
@@ -46,7 +46,7 @@ const IDE_CONFIGURATIONS = [
   },
   {
     id: 'windsurf',
-    name: 'Windsurf (formerly Codeium)',
+    name: 'Windsurf',
     configFolder: '.windsurf',
     rulesFolder: '.windsurf/rules',
     configFiles: ['.windsurf/config.json'],
@@ -84,7 +84,7 @@ const IDE_CONFIGURATIONS = [
     id: 'claude',
     name: 'Claude Code',
     configFolder: '.claude',
-    rulesFolder: '.claude/rules',
+    rulesFolder: '.claude/commands',
     configFiles: ['.claude/settings.json', '.claude/settings.local.json'],
     globalConfigPath: '~/.claude/settings.json',
     enterpriseConfigPath: '/Library/Application Support/ClaudeCode/policies.json',
@@ -122,7 +122,7 @@ const IDE_CONFIGURATIONS = [
     configFolder: '.ai',
     rulesFolder: '.ai/rules',
     configFiles: ['.ai/config.json'],
-    description: 'Works with most AI coding assistants and is the VibeKit VDK CLI standard.'
+    description: 'Works with most AI coding assistants and is the VDK CLI standard.'
   }
 ];
 
@@ -197,10 +197,10 @@ function ensureRuleDirectory(id, projectPath) {
 }
 
 /**
- * Format IDE options for display in the setup wizard
+ * Format IDE options for display in the CLI
  * @returns {Array} List of IDE options with name and description
  */
-function getIDEOptionsForWizard() {
+function getIDEOptionsForCLI() {
   return IDE_CONFIGURATIONS.map(ide => ({
     name: ide.name,
     folder: ide.rulesFolder,
@@ -209,12 +209,12 @@ function getIDEOptionsForWizard() {
   }));
 }
 
-// Export functions for use in setup-wizard
+// Export functions for use in CLI
 export {
   IDE_CONFIGURATIONS,
   getIDEConfigById,
   getIDEConfigPaths,
   detectIDEs,
   ensureRuleDirectory,
-  getIDEOptionsForWizard
+  getIDEOptionsForCLI
 };

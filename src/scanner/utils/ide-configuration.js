@@ -2,7 +2,7 @@
  * IDE Configuration Module
  * -----------------------
  * Centralizes IDE/tool configuration mappings to ensure consistent integration
- * between project-scanner and setup-wizard tools.
+ * between project-scanner and CLI tools.
  */
 
 import fs from 'fs';
@@ -45,7 +45,7 @@ export const IDE_CONFIGURATIONS = [
   },
   {
     id: 'windsurf',
-    name: 'Windsurf (formerly Codeium)',
+    name: 'Windsurf',
     configFolder: '.windsurf',
     rulesFolder: '.windsurf/rules',
     configFiles: ['.windsurf/config.json'],
@@ -83,7 +83,7 @@ export const IDE_CONFIGURATIONS = [
     id: 'claude',
     name: 'Claude Code',
     configFolder: '.claude',
-    rulesFolder: '.claude/rules',
+    rulesFolder: '.claude/commands',
     configFiles: ['.claude/settings.json', '.claude/settings.local.json'],
     globalConfigPath: '~/.claude/settings.json',
     enterpriseConfigPath: '/Library/Application Support/ClaudeCode/policies.json',

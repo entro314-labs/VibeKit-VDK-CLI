@@ -300,7 +300,7 @@ class RuleValidator {
    * @param {Object} result - Validation result object to update
    */
   validateForPlaceholders(content, result) {
-    const placeholderRegex = /\{\{[^\}]+\}\}/g;
+    const placeholderRegex = /\{\{[^}]+\}\}/g;
     const placeholders = content.match(placeholderRegex);
     
     if (placeholders && placeholders.length > 0) {

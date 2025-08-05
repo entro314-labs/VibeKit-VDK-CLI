@@ -1,6 +1,6 @@
-# Contributing to VibeKit VDK CLI
+# Contributing to VDK CLI
 
-Thank you for considering contributing to VibeKit VDK CLI! This document provides guidelines and instructions for contributing to the project.
+Thank you for considering contributing to VDK CLI! This document provides guidelines and instructions for contributing to the project.
 
 ## Table of Contents
 
@@ -15,8 +15,8 @@ Thank you for considering contributing to VibeKit VDK CLI! This document provide
 
 Before you begin contributing, please:
 
-1. Familiarize yourself with the [VibeKit VDK CLI Guide](./GUIDE.md)
-2. Check the [Issues](https://github.com/entro314-labs/VibeKit-VDK-CLI/issues) for open tasks or create a new issue to discuss your proposed changes.
+1. Familiarize yourself with the [VDK CLI Guide](./GUIDE.md)
+2. Check the [Issues](https://github.com/entro314-labs/VDK-CLI/issues) for open tasks or create a new issue to discuss your proposed changes.
 
 ## Development Setup
 
@@ -24,8 +24,8 @@ To set up a local development environment:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/entro314-labs/VibeKit-VDK-CLI.git
-cd VibeKit-VDK-CLI
+git clone https://github.com/entro314-labs/VDK-CLI.git
+cd VDK-CLI
 
 # 2. Install dependencies
 npm install
@@ -93,7 +93,7 @@ Describe the manual testing performed to verify your changes.
 
 ## Adding New Features
 
-When adding new features to VibeKit VDK CLI:
+When adding new features to VDK CLI:
 
 1. **Discuss First**: Create an issue to discuss your proposed feature before implementation.
 2. **Follow the Architecture**: Understand and follow the existing architecture and design patterns.
@@ -103,4 +103,4 @@ When adding new features to VibeKit VDK CLI:
 
 All new rule files must be placed in the `.ai/rules/` directory within a project after running `vdk init`. If you are contributing new default rule templates, they should be added to the `templates/` directory in this repository.
 
-Thank you for contributing to VibeKit VDK CLI!
+Thank you for contributing to VDK CLI!

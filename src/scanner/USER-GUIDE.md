@@ -3,7 +3,7 @@
 <div align="center">
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)](https://github.com/entro314-labs/VibeKit-VDK-CLI)
+[![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen.svg)](https://github.com/entro314-labs/VDK-CLI)
 
 *A powerful tool for analyzing project structures and generating customized AI coding rules*
 
@@ -45,15 +45,13 @@ Key features include:
 
 ### Installation
 
-The Project Scanner is included with VibeKit VDK CLI:
+The Project Scanner is included with VDK CLI:
 
 ```bash
-# Clone the repository
-git clone https://github.com/entro314-labs/VibeKit-VDK-CLI.git
-cd VibeKit-VDK-CLI
-
-# Install dependencies
-npm install
+# Install VDK CLI globally
+npm install -g @vibe-dev-kit/cli
+# or
+pnpm add -g @vibe-dev-kit/cli
 ```
 
 ## 🏁 Basic Usage
@@ -63,22 +61,25 @@ npm install
 Run the scanner on your project:
 
 ```bash
-# From the VibeKit-VDK-CLI directory
-npm run scan
+# Initialize VDK in current directory (includes scanning)
+vdk init
 
-# Scan a specific project
-npm run scan -- --path /path/to/your/project
+# Interactive mode with project scanning
+vdk init --interactive
 
-# With options
-npm run scan -- --path /path/to/your/project --output ./rules --deep --verbose
+# Analyze and update existing project
+vdk scan
+
+# Check status
+vdk status
 ```
 
-### Via Setup Wizard
+### Interactive Mode
 
-The easiest way to use the scanner is through the interactive setup wizard:
+The easiest way to use the scanner is through the interactive mode:
 
 ```bash
-npm run wizard
+vdk init --interactive
 ```
 
 ### Configuration File
@@ -247,6 +248,6 @@ Contributions are welcome! See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guid
 
 <div align="center">
 
-**Part of [VibeKit VDK CLI](https://github.com/entro314-labs/VibeKit-VDK-CLI)**
+**Part of [VDK CLI](https://github.com/entro314-labs/VDK-CLI)**
 
 </div>

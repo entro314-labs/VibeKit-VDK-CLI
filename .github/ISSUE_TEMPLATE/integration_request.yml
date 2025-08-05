@@ -1,0 +1,276 @@
+name: 🧩 Integration Request
+description: Request support for a new AI assistant or IDE
+title: "[Integration]: "
+labels: ["integration", "enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for requesting a new integration! This helps us understand which AI assistants and IDEs the community wants to see supported.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting an integration request
+      options:
+        - label: I have searched existing issues to ensure this integration hasn't been requested before
+          required: true
+        - label: The AI assistant/IDE has a documented API or configuration system
+          required: true
+        - label: The tool is actively maintained and widely used
+          required: true
+
+  - type: dropdown
+    id: integration-type
+    attributes:
+      label: Integration Type
+      description: What type of integration are you requesting?
+      options:
+        - AI Assistant
+        - IDE/Editor
+        - Development Tool
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: What is the name of the AI assistant or IDE?
+      placeholder: "e.g., Claude Desktop, VS Code with Copilot, Vim with AI plugin"
+    validations:
+      required: true
+
+  - type: input
+    id: tool-version
+    attributes:
+      label: Tool Version
+      description: What version of the tool are you using?
+      placeholder: "e.g., 1.2.3, Latest stable"
+
+  - type: input
+    id: website
+    attributes:
+      label: Official Website
+      description: Link to the official website or documentation
+      placeholder: "https://example.com"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Tool Description
+      description: Provide a brief description of the AI assistant or IDE
+      placeholder: |
+        What does this tool do?
+        What makes it unique?
+        Who uses it?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: popularity
+    attributes:
+      label: Popularity/Usage
+      description: How popular is this tool in the development community?
+      options:
+        - Very popular - Used by many developers
+        - Moderately popular - Growing user base
+        - Niche - Specialized use cases
+        - New - Recently released
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Configuration System
+      description: How does the tool handle configuration and rules?
+      placeholder: |
+        Configuration files:
+        - .toolconfig.json
+        - .tool/settings.yaml
+        
+        Rule formats:
+        - Supports markdown files
+        - Has custom XML format
+        - Uses JSON schema
+        
+        Documentation:
+        - Link to configuration docs
+        - API reference
+    validations:
+      required: true
+
+  - type: textarea
+    id: rule-format
+    attributes:
+      label: Rule/Instruction Format
+      description: What format does the tool use for AI instructions or rules?
+      placeholder: |
+        Format examples:
+        - Plain text instructions
+        - Markdown with frontmatter
+        - JSON configuration
+        - XML with custom tags
+        - YAML with schema
+        
+        Include example if possible:
+        ```
+        Example rule format here
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-docs
+    attributes:
+      label: API/Configuration Documentation
+      description: Links to documentation about the tool's configuration or API
+      placeholder: |
+        Documentation links:
+        - Configuration guide: https://...
+        - API reference: https://...
+        - Plugin development: https://...
+        - Examples: https://...
+
+  - type: textarea
+    id: similar-integrations
+    attributes:
+      label: Similar Existing Integrations
+      description: Are there existing VDK integrations that work similarly?
+      placeholder: |
+        This tool is similar to:
+        - Claude Code (in terms of memory management)
+        - Cursor (in terms of rule format)
+        - GitHub Copilot (in terms of VS Code integration)
+        
+        Key differences:
+        - Uses different file format
+        - Has unique features like X
+        - Different configuration approach
+
+  - type: textarea
+    id: unique-features
+    attributes:
+      label: Unique Features
+      description: What unique features does this tool have that would require special handling?
+      placeholder: |
+        Special features:
+        - Multi-agent support
+        - Custom directive system
+        - Real-time collaboration
+        - Plugin architecture
+        - Specialized for certain languages
+
+  - type: checkboxes
+    id: platform-support
+    attributes:
+      label: Platform Support
+      description: Which platforms does the tool support?
+      options:
+        - label: Windows
+        - label: macOS
+        - label: Linux
+        - label: Web-based
+        - label: VS Code Extension
+        - label: JetBrains Plugin
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific scenarios where this integration would be valuable
+      placeholder: |
+        Use cases:
+        1. Team using Tool X for AI-assisted development
+        2. Projects that require specific rule format Y
+        3. Developers who prefer Tool X's unique features
+        
+        Benefits:
+        - Improved workflow for Tool X users
+        - Better integration with existing toolchain
+        - Access to VDK's project analysis for Tool X
+
+  - type: textarea
+    id: implementation-hints
+    attributes:
+      label: Implementation Hints
+      description: Any ideas on how this integration could be implemented? (Optional)
+      placeholder: |
+        Technical considerations:
+        - Tool uses config file at .tool/config.json
+        - Rules should be generated in format X
+        - Special handling needed for feature Y
+        - Similar to existing integration Z but with differences A, B, C
+        
+        Potential challenges:
+        - Tool's API limitations
+        - Complex configuration structure
+        - Platform-specific requirements
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority for You
+      description: How important is this integration to your workflow?
+      options:
+        - High - Essential for my team's workflow
+        - Medium - Would significantly improve our experience
+        - Low - Nice to have for occasional use
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you be willing to help with this integration?
+      options:
+        - label: I can help with testing and feedback
+        - label: I have experience with this tool's configuration
+        - label: I can provide documentation or examples
+        - label: I'm willing to work on implementation
+        - label: I can help with code review
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Configuration Examples
+      description: Provide examples of the tool's configuration or rule files
+      placeholder: |
+        Example configuration:
+        ```json
+        {
+          "tool": {
+            "rules": ["rule1.md", "rule2.json"],
+            "settings": {
+              "autoComplete": true,
+              "contextAware": true
+            }
+          }
+        }
+        ```
+        
+        Example rule file:
+        ```markdown
+        # Rule Title
+        This is how rules work in Tool X...
+        ```
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other information that would help implement this integration
+      placeholder: |
+        Additional information:
+        - Community size and activity
+        - Tool's development roadmap
+        - Integration with other development tools
+        - Performance considerations
+        - Security requirements

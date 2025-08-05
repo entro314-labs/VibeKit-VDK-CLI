@@ -1,72 +1,62 @@
 #!/bin/sh
-# VibeKit VDK CLI Installer
-# A universal shell script to install VibeKit VDK CLI into any project with interactive setup
-# Usage: curl -fsSL https://raw.githubusercontent.com/entro314-labs/VibeKit-VDK-CLI/main/install.sh | sh
+# VDK CLI Installer
+# Universal installer script for VDK CLI via NPM
+# Usage: curl -fsSL https://raw.githubusercontent.com/entro314-labs/VDK-CLI/main/install.sh | sh
 
 set -e
 
-# Default values
-REPO_URL="https://github.com/entro314-labs/VibeKit-VDK-CLI"
-TEMP_DIR="/tmp/vibekit-vdk-cli-$(date +%s)"
-BRANCH="main"
-METHOD="git"
-UPGRADE=false
-RUN_WIZARD=true
-QUIET=false
-TARGET_DIR=".ai/rules"
-# Save the original working directory before changing to temp
-ORIGINAL_PWD="$PWD"
-
 # Banner
 echo "====================================="
-echo "VibeKit VDK CLI Installer"
-echo "Interactive AI Rules Setup"
+echo "      VDK CLI Installer v2.0        "
 echo "====================================="
-echo "A comprehensive collection of AI prompt engineering rules"
+echo "🚀 AI-Powered Development Toolkit"
+echo "🎯 Project-Aware Assistant Rules"
+echo "🔧 Universal AI Integration"
 echo "====================================="
+echo ""
 
 # Parse arguments
+INTERACTIVE=true
+QUIET=false
+PACKAGE_MANAGER=""
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --target=*)
-      TARGET_DIR="${1#*=}"
-      ;;
-    --repo=*)
-      REPO_URL="${1#*=}"
-      ;;
-    --branch=*)
-      BRANCH="${1#*=}"
-      ;;
-    --method=*)
-      METHOD="${1#*=}"
-      ;;
-    --upgrade|--update)
-      UPGRADE=true
-      echo "⬆️ Upgrade mode: Will preserve existing customizations"
-      ;;
-    --direct)
-      RUN_WIZARD=false
-      echo "🔄 Direct mode: Will install to $TARGET_DIR without CLI"
+    --non-interactive)
+      INTERACTIVE=false
+      echo "🤖 Non-interactive mode enabled"
       ;;
     --quiet)
       QUIET=true
       ;;
+    --npm)
+      PACKAGE_MANAGER="npm"
+      ;;
+    --pnpm)
+      PACKAGE_MANAGER="pnpm"
+      ;;
     --help)
-      echo "Usage: ./install.sh [options]"
+      echo "VDK CLI Installer"
+      echo ""
+      echo "Usage: curl -fsSL <installer-url> | sh [options]"
       echo ""
       echo "Options:"
-      echo "  --target=DIR     Install rules to this directory (default: .ai/rules)"
-      echo "  --repo=URL       Use this repository URL (default: $REPO_URL)"
-      echo "  --branch=BRANCH  Use this branch (default: main)"
-      echo "  --method=METHOD  Download method: git or curl (default: git)"
-      echo "  --upgrade        Preserve user customizations when installing"
-      echo "  --direct         Skip the CLI and install directly to .ai/rules"
-      echo "  --quiet          Reduce output verbosity"
-      echo "  --help           Show this help message"
+      echo "  --non-interactive  Skip interactive setup"
+      echo "  --quiet           Reduce output verbosity"
+      echo "  --npm             Force npm as package manager"
+      echo "  --pnpm            Force pnpm as package manager"
+      echo "  --help            Show this help message"
+      echo ""
+      echo "Examples:"
+      echo "  # Interactive install (recommended)"
+      echo "  curl -fsSL <installer-url> | sh"
+      echo ""
+      echo "  # Quick install"
+      echo "  curl -fsSL <installer-url> | sh -s -- --non-interactive"
       exit 0
       ;;
     *)
-      echo "Unknown option: $1"
+      echo "❌ Unknown option: $1"
       echo "Run with --help for usage information."
       exit 1
       ;;
@@ -76,194 +66,87 @@ done
 
 # Set verbosity
 if [ "$QUIET" = true ]; then
-  # Save original stdout/stderr
-  exec 3>&1 4>&2
-  # Redirect to /dev/null
   exec 1>/dev/null 2>/dev/null
 fi
 
-# Download the repository
-echo "📦 Downloading VibeKit VDK CLI..."
-
-rm -rf "$TEMP_DIR"
-mkdir -p "$TEMP_DIR"
-
-if [ "$METHOD" = "git" ]; then
-  if ! command -v git >/dev/null 2>&1; then
-    echo "⚠️ git not found, falling back to curl method"
-    METHOD="curl"
-  fi
-fi
-
-if [ "$METHOD" = "git" ]; then
-  # Git method
-  if ! git clone --depth=1 --branch="$BRANCH" "$REPO_URL" "$TEMP_DIR"; then
-    echo "❌ Failed to clone repository. Falling back to curl method."
-    METHOD="curl"
+# Detect package manager if not specified
+if [ -z "$PACKAGE_MANAGER" ]; then
+  if command -v pnpm >/dev/null 2>&1; then
+    PACKAGE_MANAGER="pnpm"
+  elif command -v npm >/dev/null 2>&1; then
+    PACKAGE_MANAGER="npm"
   else
-    rm -rf "$TEMP_DIR/.git"
-  fi
-fi
-
-if [ "$METHOD" = "curl" ]; then
-  # Curl method
-  if ! curl -L "$REPO_URL/archive/$BRANCH.tar.gz" | tar -xz -C "$TEMP_DIR" --strip-components=1; then
-    echo "❌ Failed to download repository via curl."
-    echo "Please check your internet connection and try again."
-    rm -rf "$TEMP_DIR"
+    echo "❌ Neither npm nor pnpm found. Please install Node.js first:"
+    echo "   https://nodejs.org/"
     exit 1
   fi
 fi
 
-# Check for Node.js if running the wizard
-if [ "$RUN_WIZARD" = true ]; then
-  if ! command -v node >/dev/null 2>&1; then
-    echo "⚠️ Node.js not found, falling back to direct installation"
-    RUN_WIZARD=false
-  fi
-fi
+echo "📦 Using package manager: $PACKAGE_MANAGER"
 
-# Installation approach based on user preference
-if [ "$RUN_WIZARD" = true ]; then
-  echo "🧙 Running interactive CLI..."
+# Check Node.js version
+if command -v node >/dev/null 2>&1; then
+  NODE_VERSION=$(node --version | sed 's/v//')
+  NODE_MAJOR=$(echo "$NODE_VERSION" | cut -d. -f1)
 
-  # Make CLI executable
-  if [ -f "$TEMP_DIR/cli.js" ]; then
-    chmod +x "$TEMP_DIR/cli.js"
-
-    # Install dependencies before running CLI
-    echo "📦 Installing dependencies..."
-    cd "$TEMP_DIR"
-    if command -v npm >/dev/null 2>&1; then
-      if ! npm install --silent; then
-        echo "❌ Failed to install dependencies with npm. Falling back to direct installation."
-        RUN_WIZARD=false
-      fi
-    elif command -v pnpm >/dev/null 2>&1; then
-      if ! pnpm install --silent; then
-        echo "❌ Failed to install dependencies with pnpm. Falling back to direct installation."
-        RUN_WIZARD=false
-      fi
-    else
-      echo "❌ Neither npm nor pnpm found. Falling back to direct installation."
-      RUN_WIZARD=false
-    fi
-
-    # Run the CLI from the temporary directory only if dependencies were installed
-    # Pass the original working directory to the CLI so it knows where to install
-    if [ "$RUN_WIZARD" = true ]; then
-      node cli.js --target-dir "$ORIGINAL_PWD"
-
-      WIZARD_EXIT=$?
-      if [ $WIZARD_EXIT -ne 0 ]; then
-        echo "⚠️ CLI encountered an error, falling back to direct installation"
-        RUN_WIZARD=false
-      else
-        echo "✅ VibeKit VDK CLI installed successfully via CLI"
-      fi
-    fi
+  if [ "$NODE_MAJOR" -lt 22 ]; then
+    echo "⚠️  Warning: Node.js $NODE_VERSION detected. VDK CLI requires Node.js 22+."
+    echo "   Please update Node.js: https://nodejs.org/"
   else
-    echo "⚠️ CLI not found in repository, falling back to direct installation"
-    RUN_WIZARD=false
+    echo "✅ Node.js $NODE_VERSION detected"
   fi
+else
+  echo "❌ Node.js not found. Please install Node.js 22+ first:"
+  echo "   https://nodejs.org/"
+  exit 1
 fi
 
-# Perform direct installation if wizard was skipped or failed
-if [ "$RUN_WIZARD" = false ]; then
-  echo "📋 Installing VibeKit VDK CLI directly to $TARGET_DIR..."
+# Install VDK CLI globally
+echo "📥 Installing VDK CLI..."
 
-  # Use the original working directory for direct installation
-  cd "$ORIGINAL_PWD"
-  
-  # Create the target directory if it doesn't exist
-  if ! mkdir -p "$TARGET_DIR"; then
-    echo "❌ Failed to create target directory: $TARGET_DIR"
-    echo "Please check permissions and try again."
-    rm -rf "$TEMP_DIR"
+if [ "$PACKAGE_MANAGER" = "pnpm" ]; then
+  if ! pnpm add -g @vibe-dev-kit/cli; then
+    echo "❌ Failed to install VDK CLI with pnpm"
     exit 1
   fi
-
-  if [ "$UPGRADE" = true ]; then
-    # Upgrade mode - preserve user customizations
-    echo "🔄 Upgrade mode: Preserving user customizations..."
-
-    # Copy core agent without overwriting user customizations
-    if [ -f "$TEMP_DIR/.ai/rules/00-core-agent.mdc" ]; then
-      cp -f "$TEMP_DIR/.ai/rules/00-core-agent.mdc" "$TARGET_DIR/"
-    fi
-
-    # Skip user customization files if they already exist
-    if [ ! -f "$TARGET_DIR/01-project-context.mdc" ] && [ -f "$TEMP_DIR/.ai/rules/01-project-context.mdc" ]; then
-      cp "$TEMP_DIR/.ai/rules/01-project-context.mdc" "$TARGET_DIR/"
-    fi
-
-    if [ ! -f "$TARGET_DIR/02-common-errors.mdc" ] && [ -f "$TEMP_DIR/.ai/rules/02-common-errors.mdc" ]; then
-      cp "$TEMP_DIR/.ai/rules/02-common-errors.mdc" "$TARGET_DIR/"
-    fi
-
-    if [ ! -f "$TARGET_DIR/03-mcp-configuration.mdc" ] && [ -f "$TEMP_DIR/.ai/rules/03-mcp-configuration.mdc" ]; then
-      cp "$TEMP_DIR/.ai/rules/03-mcp-configuration.mdc" "$TARGET_DIR/"
-    fi
-
-    # Create directories if they don't exist
-    mkdir -p "$TARGET_DIR/tasks"
-    mkdir -p "$TARGET_DIR/languages"
-    mkdir -p "$TARGET_DIR/technologies"
-    mkdir -p "$TARGET_DIR/stacks"
-    mkdir -p "$TARGET_DIR/assistants"
-    mkdir -p "$TARGET_DIR/tools"
-
-    # Copy other directories, overwriting existing files
-    if [ -d "$TEMP_DIR/.ai/rules/tasks" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/tasks/"* "$TARGET_DIR/tasks/"
-    fi
-    if [ -d "$TEMP_DIR/.ai/rules/languages" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/languages/"* "$TARGET_DIR/languages/"
-    fi
-    if [ -d "$TEMP_DIR/.ai/rules/technologies" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/technologies/"* "$TARGET_DIR/technologies/"
-    fi
-    if [ -d "$TEMP_DIR/.ai/rules/stacks" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/stacks/"* "$TARGET_DIR/stacks/"
-    fi
-    if [ -d "$TEMP_DIR/.ai/rules/assistants" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/assistants/"* "$TARGET_DIR/assistants/"
-    fi
-    if [ -d "$TEMP_DIR/.ai/rules/tools" ]; then
-      cp -rf "$TEMP_DIR/.ai/rules/tools/"* "$TARGET_DIR/tools/"
-    fi
-  else
-    # Fresh install - copy everything
-    cp -r "$TEMP_DIR/.ai/rules/"* "$TARGET_DIR/"
+else
+  if ! npm install -g @vibe-dev-kit/cli; then
+    echo "❌ Failed to install VDK CLI with npm"
+    exit 1
   fi
-
-  echo "✅ VibeKit VDK CLI installed successfully to $TARGET_DIR"
 fi
 
-# Make the update-mcp-config.sh script executable
-if [ -f "update-mcp-config.sh" ]; then
-  chmod +x update-mcp-config.sh
-fi
+echo "✅ VDK CLI installed successfully!"
 
-# Clean up
-rm -rf "$TEMP_DIR"
-echo "🧹 Cleaned up temporary files"
-
-# Restore stdout/stderr if quiet mode was enabled
-if [ "$QUIET" = true ]; then
-  exec 1>&3 2>&4
+# Verify installation
+if command -v vdk >/dev/null 2>&1; then
+  VDK_VERSION=$(vdk --version 2>/dev/null || echo "unknown")
+  echo "🎉 VDK CLI $VDK_VERSION is ready!"
+else
+  echo "⚠️  VDK CLI installed but not found in PATH"
+  echo "   You may need to restart your terminal or add npm global bin to PATH"
 fi
 
 echo ""
 echo "====================================="
-echo "🚀 Ready for AI-assisted development!"
+echo "🚀 Ready to enhance your AI coding!"
 echo ""
-echo "📚 Next steps:"
-echo "1. Customize project context with your details"
-echo "2. Add project-specific anti-patterns if needed"
-echo "3. Configure MCP paths with the update tool: ./update-mcp-config.sh"
-echo "4. Start using the specialized rules in your development"
+echo "📚 Quick Start:"
+echo "   cd your-project"
+echo "   vdk init"
 echo ""
-echo "For updates, run:"
-echo "curl -fsSL https://raw.githubusercontent.com/entro314-labs/VibeKit-VDK-CLI/main/install.sh | sh -s -- --upgrade"
+echo "📖 Documentation:"
+echo "   vdk --help"
+echo "   https://github.com/entro314-labs/VDK-CLI"
+echo ""
+echo "🎯 What's Next:"
+if [ "$INTERACTIVE" = true ]; then
+  echo "   • Run 'vdk init' in your project"
+  echo "   • Follow the interactive setup"
+  echo "   • Customize generated rules as needed"
+else
+  echo "   • Navigate to your project directory"
+  echo "   • Run 'vdk init' to analyze and setup"
+  echo "   • Check generated blueprints directory"
+fi
 echo "====================================="

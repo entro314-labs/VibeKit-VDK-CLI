@@ -1,0 +1,197 @@
+name: 💡 Feature Request
+description: Suggest a new feature or enhancement for VDK CLI
+title: "[Feature]: "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please fill out the form below to help us understand your request.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting a feature request
+      options:
+        - label: I have searched existing issues to ensure this feature hasn't been requested before
+          required: true
+        - label: I have checked the roadmap to see if this feature is already planned
+          required: true
+        - label: This feature would benefit the broader VDK CLI community
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve? Is your feature request related to a problem?
+      placeholder: |
+        I'm always frustrated when...
+        The current workflow is inefficient because...
+        There's no way to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented
+      placeholder: |
+        I would like VDK to...
+        The feature should work like...
+        Users should be able to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Describe any alternative solutions or features you've considered
+      placeholder: |
+        Alternative approaches could include...
+        I've also considered...
+        Another way to solve this would be...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: Which area of VDK CLI would this feature affect?
+      options:
+        - CLI Commands
+        - Project Scanner
+        - AI Assistant Integrations
+        - VDK Hub
+        - Configuration
+        - Rule Generation
+        - Documentation
+        - Performance
+        - Developer Experience
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How important is this feature to you?
+      options:
+        - High - Critical for my workflow
+        - Medium - Would significantly improve my experience
+        - Low - Nice to have enhancement
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: integration
+    attributes:
+      label: AI Assistant Integration
+      description: Which AI assistants should this feature support?
+      options:
+        - label: Claude Code
+        - label: Cursor
+        - label: Windsurf
+        - label: GitHub Copilot
+        - label: All assistants
+        - label: Not applicable
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific scenarios where this feature would be useful
+      placeholder: |
+        Scenario 1: When working with...
+        Scenario 2: In a team environment where...
+        Scenario 3: For projects that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Provide examples of how this feature might work
+      placeholder: |
+        Command examples:
+        vdk new-command --option value
+        
+        Configuration examples:
+        {
+          "newFeature": {
+            "enabled": true,
+            "option": "value"
+          }
+        }
+        
+        Workflow examples:
+        1. User runs command
+        2. Feature analyzes project
+        3. Output is generated
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Ideas
+      description: Do you have any ideas on how this feature could be implemented? (Optional)
+      placeholder: |
+        Technical approach:
+        - Could use existing X functionality
+        - Might require new Y component
+        - Similar to how Z works in other tools
+        
+        API design:
+        - New command structure
+        - Configuration options
+        - Integration points
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Simple - Small addition or modification
+        - Medium - Moderate effort, new functionality
+        - Complex - Significant new feature or architectural change
+        - Unknown - Not sure about implementation complexity
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What benefits would this feature provide to VDK CLI users?
+      placeholder: |
+        - Improved developer productivity
+        - Better team collaboration
+        - Enhanced AI assistant integration
+        - Simplified workflow
+        - Better project analysis
+
+  - type: checkboxes
+    id: contributions
+    attributes:
+      label: Contribution
+      description: Would you be willing to contribute to this feature?
+      options:
+        - label: I'm willing to work on implementing this feature
+        - label: I can help with testing and feedback
+        - label: I can provide documentation or examples
+        - label: I can help with design and specification
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples about the feature request
+      placeholder: |
+        - Links to similar features in other tools
+        - Screenshots or mockups
+        - Related issues or discussions
+        - Any other relevant information
