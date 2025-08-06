@@ -35,7 +35,7 @@
     "test:cli": "node tests/new-cli.test.js",
     "test:legacy": "node test/basic-functionality.test.js",
     "build": "echo 'No build step required'",
-    "prepublishOnly": "npm run validate && npm run quality"
+    "prepublishOnly": "npm run validate && pnpm run lint && pnpm run format:check"
   },
   "keywords": [
     "ai-assistant",
