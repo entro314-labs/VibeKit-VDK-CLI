@@ -1550,7 +1550,7 @@ priority: "high"
 Create a new component following established project patterns.
 
 ## Arguments
-- Component name (required): \$ARGUMENTS
+- Component name (required): $ARGUMENTS
 - Component type (optional): functional|class (default: functional)
 
 ## Implementation Steps
@@ -1790,7 +1790,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
 - Standards: Reference CLAUDE-patterns.md for project conventions
 
 ## Usage
-\`/project:${commandName} \$ARGUMENTS\`
+\`/project:${commandName} $ARGUMENTS\`
 `,
       });
     }
@@ -1841,108 +1841,6 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     return integrations;
   }
 
-  /**
-   * Generate Claude Code settings
-   */
-  async generateClaudeSettings(rules, projectContext) {
-    const settings = {
-      permissions: {
-        allow: [
-          'Read(*)',
-          'Write(src/**/*)',
-          'Write(components/**/*)',
-          'Write(pages/**/*)',
-          'Write(tests/**/*)',
-          'Write(test/**/*)',
-          'Write(docs/**/*)',
-          'Edit(**/CLAUDE*.md)',
-          'Bash(npm run:*)',
-          'Bash(pnpm run:*)',
-          'Bash(yarn run:*)',
-          'Bash(git status)',
-          'Bash(git add:*)',
-          'Bash(git commit:*)',
-          'Bash(git diff:*)',
-          'Bash(git log:*)',
-        ],
-        deny: [
-          'Bash(rm -rf:*)',
-          'Bash(sudo:*)',
-          'Write(.env*)',
-          'Write(node_modules/**/*)',
-          'Write(.git/**/*)',
-        ],
-      },
-      env: {},
-      cleanupPeriodDays: 30,
-    };
-
-    // Add framework-specific permissions
-    const frameworks = projectContext.techStack?.frameworks || [];
-    for (const framework of frameworks) {
-      const frameworkPermissions = this.getFrameworkPermissions(framework);
-      settings.permissions.allow.push(...frameworkPermissions);
-    }
-
-    // Add project-specific environment variables
-    if (projectContext.techStack?.buildTools?.includes('vite')) {
-      settings.env.VITE_DEV_MODE = 'true';
-    }
-
-    if (projectContext.techStack?.testingFrameworks?.includes('jest')) {
-      settings.permissions.allow.push('Bash(npm run test:*)', 'Bash(jest:*)');
-    }
-
-    return settings;
-  }
-
-  // Helper methods
-
-  generateCommandName(description) {
-    return description
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '-')
-      .substring(0, 30);
-  }
-
-  capitalizeWords(str) {
-    return str.replace(/\b\w/g, (l) => l.toUpperCase());
-  }
-
-  getComponentsDirectory(projectContext) {
-    // Check common component directory patterns
-    const commonPaths = [
-      'src/components',
-      'components',
-      'src/app/components',
-      'app/components',
-      'lib/components',
-    ];
-
-    // Use project structure analysis if available
-    if (projectContext.projectStructure?.directories) {
-      const componentDir = projectContext.projectStructure.directories.find((dir) =>
-        dir.name.toLowerCase().includes('component')
-      );
-      if (componentDir) return componentDir.path;
-    }
-
-    return commonPaths[0]; // Default
-  }
-
-  detectPrimaryIDE(projectContext) {
-    // Detection logic for primary IDE
-    const ideIndicators = {
-      vscode: ['.vscode/', 'settings.json'],
-      cursor: ['.cursor/', 'cursor.json'],
-      windsurf: ['.windsurf/', '.windsurfrules.md'],
-      jetbrains: ['.idea/', '*.iml'],
-    };
-
-    // Simple detection based on config files
-    return 'VS Code'; // Default
-  }
 
   detectsDatabase(projectContext) {
     const dbIndicators = ['prisma', 'sequelize', 'mongoose', 'postgresql', 'mysql', 'sqlite'];

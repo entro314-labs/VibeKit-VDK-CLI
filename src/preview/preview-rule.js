@@ -7,15 +7,14 @@
  * VDK Web Application.
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const matter = require('gray-matter');
-const chalk = require('chalk');
-const marked = require('marked');
-const TerminalRenderer = require('marked-terminal');
-const open = require('open');
-const http = require('http');
-const express = require('express');
+import chalk from 'chalk';
+import express from 'express';
+import fs from 'fs/promises';
+import matter from 'gray-matter';
+import { marked } from 'marked';
+import TerminalRenderer from 'marked-terminal';
+import open from 'open';
+import path from 'path';
 
 // Set up Markdown renderer for terminal
 marked.setOptions({

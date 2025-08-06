@@ -170,7 +170,7 @@ export class PatternDetector {
       convention = 'snake_case';
     }
     // kebab-case: contains hyphens, all lowercase
-    else if (/^[a-z0-9\-]+$/.test(name) && name.includes('-')) {
+    else if (/^[a-z0-9-]+$/.test(name) && name.includes('-')) {
       convention = 'kebab-case';
     }
     // lowercase: all lowercase, no separators
