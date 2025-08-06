@@ -10,9 +10,9 @@
  * 3. Expanding platform-specific paths (like ~ on Unix systems)
  */
 
+import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import fs from 'fs';
 
 // Import centralized IDE configurations
 import { IDE_CONFIGURATIONS } from './ide-configuration.js';
@@ -41,13 +41,14 @@ function expandPath(filePath) {
  * @returns {object} Object containing both projectConfig and globalConfig paths
  */
 function getMCPConfigPaths(ideId, projectPath, preferGlobal = false) {
-  const ideConfig = IDE_CONFIGURATIONS.find(ide => ide.id === ideId) ||
-                   IDE_CONFIGURATIONS.find(ide => ide.id === 'generic');
+  const ideConfig =
+    IDE_CONFIGURATIONS.find((ide) => ide.id === ideId) ||
+    IDE_CONFIGURATIONS.find((ide) => ide.id === 'generic');
 
   const result = {
     projectConfig: null,
     globalConfig: null,
-    activeConfig: null
+    activeConfig: null,
   };
 
   // Set project-specific config path if available
@@ -105,15 +106,19 @@ function getMCPConfiguration(ideId, projectPath) {
 function getAllEditorConfigPaths(projectPath) {
   const editorPaths = {};
 
-  IDE_CONFIGURATIONS.forEach(ide => {
+  IDE_CONFIGURATIONS.forEach((ide) => {
     const mcpPaths = getMCPConfigPaths(ide.id, projectPath);
 
     editorPaths[ide.id] = {
       name: ide.name,
-      projectConfigPath: mcpPaths.projectConfig ? path.relative(projectPath, mcpPaths.projectConfig) : null,
+      projectConfigPath: mcpPaths.projectConfig
+        ? path.relative(projectPath, mcpPaths.projectConfig)
+        : null,
       globalConfigPath: mcpPaths.globalConfig,
-      activeConfigPath: mcpPaths.activeConfig ? path.relative(projectPath, mcpPaths.activeConfig) : null,
-      rulesFolder: ide.rulesFolder
+      activeConfigPath: mcpPaths.activeConfig
+        ? path.relative(projectPath, mcpPaths.activeConfig)
+        : null,
+      rulesFolder: ide.rulesFolder,
     };
   });
 
@@ -134,7 +139,7 @@ function generateMCPConfigurationContent(projectPath) {
   // Add the editor paths section
   content += '## Editor Configuration Paths\n\n';
 
-  Object.keys(editorPaths).forEach(ideId => {
+  Object.keys(editorPaths).forEach((ideId) => {
     const editor = editorPaths[ideId];
     if (!editor.name) return;
 
@@ -158,16 +163,16 @@ function generateMCPConfigurationContent(projectPath) {
   // Try to find and include MCP servers from configs
   const mcpServers = [];
 
-  Object.keys(editorPaths).forEach(ideId => {
+  Object.keys(editorPaths).forEach((ideId) => {
     const config = getMCPConfiguration(ideId, projectPath);
     if (config && config.servers) {
-      Object.keys(config.servers).forEach(serverName => {
+      Object.keys(config.servers).forEach((serverName) => {
         const server = config.servers[serverName];
-        if (!mcpServers.some(s => s.name === serverName)) {
+        if (!mcpServers.some((s) => s.name === serverName)) {
           mcpServers.push({
             name: serverName,
             config: server,
-            source: editorPaths[ideId].name
+            source: editorPaths[ideId].name,
           });
         }
       });
@@ -178,7 +183,7 @@ function generateMCPConfigurationContent(projectPath) {
   if (mcpServers.length > 0) {
     content += '## Available MCP Servers\n\n';
 
-    mcpServers.forEach(server => {
+    mcpServers.forEach((server) => {
       content += `### ${server.name}\n`;
       content += `Source: ${server.source}\n`;
 
@@ -188,7 +193,9 @@ function generateMCPConfigurationContent(projectPath) {
 
       if (server.config.commands) {
         content += 'Key Commands: ';
-        content += Object.keys(server.config.commands).map(cmd => `\`${cmd}\``).join(', ');
+        content += Object.keys(server.config.commands)
+          .map((cmd) => `\`${cmd}\``)
+          .join(', ');
         content += '\n';
       }
 
@@ -238,13 +245,14 @@ function updateMCPConfigurationFile(projectPath, rulePath) {
         existingContent.indexOf('## Available MCP Servers'),
         existingContent.indexOf('## MCP Technology Integration'),
         existingContent.indexOf('## Code Generation Patterns'),
-        existingContent.indexOf('---\nNOTE TO AI:')
-      ].filter(pos => pos !== -1);
+        existingContent.indexOf('---\nNOTE TO AI:'),
+      ].filter((pos) => pos !== -1);
 
       if (insertPositions.length > 0) {
         // Insert before the earliest section found
         const pos = Math.min(...insertPositions);
-        updatedContent = existingContent.slice(0, pos) + newContent + '\n' + existingContent.slice(pos);
+        updatedContent =
+          existingContent.slice(0, pos) + newContent + '\n' + existingContent.slice(pos);
       } else {
         // Append to the end if no good position is found
         updatedContent = existingContent + '\n\n' + newContent;
@@ -264,9 +272,9 @@ function updateMCPConfigurationFile(projectPath, rulePath) {
 // Export functions for use in other modules
 export {
   expandPath,
+  generateMCPConfigurationContent,
+  getAllEditorConfigPaths,
   getMCPConfigPaths,
   getMCPConfiguration,
-  getAllEditorConfigPaths,
-  generateMCPConfigurationContent,
-  updateMCPConfigurationFile
+  updateMCPConfigurationFile,
 };

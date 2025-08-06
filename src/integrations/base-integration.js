@@ -6,10 +6,10 @@
  * configuration, and management.
  */
 
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
 import { execSync } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
 /**
  * Base class for all VDK integrations
@@ -21,7 +21,7 @@ export class BaseIntegration {
     this.projectPath = projectPath;
     this.configPath = null;
     this.globalConfigPath = null;
-    
+
     // Detection result cache
     this._detectionCache = null;
     this._detectionCacheTime = null;
@@ -38,7 +38,7 @@ export class BaseIntegration {
   }
 
   /**
-   * Abstract method - must be implemented by subclasses  
+   * Abstract method - must be implemented by subclasses
    * Get integration-specific configuration paths
    * @returns {Object} Configuration paths relevant to this integration
    */
@@ -63,8 +63,8 @@ export class BaseIntegration {
    */
   getCachedDetection(force = false) {
     const now = Date.now();
-    const cacheExpired = !this._detectionCacheTime || 
-                        (now - this._detectionCacheTime) > this._cacheValidityMs;
+    const cacheExpired =
+      !this._detectionCacheTime || now - this._detectionCacheTime > this._cacheValidityMs;
 
     if (force || !this._detectionCache || cacheExpired) {
       this._detectionCache = this.detectUsage();
@@ -186,9 +186,9 @@ export class BaseIntegration {
    */
   getCommandVersion(command, versionFlag = '--version') {
     try {
-      const output = execSync(`${command} ${versionFlag}`, { 
-        encoding: 'utf8', 
-        stdio: 'pipe' 
+      const output = execSync(`${command} ${versionFlag}`, {
+        encoding: 'utf8',
+        stdio: 'pipe',
       });
       return output.trim();
     } catch (error) {
@@ -209,9 +209,9 @@ export class BaseIntegration {
 
     try {
       const files = fs.readdirSync(dirPath);
-      const cutoffTime = Date.now() - (daysBack * 24 * 60 * 60 * 1000);
-      
-      return files.filter(file => {
+      const cutoffTime = Date.now() - daysBack * 24 * 60 * 60 * 1000;
+
+      return files.filter((file) => {
         const filePath = path.join(dirPath, file);
         try {
           const stats = fs.statSync(filePath);
@@ -263,11 +263,7 @@ export class BaseIntegration {
    */
   async writeJsonFile(filePath, data) {
     try {
-      await fs.promises.writeFile(
-        filePath, 
-        JSON.stringify(data, null, 2),
-        'utf8'
-      );
+      await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
       return true;
     } catch (error) {
       return false;
@@ -285,23 +281,26 @@ export class BaseIntegration {
     return {
       home,
       platform,
-      config: platform === 'win32' 
-        ? path.join(home, 'AppData', 'Roaming')
-        : platform === 'darwin'
-        ? path.join(home, 'Library', 'Application Support')
-        : path.join(home, '.config'),
-      
-      logs: platform === 'win32'
-        ? path.join(home, 'AppData', 'Local', 'Logs')
-        : platform === 'darwin'
-        ? path.join(home, 'Library', 'Logs')
-        : path.join(home, '.local', 'share', 'logs'),
-        
-      cache: platform === 'win32'
-        ? path.join(home, 'AppData', 'Local', 'Cache')
-        : platform === 'darwin'
-        ? path.join(home, 'Library', 'Caches')
-        : path.join(home, '.cache')
+      config:
+        platform === 'win32'
+          ? path.join(home, 'AppData', 'Roaming')
+          : platform === 'darwin'
+            ? path.join(home, 'Library', 'Application Support')
+            : path.join(home, '.config'),
+
+      logs:
+        platform === 'win32'
+          ? path.join(home, 'AppData', 'Local', 'Logs')
+          : platform === 'darwin'
+            ? path.join(home, 'Library', 'Logs')
+            : path.join(home, '.local', 'share', 'logs'),
+
+      cache:
+        platform === 'win32'
+          ? path.join(home, 'AppData', 'Local', 'Cache')
+          : platform === 'darwin'
+            ? path.join(home, 'Library', 'Caches')
+            : path.join(home, '.cache'),
     };
   }
 
@@ -318,7 +317,7 @@ export class BaseIntegration {
 
     try {
       const content = fs.readFileSync(gitignorePath, 'utf8');
-      return patterns.filter(pattern => content.includes(pattern));
+      return patterns.filter((pattern) => content.includes(pattern));
     } catch (error) {
       return [];
     }
@@ -331,18 +330,18 @@ export class BaseIntegration {
    */
   async ensureGitignoreEntry(entry) {
     const gitignorePath = path.join(this.projectPath, '.gitignore');
-    
+
     try {
       let content = '';
       if (this.fileExists(gitignorePath)) {
         content = await fs.promises.readFile(gitignorePath, 'utf8');
       }
-      
+
       // Check if entry already exists
       if (content.includes(entry)) {
         return true;
       }
-      
+
       // Add entry with proper spacing
       const newContent = content + (content && !content.endsWith('\n') ? '\n' : '') + entry + '\n';
       await fs.promises.writeFile(gitignorePath, newContent, 'utf8');
@@ -364,7 +363,9 @@ export class BaseIntegration {
       confidence: this.getConfidence(),
       indicatorCount: this.getIndicators().length,
       recommendationCount: this.getRecommendations().length,
-      lastChecked: this._detectionCacheTime ? new Date(this._detectionCacheTime).toISOString() : null
+      lastChecked: this._detectionCacheTime
+        ? new Date(this._detectionCacheTime).toISOString()
+        : null,
     };
   }
 }

@@ -10,45 +10,45 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 
 Examples of behavior that contributes to a positive environment for our community include:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the overall community
+- Demonstrating empathy and kindness toward other people
+- Being respectful of differing opinions, viewpoints, and experiences
+- Giving and gracefully accepting constructive feedback
+- Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
+- Focusing on what is best not just for us as individuals, but for the overall community
 
 Examples of unacceptable behavior include:
 
-* The use of sexualized language or imagery, and sexual attention or advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a professional setting
+- The use of sexualized language or imagery, and sexual attention or advances of any kind
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or email address, without their explicit permission
+- Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ## Community Guidelines
 
 ### Technical Discussions
 
-* **Be Patient**: Remember that contributors have varying levels of experience
-* **Be Constructive**: Provide actionable feedback and suggestions
-* **Be Respectful**: Disagree with ideas, not people
-* **Be Inclusive**: Welcome newcomers and help them contribute
-* **Be Professional**: Maintain a professional tone in all interactions
+- **Be Patient**: Remember that contributors have varying levels of experience
+- **Be Constructive**: Provide actionable feedback and suggestions
+- **Be Respectful**: Disagree with ideas, not people
+- **Be Inclusive**: Welcome newcomers and help them contribute
+- **Be Professional**: Maintain a professional tone in all interactions
 
 ### Collaboration
 
-* **Share Knowledge**: Help others learn and grow
-* **Ask Questions**: No question is too basic or advanced
-* **Provide Context**: Give background when asking for help
-* **Follow Up**: Update threads with solutions you find
-* **Credit Others**: Acknowledge contributions and assistance
+- **Share Knowledge**: Help others learn and grow
+- **Ask Questions**: No question is too basic or advanced
+- **Provide Context**: Give background when asking for help
+- **Follow Up**: Update threads with solutions you find
+- **Credit Others**: Acknowledge contributions and assistance
 
 ### Code Contributions
 
-* **Quality First**: Submit well-tested, documented code
-* **Follow Standards**: Adhere to project coding standards
-* **Be Open to Feedback**: Accept code review comments gracefully
-* **Collaborate**: Work with maintainers to improve contributions
-* **Document Changes**: Explain the reasoning behind changes
+- **Quality First**: Submit well-tested, documented code
+- **Follow Standards**: Adhere to project coding standards
+- **Be Open to Feedback**: Accept code review comments gracefully
+- **Collaborate**: Work with maintainers to improve contributions
+- **Document Changes**: Explain the reasoning behind changes
 
 ## Enforcement Responsibilities
 
@@ -62,17 +62,17 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 This includes:
 
-* **GitHub Repository**: Issues, pull requests, discussions, and code comments
-* **Discord Server**: All channels and direct messages
-* **Social Media**: Official VDK accounts and community hashtags
-* **Events**: Conferences, meetups, and online events
-* **Documentation**: Wikis, guides, and community resources
+- **GitHub Repository**: Issues, pull requests, discussions, and code comments
+- **Discord Server**: All channels and direct messages
+- **Social Media**: Official VDK accounts and community hashtags
+- **Events**: Conferences, meetups, and online events
+- **Documentation**: Wikis, guides, and community resources
 
 ## Reporting Guidelines
 
 ### How to Report
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **conduct@vdk.tools**.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at **<conduct@vdk.tools>**.
 
 All complaints will be reviewed and investigated promptly and fairly.
 
@@ -80,11 +80,11 @@ All complaints will be reviewed and investigated promptly and fairly.
 
 When reporting, please include:
 
-* **Your contact information** (so we can follow up)
-* **Names (usernames) of any individuals involved**
-* **Description of the incident** and what happened
-* **Additional context** such as screenshots or links
-* **Any prior incidents** with the same individuals
+- **Your contact information** (so we can follow up)
+- **Names (usernames) of any individuals involved**
+- **Description of the incident** and what happened
+- **Additional context** such as screenshots or links
+- **Any prior incidents** with the same individuals
 
 ### Confidentiality
 
@@ -122,7 +122,7 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 If you believe you have been wrongly accused or that the enforcement action was inappropriate, you may appeal by:
 
-1. **Contacting the enforcement team** at conduct@vdk.tools within 30 days
+1. **Contacting the enforcement team** at <conduct@vdk.tools> within 30 days
 2. **Providing a detailed explanation** of why you believe the action was inappropriate
 3. **Including any additional context** or evidence that supports your case
 
@@ -132,9 +132,9 @@ Appeals will be reviewed by community leaders who were not involved in the origi
 
 Our community leaders include:
 
-* **Project Maintainers**: Responsible for code review and technical decisions
-* **Community Moderators**: Responsible for maintaining community standards
-* **Advisory Board**: Provides guidance on community direction and policies
+- **Project Maintainers**: Responsible for code review and technical decisions
+- **Community Moderators**: Responsible for maintaining community standards
+- **Advisory Board**: Provides guidance on community direction and policies
 
 ## Positive Community Examples
 
@@ -142,34 +142,34 @@ We encourage behavior that builds a positive community:
 
 ### Technical Contributions
 
-* **Helpful Code Reviews**: Providing constructive feedback that helps improve code quality
-* **Mentoring**: Helping new contributors learn and succeed
-* **Documentation**: Creating clear, helpful documentation and examples
-* **Bug Reports**: Filing detailed, actionable bug reports
-* **Feature Discussions**: Engaging thoughtfully in feature planning and design
+- **Helpful Code Reviews**: Providing constructive feedback that helps improve code quality
+- **Mentoring**: Helping new contributors learn and succeed
+- **Documentation**: Creating clear, helpful documentation and examples
+- **Bug Reports**: Filing detailed, actionable bug reports
+- **Feature Discussions**: Engaging thoughtfully in feature planning and design
 
 ### Community Building
 
-* **Welcoming Newcomers**: Helping new community members get started
-* **Knowledge Sharing**: Teaching others through blog posts, talks, or tutorials
-* **Event Organization**: Organizing meetups, workshops, or conferences
-* **Translation**: Making content accessible in multiple languages
-* **Advocacy**: Promoting the project and community in professional settings
+- **Welcoming Newcomers**: Helping new community members get started
+- **Knowledge Sharing**: Teaching others through blog posts, talks, or tutorials
+- **Event Organization**: Organizing meetups, workshops, or conferences
+- **Translation**: Making content accessible in multiple languages
+- **Advocacy**: Promoting the project and community in professional settings
 
 ## Resources
 
 ### Community Resources
 
-* **Discord**: [Join our community](https://discord.gg/vdk)
-* **GitHub Discussions**: [Community discussions](https://github.com/entro314-labs/VDK-CLI/discussions)
-* **Documentation**: [Contributing guide](https://docs.vdk.dev/contributing)
-* **Blog**: [Community blog](https://blog.vdk.dev)
+- **Discord**: [Join our community](https://discord.gg/vdk)
+- **GitHub Discussions**: [Community discussions](https://github.com/entro314-labs/VDK-CLI/discussions)
+- **Documentation**: [Contributing guide](https://docs.vdk.dev/contributing)
+- **Blog**: [Community blog](https://blog.vdk.dev)
 
 ### Support Resources
 
-* **Mental Health**: [Crisis Text Line](https://www.crisistextline.org/)
-* **Harassment**: [Online harassment resources](https://onlineharassmentfieldmanual.pen.org/)
-* **Diversity**: [Diversity and inclusion resources](https://www.diversityintech.co/)
+- **Mental Health**: [Crisis Text Line](https://www.crisistextline.org/)
+- **Harassment**: [Online harassment resources](https://onlineharassmentfieldmanual.pen.org/)
+- **Diversity**: [Diversity and inclusion resources](https://www.diversityintech.co/)
 
 ## Acknowledgements
 
@@ -184,4 +184,4 @@ For answers to common questions about this code of conduct, see the FAQ at [http
 **Last Updated**: July 2025
 **Next Review**: July 2026
 
-For questions about this Code of Conduct, please contact conduct@vdk.tools.
+For questions about this Code of Conduct, please contact <conduct@vdk.tools>.

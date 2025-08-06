@@ -35,9 +35,11 @@ VDK CLI revolutionizes AI-assisted development by generating intelligent rules t
 <div align="center">
 
 ### Interactive Setup & Features
+
 ![VDK CLI Interactive Demo](docs/media/demo-interactive.gif)
 
-### Quick Start Workflow  
+### Quick Start Workflow
+
 ![VDK CLI Quick Demo](docs/media/demo-quick-real.gif)
 
 </div>

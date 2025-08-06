@@ -4,23 +4,23 @@
  */
 
 import chalk from 'chalk';
+import fs from 'fs/promises';
 import ora from 'ora';
 import path from 'path';
-import fs from 'fs/promises';
 
-import { ProjectScanner } from './core/ProjectScanner.js';
-import { PatternDetector } from './core/PatternDetector.js';
-import { TechnologyAnalyzer } from './core/TechnologyAnalyzer.js';
-import { RuleGenerator } from './core/RuleGenerator.js';
-import { RuleValidator } from './utils/validator.js';
 import { createIntegrationManager } from '../integrations/index.js';
-import { getVersion } from './utils/version.js';
-import { GitIgnoreParser } from './utils/gitignore-parser.js';
-import { 
-  selectCategoriesInteractively, 
-  getCategoryFilter, 
-  displaySelectionSummary 
+import {
+  displaySelectionSummary,
+  getCategoryFilter,
+  selectCategoriesInteractively,
 } from '../utils/category-selector.js';
+import { PatternDetector } from './core/PatternDetector.js';
+import { ProjectScanner } from './core/ProjectScanner.js';
+import { RuleGenerator } from './core/RuleGenerator.js';
+import { TechnologyAnalyzer } from './core/TechnologyAnalyzer.js';
+import { GitIgnoreParser } from './utils/gitignore-parser.js';
+import { RuleValidator } from './utils/validator.js';
+import { getVersion } from './utils/version.js';
 
 /**
  * Orchestrates the project scanning process.
@@ -50,7 +50,9 @@ export async function runScanner(options) {
         const gitignorePatterns = await GitIgnoreParser.parseGitIgnore(projectPath);
         ignorePatterns = [...ignorePatterns, ...gitignorePatterns];
         if (options.verbose && gitignorePatterns.length > 0) {
-          spinner.info(`Successfully parsed .gitignore file with ${gitignorePatterns.length} patterns.`);
+          spinner.info(
+            `Successfully parsed .gitignore file with ${gitignorePatterns.length} patterns.`
+          );
         }
       } catch (error) {
         spinner.warn('Could not parse .gitignore file. Proceeding without it.');
@@ -98,22 +100,22 @@ export async function runScanner(options) {
     spinner.succeed('Code patterns detected.');
 
     spinner.text = 'Generating AI rules...';
-    const ruleGenerator = new RuleGenerator(outputPath, options.template, options.overwrite, { 
+    const ruleGenerator = new RuleGenerator(outputPath, options.template, options.overwrite, {
       verbose: options.verbose,
-      projectPath: projectPath 
+      projectPath: projectPath,
     });
     const analysisData = {
-      projectStructure: { 
+      projectStructure: {
         root: projectPath,
         files: files,
         directories: projectData.directories,
         fileCount: files.length,
         directoryCount: projectData.directories?.length || 0,
-        fileTypes: projectData.fileTypes
+        fileTypes: projectData.fileTypes,
       },
       technologyData: techData,
       patterns,
-      outputPath: outputPath
+      outputPath: outputPath,
     };
 
     // Handle category selection for command fetching
@@ -132,7 +134,7 @@ export async function runScanner(options) {
 
     const ruleResults = await ruleGenerator.generateIDESpecificRules(analysisData, categoryFilter);
     spinner.succeed('AI rules generated successfully.');
-    
+
     // Extract file paths from the results for display
     let generatedFiles = [];
     if (ruleResults && ruleResults.generatedRules) {
@@ -144,7 +146,10 @@ export async function runScanner(options) {
     }
 
     // Only validate traditional rule files if they were generated
-    const rulesDirectoryExists = await fs.access(outputPath).then(() => true).catch(() => false);
+    const rulesDirectoryExists = await fs
+      .access(outputPath)
+      .then(() => true)
+      .catch(() => false);
     if (rulesDirectoryExists) {
       spinner.text = 'Validating generated rules...';
       const validator = new RuleValidator({ verbose: options.verbose });
@@ -153,47 +158,59 @@ export async function runScanner(options) {
     } else {
       // Skip validation for IDE-specific file generation (like Claude Code memory files)
       if (options.verbose) {
-        console.log(chalk.gray('Skipping traditional rule validation - using IDE-specific file generation'));
+        console.log(
+          chalk.gray('Skipping traditional rule validation - using IDE-specific file generation')
+        );
       }
     }
 
     let initializedIDEs = [];
     let ideIntegration = null;
 
-
     if (options.ideIntegration) {
       spinner.text = 'Setting up IDE integration...';
       try {
         ideIntegration = createIntegrationManager(projectPath);
-        
+
         // Discover and register integrations
         await ideIntegration.discoverIntegrations({ verbose: options.verbose });
-        
+
         // Scan for active integrations
         await ideIntegration.scanAll({ verbose: options.verbose });
-        
+
         // Initialize active integrations
         const initResults = await ideIntegration.initializeActive({ verbose: options.verbose });
-        
+
         // Get the list of successfully initialized integrations
-        initializedIDEs = initResults.successful.map(result => result.name);
-        
+        initializedIDEs = initResults.successful.map((result) => result.name);
+
         if (initializedIDEs.length > 0) {
           console.log(chalk.green(`IDE integrations initialized: ${initializedIDEs.join(', ')}`));
-          
+
           // Provide user guidance for Claude Code integration
-          if (initializedIDEs.includes('Claude Code') && !options.interactive && !options.categories && options.preset === 'auto') {
-            console.log(chalk.cyan('\n💡 Claude Code detected! You can customize command selection:'));
+          if (
+            initializedIDEs.includes('Claude Code') &&
+            !options.interactive &&
+            !options.categories &&
+            options.preset === 'auto'
+          ) {
+            console.log(
+              chalk.cyan('\n💡 Claude Code detected! You can customize command selection:')
+            );
             console.log(chalk.gray('   • Use --interactive for guided category selection'));
-            console.log(chalk.gray('   • Use --preset development for development-focused commands'));
-            console.log(chalk.gray('   • Use --categories development,quality for specific categories'));
+            console.log(
+              chalk.gray('   • Use --preset development for development-focused commands')
+            );
+            console.log(
+              chalk.gray('   • Use --categories development,quality for specific categories')
+            );
             console.log(chalk.gray('   • Use --help to see all options'));
           }
         } else {
           console.log(chalk.yellow('No IDE integrations detected, using generic setup'));
           initializedIDEs = ['generic'];
         }
-        
+
         spinner.succeed('IDE integration setup complete.');
       } catch (error) {
         spinner.fail(`IDE integration setup failed: ${error.message}`);
@@ -206,8 +223,9 @@ export async function runScanner(options) {
     console.log('\n' + chalk.green('✅ Project scanning completed successfully!'));
     console.log(chalk.green('Generated blueprint files:'));
     if (generatedFiles && Array.isArray(generatedFiles)) {
-      generatedFiles.forEach(file => {
-        console.log(chalk.green(`- ${file}`));
+      generatedFiles.forEach((file) => {
+        const filePath = typeof file === 'string' ? file : file.path || '[unknown file]';
+        console.log(chalk.green(`- ${filePath}`));
       });
     } else {
       console.log(chalk.green(`- Blueprints saved to ${outputPath}`));
@@ -224,7 +242,6 @@ export async function runScanner(options) {
       generatedFiles,
       ideIntegration,
     };
-
   } catch (error) {
     spinner.fail(chalk.red(`An error occurred during scanning: ${error.message}`));
     if (options.verbose && error.stack) {

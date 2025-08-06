@@ -1,4 +1,9 @@
 import js from '@eslint/js';
+import prettierConfig from 'eslint-config-prettier';
+import importPlugin from 'eslint-plugin-import';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import nodePlugin from 'eslint-plugin-node';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 export default [
   {
@@ -25,11 +30,17 @@ export default [
       'test-path-issue/**',
       'test-vdk-final/**',
       'test-vdk/**',
-      'vdk-cli-*.tgz'
-    ]
+      'vdk-cli-*.tgz',
+    ],
   },
   js.configs.recommended,
   {
+    plugins: {
+      import: importPlugin,
+      node: nodePlugin,
+      jsdoc: jsdocPlugin,
+      'simple-import-sort': simpleImportSort,
+    },
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -50,17 +61,40 @@ export default [
         AbortController: 'readonly',
         Headers: 'readonly',
         Response: 'readonly',
-        Request: 'readonly'
-      }
+        Request: 'readonly',
+      },
     },
     rules: {
-      'no-unused-vars': ['warn', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
-      }],
+      // Existing rules
+      'no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'no-console': 'off',
       'prefer-const': 'warn',
-      'no-var': 'error'
-    }
-  }
+      'no-var': 'error',
+
+      // Import organization
+      'simple-import-sort/imports': 'warn',
+      'simple-import-sort/exports': 'warn',
+      'import/first': 'warn',
+      'import/newline-after-import': 'warn',
+      'import/no-duplicates': 'warn',
+
+      // JSDoc rules
+      'jsdoc/require-description': 'warn',
+      'jsdoc/require-param-description': 'warn',
+      'jsdoc/require-returns-description': 'warn',
+      'jsdoc/check-param-names': 'warn',
+      'jsdoc/check-tag-names': 'warn',
+
+      // Node.js specific
+      'node/no-unsupported-features/es-syntax': 'off',
+      'node/no-missing-import': 'off',
+    },
+  },
+  prettierConfig,
 ];

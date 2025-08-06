@@ -26,7 +26,7 @@ async function loadSchema(schemaName) {
     const schemaPath = path.join(SCHEMAS_DIR, `${schemaName}.json`);
     const schemaContent = await fs.readFile(schemaPath, 'utf8');
     const schema = JSON.parse(schemaContent);
-    
+
     schemaCache.set(schemaName, schema);
     return schema;
   } catch (error) {
@@ -54,7 +54,7 @@ export async function validateSchema(data, schemaName) {
   if (schema.properties) {
     for (const [field, fieldSchema] of Object.entries(schema.properties)) {
       const value = data[field];
-      
+
       if (value === undefined || value === null) {
         continue; // Skip validation for missing optional fields
       }
@@ -62,7 +62,7 @@ export async function validateSchema(data, schemaName) {
       // Type validation
       const expectedType = fieldSchema.type;
       const actualType = Array.isArray(value) ? 'array' : typeof value;
-      
+
       if (expectedType && actualType !== expectedType) {
         errors.push(`Field '${field}' should be of type ${expectedType}, got ${actualType}`);
         continue;
@@ -98,7 +98,9 @@ export async function validateSchema(data, schemaName) {
           for (const [index, item] of value.entries()) {
             const itemType = typeof item;
             if (itemType !== fieldSchema.items.type) {
-              errors.push(`Array '${field}' item at index ${index} should be ${fieldSchema.items.type}, got ${itemType}`);
+              errors.push(
+                `Array '${field}' item at index ${index} should be ${fieldSchema.items.type}, got ${itemType}`
+              );
             }
           }
         }
@@ -111,7 +113,9 @@ export async function validateSchema(data, schemaName) {
           if (subValue !== undefined && subSchema.type) {
             const subType = Array.isArray(subValue) ? 'array' : typeof subValue;
             if (subType !== subSchema.type) {
-              errors.push(`Object '${field}.${subField}' should be ${subSchema.type}, got ${subType}`);
+              errors.push(
+                `Object '${field}.${subField}' should be ${subSchema.type}, got ${subType}`
+              );
             }
           }
         }
@@ -121,7 +125,7 @@ export async function validateSchema(data, schemaName) {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -145,9 +149,7 @@ export async function validateBlueprint(blueprintData) {
 export async function getAvailableSchemas() {
   try {
     const files = await fs.readdir(SCHEMAS_DIR);
-    return files
-      .filter(file => file.endsWith('.json'))
-      .map(file => file.replace('.json', ''));
+    return files.filter((file) => file.endsWith('.json')).map((file) => file.replace('.json', ''));
   } catch (error) {
     console.warn(`Could not read schemas directory: ${error.message}`);
     return [];
@@ -166,5 +168,5 @@ export default {
   validateCommand,
   validateBlueprint,
   getAvailableSchemas,
-  clearSchemaCache
+  clearSchemaCache,
 };

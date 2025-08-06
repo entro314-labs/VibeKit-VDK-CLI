@@ -8,10 +8,10 @@
  * - Validates that YAML frontmatter is parseable
  */
 
+import chalk from 'chalk';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import chalk from 'chalk';
 
 // Get directory paths for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -22,11 +22,11 @@ const rulesRootDir = path.join(__dirname, '../..');
 const ruleDirectories = [
   '.ai/rules',
   '.ai/rules/assistants',
-  '.ai/rules/languages', 
+  '.ai/rules/languages',
   '.ai/rules/stacks',
   '.ai/rules/tasks',
   '.ai/rules/technologies',
-  '.ai/rules/tools'
+  '.ai/rules/tools',
 ];
 
 // Track all rule IDs to check for duplicates
@@ -36,13 +36,13 @@ const ruleIds = new Map();
 function parseYamlFrontmatter(content) {
   const frontmatterRegex = /^---\s*\n([\s\S]*?)\n---/;
   const match = content.match(frontmatterRegex);
-  
+
   if (!match) {
     // Check if there's YAML at the start without --- delimiters
     const lines = content.split('\n');
     let yamlContent = '';
     let foundYaml = false;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       if (line === '---') {
@@ -57,23 +57,23 @@ function parseYamlFrontmatter(content) {
         break;
       }
     }
-    
+
     return yamlContent.trim() ? yamlContent : null;
   }
-  
+
   return match[1];
 }
 
 // Basic YAML validation (just check for basic structure)
 function isValidYaml(yamlContent) {
   if (!yamlContent) return false;
-  
+
   try {
     const lines = yamlContent.split('\n');
     for (const line of lines) {
       const trimmed = line.trim();
       if (trimmed === '' || trimmed.startsWith('#')) continue;
-      
+
       // Check for basic YAML key-value structure
       if (!trimmed.includes(':') && !trimmed.startsWith('-')) {
         return false;
@@ -88,13 +88,13 @@ function isValidYaml(yamlContent) {
 // Get all MDC files recursively
 async function getAllMdcFiles(dirPath) {
   const files = [];
-  
+
   try {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry.name);
-      
+
       if (entry.isFile() && (entry.name.endsWith('.mdc') || entry.name.endsWith('.md'))) {
         // Skip common non-rule files
         if (!['README.md', 'CONTRIBUTING.md', 'CHANGELOG.md'].includes(entry.name)) {
@@ -106,7 +106,7 @@ async function getAllMdcFiles(dirPath) {
   } catch (error) {
     // Directory doesn't exist, skip
   }
-  
+
   return files;
 }
 
@@ -136,14 +136,14 @@ async function validateRules() {
   // Validate each file
   for (const filePath of allFiles) {
     const relativePath = path.relative(rulesRootDir, filePath);
-    
+
     try {
       // Read file content
       const content = await fs.readFile(filePath, 'utf-8');
-      
+
       // Check for YAML frontmatter
       const yamlContent = parseYamlFrontmatter(content);
-      
+
       if (!yamlContent) {
         console.log(
           chalk.yellow(`  ⚠ ${relativePath}:`),
@@ -160,11 +160,11 @@ async function validateRules() {
         console.log(chalk.green(`  ✓ ${relativePath}`));
         validFiles++;
       }
-      
+
       // Check for duplicate rule IDs (based on filename)
       const fileName = path.basename(filePath);
       const ruleId = path.basename(fileName, path.extname(fileName)).toLowerCase();
-      
+
       if (ruleIds.has(ruleId)) {
         console.log(
           chalk.red(`  ✘ Duplicate rule ID: ${ruleId}`),
@@ -175,7 +175,6 @@ async function validateRules() {
       } else {
         ruleIds.set(ruleId, relativePath);
       }
-      
     } catch (err) {
       console.log(chalk.red(`  ✘ ${relativePath}: Error reading file: ${err.message}`));
       errors++;
@@ -201,7 +200,7 @@ async function validateRules() {
 }
 
 // Run validation
-validateRules().catch(err => {
+validateRules().catch((err) => {
   console.error(chalk.red(`An error occurred: ${err.message}`));
   process.exit(1);
 });

@@ -1,7 +1,7 @@
 name: 💡 Feature Request
 description: Suggest a new feature or enhancement for VDK CLI
-title: "[Feature]: "
-labels: ["enhancement"]
+title: '[Feature]: '
+labels: ['enhancement']
 assignees: []
 
 body:
@@ -121,7 +121,7 @@ body:
       placeholder: |
         Command examples:
         vdk new-command --option value
-        
+
         Configuration examples:
         {
           "newFeature": {
@@ -129,7 +129,7 @@ body:
             "option": "value"
           }
         }
-        
+
         Workflow examples:
         1. User runs command
         2. Feature analyzes project
@@ -145,7 +145,7 @@ body:
         - Could use existing X functionality
         - Might require new Y component
         - Similar to how Z works in other tools
-        
+
         API design:
         - New command structure
         - Configuration options

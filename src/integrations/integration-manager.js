@@ -6,6 +6,7 @@
  */
 
 import chalk from 'chalk';
+
 import { BaseIntegration } from './base-integration.js';
 
 /**
@@ -27,7 +28,7 @@ export class IntegrationManager {
     if (!(integration instanceof BaseIntegration)) {
       throw new Error('Integration must extend BaseIntegration');
     }
-    
+
     this.integrations.set(integration.name, integration);
   }
 
@@ -36,7 +37,7 @@ export class IntegrationManager {
    * @param {Array<BaseIntegration>} integrations - Array of integration instances
    */
   registerMultiple(integrations) {
-    integrations.forEach(integration => this.register(integration));
+    integrations.forEach((integration) => this.register(integration));
   }
 
   /**
@@ -46,40 +47,41 @@ export class IntegrationManager {
    */
   async discoverIntegrations(options = {}) {
     const { verbose = false } = options;
-    
+
     // Dynamically import and register all integrations
     const integrationModules = [
       './claude-code-integration.js',
       './cursor-integration.js',
       './windsurf-integration.js',
       './github-copilot-integration.js',
-      './generic-ide-integration.js'
+      './generic-ide-integration.js',
     ];
 
     const results = {
       loaded: [],
       failed: [],
-      registered: 0
+      registered: 0,
     };
 
     for (const modulePath of integrationModules) {
       try {
         const module = await import(modulePath);
         let foundIntegration = false;
-        
+
         // Look for integration class exports
         for (const [exportName, exportValue] of Object.entries(module)) {
-          if (exportName.includes('Integration') && 
-              typeof exportValue === 'function' &&
-              exportValue.prototype instanceof BaseIntegration) {
-            
+          if (
+            exportName.includes('Integration') &&
+            typeof exportValue === 'function' &&
+            exportValue.prototype instanceof BaseIntegration
+          ) {
             try {
               const integration = new exportValue(this.projectPath);
               this.register(integration);
               results.loaded.push({
                 module: modulePath,
                 class: exportName,
-                name: integration.name
+                name: integration.name,
               });
               results.registered++;
               foundIntegration = true;
@@ -87,7 +89,7 @@ export class IntegrationManager {
               results.failed.push({
                 module: modulePath,
                 class: exportName,
-                error: `Constructor failed: ${constructorError.message}`
+                error: `Constructor failed: ${constructorError.message}`,
               });
             }
           }
@@ -96,20 +98,21 @@ export class IntegrationManager {
         if (!foundIntegration) {
           results.failed.push({
             module: modulePath,
-            error: 'No valid Integration class found in module'
+            error: 'No valid Integration class found in module',
           });
         }
-
       } catch (error) {
         // Integration module doesn't exist or failed to load - that's OK
         // We only register integrations that are available
         results.failed.push({
           module: modulePath,
-          error: error.message
+          error: error.message,
         });
-        
+
         if (process.env.VDK_DEBUG || verbose) {
-          console.warn(chalk.yellow(`Failed to load integration module ${modulePath}: ${error.message}`));
+          console.warn(
+            chalk.yellow(`Failed to load integration module ${modulePath}: ${error.message}`)
+          );
         }
       }
     }
@@ -131,23 +134,25 @@ export class IntegrationManager {
    */
   async scanAll(options = {}) {
     const { verbose = false, force = false } = options;
-    
+
     if (verbose) {
       console.log(chalk.blue('🔍 Scanning for integration usage...'));
     }
 
     const results = {
       active: [],
-      inactive: [], 
+      inactive: [],
       recommendations: [],
       errors: [],
-      summary: {}
+      summary: {},
     };
 
     // Ensure we have integrations to scan
     if (this.integrations.size === 0) {
       if (verbose) {
-        console.log(chalk.yellow('⚠️ No integrations registered. Run discoverIntegrations() first.'));
+        console.log(
+          chalk.yellow('⚠️ No integrations registered. Run discoverIntegrations() first.')
+        );
       }
       results.errors.push('No integrations registered');
       return results;
@@ -169,7 +174,7 @@ export class IntegrationManager {
           confidence: integration.getConfidence(),
           indicators: integration.getIndicators(),
           recommendations: integration.getRecommendations(),
-          detection
+          detection,
         };
 
         if (integrationResult.isActive) {
@@ -183,26 +188,25 @@ export class IntegrationManager {
 
         if (verbose && integrationResult.indicators.length > 0) {
           console.log(chalk.gray(`  • ${name}: ${integrationResult.confidence} confidence`));
-          integrationResult.indicators.forEach(indicator => {
+          integrationResult.indicators.forEach((indicator) => {
             console.log(chalk.gray(`    - ${indicator}`));
           });
         }
-
       } catch (error) {
         const errorInfo = {
           integration: name,
           error: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
         results.errors.push(errorInfo);
-        
+
         if (verbose) {
           console.log(chalk.red(`❌ Failed to scan ${name}: ${error.message}`));
           if (process.env.VDK_DEBUG) {
             console.log(chalk.gray(`Debug: ${error.stack}`));
           }
         }
-        
+
         // Add to inactive with error indicator
         results.inactive.push({
           name,
@@ -210,7 +214,7 @@ export class IntegrationManager {
           confidence: 'error',
           indicators: [`Scan failed: ${error.message}`],
           recommendations: [`Fix ${name} integration configuration`],
-          detection: { isUsed: false, confidence: 'error', indicators: [], recommendations: [] }
+          detection: { isUsed: false, confidence: 'error', indicators: [], recommendations: [] },
         });
       }
     }
@@ -219,9 +223,9 @@ export class IntegrationManager {
     results.summary = {
       totalIntegrations: this.integrations.size,
       activeIntegrations: results.active.length,
-      highConfidenceIntegrations: results.active.filter(r => r.confidence === 'high').length,
+      highConfidenceIntegrations: results.active.filter((r) => r.confidence === 'high').length,
       recommendationCount: results.recommendations.length,
-      scanTime: new Date().toISOString()
+      scanTime: new Date().toISOString(),
     };
 
     this.lastScan = results;
@@ -261,7 +265,7 @@ export class IntegrationManager {
     if (!this.lastScan) {
       return [];
     }
-    return this.lastScan.active.filter(integration => integration.confidence === 'high');
+    return this.lastScan.active.filter((integration) => integration.confidence === 'high');
   }
 
   /**
@@ -285,7 +289,7 @@ export class IntegrationManager {
     const results = {
       successful: [],
       failed: [],
-      skipped: []
+      skipped: [],
     };
 
     const activeIntegrations = this.getActiveIntegrations();
@@ -299,11 +303,11 @@ export class IntegrationManager {
 
     for (const integrationResult of activeIntegrations) {
       const integration = this.getIntegration(integrationResult.name);
-      
+
       if (!integration) {
         results.failed.push({
           name: integrationResult.name,
-          error: 'Integration not found'
+          error: 'Integration not found',
         });
         continue;
       }
@@ -315,31 +319,30 @@ export class IntegrationManager {
 
         const success = await integration.initialize({
           ...options,
-          projectPath: this.projectPath
+          projectPath: this.projectPath,
         });
 
         if (success) {
           results.successful.push({
             name: integration.name,
-            confidence: integration.getConfidence()
+            confidence: integration.getConfidence(),
           });
-          
+
           if (verbose) {
             console.log(chalk.green(`✅ ${integration.name} initialized successfully`));
           }
         } else {
           results.failed.push({
             name: integration.name,
-            error: 'Initialization returned false'
+            error: 'Initialization returned false',
           });
         }
-
       } catch (error) {
         results.failed.push({
           name: integration.name,
-          error: error.message
+          error: error.message,
         });
-        
+
         if (verbose) {
           console.log(chalk.red(`❌ Failed to initialize ${integration.name}: ${error.message}`));
         }
@@ -357,12 +360,12 @@ export class IntegrationManager {
     if (!this.lastScan) {
       return {
         message: 'No integrations scanned yet',
-        integrations: []
+        integrations: [],
       };
     }
 
     const { summary, active, inactive } = this.lastScan;
-    
+
     let message = '';
     if (summary.activeIntegrations === 0) {
       message = 'No active integrations detected';
@@ -375,15 +378,15 @@ export class IntegrationManager {
     return {
       message,
       summary,
-      active: active.map(i => ({
+      active: active.map((i) => ({
         name: i.name,
         confidence: i.confidence,
-        indicatorCount: i.indicators.length
+        indicatorCount: i.indicators.length,
       })),
-      inactive: inactive.map(i => ({
+      inactive: inactive.map((i) => ({
         name: i.name,
-        confidence: i.confidence
-      }))
+        confidence: i.confidence,
+      })),
     };
   }
 
@@ -445,7 +448,7 @@ export class IntegrationManager {
       recommendations: integration.getRecommendations(),
       configPaths: integration.getConfigPaths(),
       summary: integration.getSummary(),
-      detection
+      detection,
     };
   }
 }

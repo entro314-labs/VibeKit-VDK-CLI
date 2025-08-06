@@ -5,10 +5,10 @@
  * Part of Phase 3 implementation for the Project-Specific Rule Generator.
  */
 
-import fs from 'fs';
-import path from 'path';
 import chalk from 'chalk';
+import fs from 'fs';
 import ora from 'ora';
+import path from 'path';
 
 class RuleValidator {
   constructor(options = {}) {
@@ -18,8 +18,8 @@ class RuleValidator {
       thresholds: {
         requiredFields: options.thresholds?.requiredFields || 0.95, // 95% of required fields must be present
         contentQuality: options.thresholds?.contentQuality || 0.8, // 80% of content quality checks must pass
-        conflicts: options.thresholds?.conflicts || 0.0 // No conflicts allowed by default
-      }
+        conflicts: options.thresholds?.conflicts || 0.0, // No conflicts allowed by default
+      },
     };
 
     // Required fields for each rule type
@@ -28,7 +28,7 @@ class RuleValidator {
       coreAgent: ['Role & Responsibility', 'Core Principles', 'Coding Standards'],
       projectContext: ['Role & Responsibility', 'Core Principles', 'Project Technology Stack'],
       commonErrors: ['Role & Responsibility', 'Core Principles', 'Common Error Categories'],
-      mcpConfig: ['Role & Responsibility', 'Core Principles', 'Available MCP Servers']
+      mcpConfig: ['Role & Responsibility', 'Core Principles', 'Available MCP Servers'],
     };
 
     this.results = {
@@ -36,7 +36,7 @@ class RuleValidator {
       validRules: 0,
       warnings: [],
       errors: [],
-      validationDetails: {}
+      validationDetails: {},
     };
   }
 
@@ -47,15 +47,14 @@ class RuleValidator {
    */
   async validateRuleDirectory(rulesDir) {
     const spinner = ora('Validating rule files...').start();
-    
+
     try {
       if (!fs.existsSync(rulesDir)) {
         spinner.fail(`Rules directory not found: ${rulesDir}`);
         return { success: false, message: 'Rules directory not found' };
       }
 
-      const ruleFiles = fs.readdirSync(rulesDir)
-        .filter(file => file.endsWith('.mdc'));
+      const ruleFiles = fs.readdirSync(rulesDir).filter((file) => file.endsWith('.mdc'));
 
       this.results.totalRules = ruleFiles.length;
 
@@ -74,27 +73,33 @@ class RuleValidator {
 
       // Calculate success rate
       const successRate = this.results.validRules / this.results.totalRules;
-      
+
       if (successRate >= 0.98) {
-        spinner.succeed(`Rule validation complete: ${chalk.green(Math.round(successRate * 100))}% of rules are valid`);
-        return { 
-          success: true, 
+        spinner.succeed(
+          `Rule validation complete: ${chalk.green(Math.round(successRate * 100))}% of rules are valid`
+        );
+        return {
+          success: true,
           message: `${this.results.validRules} of ${this.results.totalRules} rules are valid`,
-          results: this.results 
+          results: this.results,
         };
       } else if (successRate >= 0.8) {
-        spinner.warn(`Rule validation complete with warnings: ${chalk.yellow(Math.round(successRate * 100))}% of rules are valid`);
-        return { 
-          success: true, 
+        spinner.warn(
+          `Rule validation complete with warnings: ${chalk.yellow(Math.round(successRate * 100))}% of rules are valid`
+        );
+        return {
+          success: true,
           message: `${this.results.validRules} of ${this.results.totalRules} rules are valid with warnings`,
-          results: this.results 
+          results: this.results,
         };
       } else {
-        spinner.fail(`Rule validation failed: ${chalk.red(Math.round(successRate * 100))}% of rules are valid`);
-        return { 
-          success: false, 
+        spinner.fail(
+          `Rule validation failed: ${chalk.red(Math.round(successRate * 100))}% of rules are valid`
+        );
+        return {
+          success: false,
           message: `Only ${this.results.validRules} of ${this.results.totalRules} rules are valid`,
-          results: this.results 
+          results: this.results,
         };
       }
     } catch (error) {
@@ -115,7 +120,7 @@ class RuleValidator {
         file: fileName,
         valid: true,
         warnings: [],
-        errors: []
+        errors: [],
       };
 
       // Check for required sections
@@ -149,14 +154,14 @@ class RuleValidator {
       if (validationResult.warnings.length > 0) {
         this.results.warnings.push({
           file: fileName,
-          warnings: validationResult.warnings
+          warnings: validationResult.warnings,
         });
       }
 
       if (validationResult.errors.length > 0) {
         this.results.errors.push({
           file: fileName,
-          errors: validationResult.errors
+          errors: validationResult.errors,
         });
       }
 
@@ -168,9 +173,9 @@ class RuleValidator {
           console.log(`${chalk.green('✓')} ${fileName} - Valid`);
         } else {
           console.log(`${chalk.red('✗')} ${fileName} - Invalid:`);
-          validationResult.errors.forEach(err => console.log(`  ${chalk.red('-')} ${err}`));
+          validationResult.errors.forEach((err) => console.log(`  ${chalk.red('-')} ${err}`));
         }
-        validationResult.warnings.forEach(warn => {
+        validationResult.warnings.forEach((warn) => {
           console.log(`  ${chalk.yellow('!')} Warning: ${warn}`);
         });
       }
@@ -181,12 +186,12 @@ class RuleValidator {
         file: fileName,
         valid: false,
         warnings: [],
-        errors: [`Failed to validate file: ${error.message}`]
+        errors: [`Failed to validate file: ${error.message}`],
       };
-      
+
       this.results.errors.push({
         file: fileName,
-        errors: validationResult.errors
+        errors: validationResult.errors,
       });
 
       return validationResult;
@@ -201,12 +206,12 @@ class RuleValidator {
   validateFrontMatter(content) {
     const frontMatterRegex = /^---[\s\S]+?---/;
     const match = content.match(frontMatterRegex);
-    
+
     if (!match) return false;
-    
+
     const frontMatter = match[0];
     let valid = true;
-    
+
     // Check for required fields
     for (const field of this.requiredFields.frontMatter) {
       const fieldRegex = new RegExp(`${field}:`, 'i');
@@ -215,7 +220,7 @@ class RuleValidator {
         break;
       }
     }
-    
+
     return valid;
   }
 
@@ -287,7 +292,7 @@ class RuleValidator {
   validateForEmptySections(content, result) {
     const sectionRegex = /##\s+([^\n]+)\s*\n+(?:##|$)/g;
     let match;
-    
+
     while ((match = sectionRegex.exec(content)) !== null) {
       const sectionName = match[1].trim();
       result.warnings.push(`Empty section: ${sectionName}`);
@@ -302,7 +307,7 @@ class RuleValidator {
   validateForPlaceholders(content, result) {
     const placeholderRegex = /\{\{[^}]+\}\}/g;
     const placeholders = content.match(placeholderRegex);
-    
+
     if (placeholders && placeholders.length > 0) {
       result.warnings.push(`Unreplaced placeholders found: ${placeholders.join(', ')}`);
     }
@@ -316,57 +321,55 @@ class RuleValidator {
   async detectRuleConflicts(rulesDir, ruleFiles) {
     // Extract globs from all rule files to check for overlaps
     const ruleGlobs = {};
-    
+
     for (const file of ruleFiles) {
       const filePath = path.join(rulesDir, file);
       const content = fs.readFileSync(filePath, 'utf8');
-      
+
       // Extract globs from front matter
       const globsMatch = content.match(/globs:\s*\[([^\]]+)\]/i);
-      
+
       if (globsMatch) {
-        const globs = globsMatch[1]
-          .split(',')
-          .map(glob => glob.trim().replace(/["']/g, ''));
-        
+        const globs = globsMatch[1].split(',').map((glob) => glob.trim().replace(/["']/g, ''));
+
         ruleGlobs[file] = globs;
       }
     }
-    
+
     // Check for conflicting rules
     const conflicts = [];
-    
+
     for (const [file1, globs1] of Object.entries(ruleGlobs)) {
       for (const [file2, globs2] of Object.entries(ruleGlobs)) {
         if (file1 !== file2) {
           // Check for identical globs
-          const overlappingGlobs = globs1.filter(glob => globs2.includes(glob));
-          
+          const overlappingGlobs = globs1.filter((glob) => globs2.includes(glob));
+
           if (overlappingGlobs.length > 0) {
             conflicts.push({
               file1,
               file2,
-              overlappingGlobs
+              overlappingGlobs,
             });
           }
         }
       }
     }
-    
+
     // Add conflicts to results
     if (conflicts.length > 0) {
       for (const conflict of conflicts) {
         const warningMessage = `Conflicting globs with ${conflict.file2}: ${conflict.overlappingGlobs.join(', ')}`;
-        
+
         // Add warning to file1's validation results
         if (this.results.validationDetails[conflict.file1]) {
           this.results.validationDetails[conflict.file1].warnings.push(warningMessage);
         }
-        
+
         // Add to global warnings
         this.results.warnings.push({
           file: conflict.file1,
-          warnings: [warningMessage]
+          warnings: [warningMessage],
         });
       }
     }

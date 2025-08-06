@@ -5,10 +5,11 @@
  * and best practices for code completion and review features.
  */
 
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
 import { execSync } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+
 import { BaseIntegration } from './base-integration.js';
 
 /**
@@ -52,7 +53,7 @@ export class GitHubCopilotIntegration extends BaseIntegration {
       isUsed: false,
       confidence: 'none', // none, low, medium, high
       indicators: [],
-      recommendations: []
+      recommendations: [],
     };
 
     // 1. Check for .github directory and Copilot configuration
@@ -60,13 +61,9 @@ export class GitHubCopilotIntegration extends BaseIntegration {
       detection.indicators.push('Project has .github directory');
 
       // Check for Copilot-specific files
-      const copilotFiles = [
-        'copilot/',
-        'CODEOWNERS',
-        'pull_request_template.md'
-      ];
+      const copilotFiles = ['copilot/', 'CODEOWNERS', 'pull_request_template.md'];
 
-      copilotFiles.forEach(file => {
+      copilotFiles.forEach((file) => {
         const filePath = path.join(this.copilotConfigPath, file);
         if (this.directoryExists(filePath) || this.fileExists(filePath)) {
           detection.indicators.push(`Found .github/${file}`);
@@ -84,10 +81,10 @@ export class GitHubCopilotIntegration extends BaseIntegration {
     const platformPaths = this.getPlatformPaths();
     const githubPaths = [
       path.join(platformPaths.home, '.config', 'gh'),
-      path.join(platformPaths.home, '.gitconfig')
+      path.join(platformPaths.home, '.gitconfig'),
     ];
 
-    githubPaths.forEach(githubPath => {
+    githubPaths.forEach((githubPath) => {
       if (this.directoryExists(githubPath) || this.fileExists(githubPath)) {
         detection.indicators.push(`GitHub configuration found at ${githubPath}`);
         if (detection.confidence === 'none') {
@@ -115,7 +112,7 @@ export class GitHubCopilotIntegration extends BaseIntegration {
       const remoteOutput = execSync('git remote -v', {
         cwd: this.projectPath,
         encoding: 'utf8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
 
       if (remoteOutput.includes('github.com')) {
@@ -139,22 +136,32 @@ export class GitHubCopilotIntegration extends BaseIntegration {
     // 6. Check .gitignore for GitHub-specific patterns
     const gitignorePatterns = this.checkGitignore(['.github']);
     if (gitignorePatterns.length > 0) {
-      detection.indicators.push(`GitHub patterns found in .gitignore: ${gitignorePatterns.join(', ')}`);
+      detection.indicators.push(
+        `GitHub patterns found in .gitignore: ${gitignorePatterns.join(', ')}`
+      );
     }
 
     // 7. Generate recommendations based on detection
     if (detection.confidence === 'none') {
-      detection.recommendations.push('GitHub Copilot not detected. Requires GitHub repository and Copilot Enterprise subscription');
+      detection.recommendations.push(
+        'GitHub Copilot not detected. Requires GitHub repository and Copilot Enterprise subscription'
+      );
       detection.recommendations.push('Install GitHub CLI: https://cli.github.com/');
     } else if (detection.confidence === 'low') {
       detection.recommendations.push('GitHub detected but Copilot guidelines not configured');
-      detection.recommendations.push('Run: vdk init --ide-integration to set up Copilot integration');
+      detection.recommendations.push(
+        'Run: vdk init --ide-integration to set up Copilot integration'
+      );
     } else if (detection.confidence === 'medium') {
       detection.recommendations.push('GitHub repository detected');
-      detection.recommendations.push('Configure Copilot Enterprise guidelines in repository settings');
+      detection.recommendations.push(
+        'Configure Copilot Enterprise guidelines in repository settings'
+      );
     } else if (detection.confidence === 'high') {
       detection.recommendations.push('GitHub Copilot guidelines are configured');
-      detection.recommendations.push('Consider reviewing and updating guidelines with VDK patterns');
+      detection.recommendations.push(
+        'Consider reviewing and updating guidelines with VDK patterns'
+      );
     }
 
     return detection;
@@ -201,28 +208,28 @@ export class GitHubCopilotIntegration extends BaseIntegration {
     }
 
     const vdkConfig = {
-      "vdk": {
-        "enabled": true,
-        "version": "1.0.0",
-        "integration": "github-copilot",
-        "projectName": options.projectName || path.basename(this.projectPath)
+      vdk: {
+        enabled: true,
+        version: '1.0.0',
+        integration: 'github-copilot',
+        projectName: options.projectName || path.basename(this.projectPath),
       },
-      "copilot": {
-        "enterprise": options.hasEnterprise || false,
-        "codeReview": true,
-        "codeCompletion": true,
-        "guidelinesVersion": "1.0"
+      copilot: {
+        enterprise: options.hasEnterprise || false,
+        codeReview: true,
+        codeCompletion: true,
+        guidelinesVersion: '1.0',
       },
-      "guidelines": {
-        "maxGuidelines": 6,
-        "enforcementLevel": "strict",
-        "languageSupport": options.languages || ["javascript", "typescript", "python"],
-        "autoUpdate": true
+      guidelines: {
+        maxGuidelines: 6,
+        enforcementLevel: 'strict',
+        languageSupport: options.languages || ['javascript', 'typescript', 'python'],
+        autoUpdate: true,
       },
-      "generated": {
-        "timestamp": new Date().toISOString(),
-        "source": "vdk-cli"
-      }
+      generated: {
+        timestamp: new Date().toISOString(),
+        source: 'vdk-cli',
+      },
     };
 
     await this.writeJsonFile(paths.vdkCopilotConfig, vdkConfig);
@@ -317,48 +324,57 @@ Use these patterns to scope guidelines to specific files:
     if (options.techStack) {
       if (options.techStack.frameworks?.includes('React')) {
         guidelines.push({
-          title: "React Component Standards",
-          description: "Use functional components with hooks. Include proper prop typing with TypeScript. Add error boundaries for complex components.",
-          paths: ["**/*.tsx", "**/*.jsx"]
+          title: 'React Component Standards',
+          description:
+            'Use functional components with hooks. Include proper prop typing with TypeScript. Add error boundaries for complex components.',
+          paths: ['**/*.tsx', '**/*.jsx'],
         });
       }
 
-      if (options.techStack.frameworks?.includes('Node.js') || options.techStack.frameworks?.includes('Express')) {
+      if (
+        options.techStack.frameworks?.includes('Node.js') ||
+        options.techStack.frameworks?.includes('Express')
+      ) {
         guidelines.push({
-          title: "API Validation Requirements",
-          description: "Validate all input parameters. Use proper HTTP status codes. Implement error handling middleware. Add rate limiting where appropriate.",
-          paths: ["src/api/**/*", "src/routes/**/*", "**/*route*"]
+          title: 'API Validation Requirements',
+          description:
+            'Validate all input parameters. Use proper HTTP status codes. Implement error handling middleware. Add rate limiting where appropriate.',
+          paths: ['src/api/**/*', 'src/routes/**/*', '**/*route*'],
         });
       }
 
       if (options.techStack.primaryLanguages?.includes('TypeScript')) {
         guidelines.push({
-          title: "TypeScript Best Practices",
-          description: "Use strict type checking. Avoid 'any' types. Define proper interfaces for data structures. Use generic types for reusable components.",
-          paths: ["**/*.ts", "**/*.tsx"]
+          title: 'TypeScript Best Practices',
+          description:
+            "Use strict type checking. Avoid 'any' types. Define proper interfaces for data structures. Use generic types for reusable components.",
+          paths: ['**/*.ts', '**/*.tsx'],
         });
       }
 
       if (options.techStack.primaryLanguages?.includes('Python')) {
         guidelines.push({
-          title: "Python Code Standards",
-          description: "Follow PEP 8 guidelines. Use type hints for function parameters and returns. Include docstrings for classes and functions.",
-          paths: ["**/*.py"]
+          title: 'Python Code Standards',
+          description:
+            'Follow PEP 8 guidelines. Use type hints for function parameters and returns. Include docstrings for classes and functions.',
+          paths: ['**/*.py'],
         });
       }
     }
 
     // Add general VDK guidelines
     guidelines.push({
-      title: "VDK Integration Standards",
-      description: "Follow VDK CLI naming conventions. Use unified rule formats. Include proper error handling and logging patterns. Update documentation when adding features.",
-      paths: []
+      title: 'VDK Integration Standards',
+      description:
+        'Follow VDK CLI naming conventions. Use unified rule formats. Include proper error handling and logging patterns. Update documentation when adding features.',
+      paths: [],
     });
 
     guidelines.push({
-      title: "Security Best Practices",
-      description: "Never commit secrets or API keys. Validate all user inputs. Use environment variables for configuration. Implement proper authentication patterns.",
-      paths: []
+      title: 'Security Best Practices',
+      description:
+        'Never commit secrets or API keys. Validate all user inputs. Use environment variables for configuration. Implement proper authentication patterns.',
+      paths: [],
     });
 
     // Save guidelines configuration
@@ -367,12 +383,12 @@ Use these patterns to scope guidelines to specific files:
       guidelines: guidelines.slice(0, 6), // GitHub Copilot max 6 guidelines
       generated: {
         timestamp: new Date().toISOString(),
-        source: "vdk-cli",
+        source: 'vdk-cli',
         projectAnalysis: {
           techStack: options.techStack,
-          patterns: options.patterns
-        }
-      }
+          patterns: options.patterns,
+        },
+      },
     };
 
     await this.writeJsonFile(paths.guidelinesConfig, guidelinesConfig);
@@ -385,15 +401,15 @@ Use these patterns to scope guidelines to specific files:
    */
   generateGuidelinesList(options = {}) {
     const commonGuidelines = [
-      "**VDK Integration Standards** - Follow VDK CLI conventions and patterns",
-      "**Security Best Practices** - Never commit secrets, validate inputs",
-      "**Error Handling** - Implement proper error boundaries and logging",
-      "**Documentation** - Update docs when adding features",
-      "**Testing** - Include tests for new functionality",
-      "**Performance** - Consider performance implications of changes"
+      '**VDK Integration Standards** - Follow VDK CLI conventions and patterns',
+      '**Security Best Practices** - Never commit secrets, validate inputs',
+      '**Error Handling** - Implement proper error boundaries and logging',
+      '**Documentation** - Update docs when adding features',
+      '**Testing** - Include tests for new functionality',
+      '**Performance** - Consider performance implications of changes',
     ];
 
-    return commonGuidelines.map(guideline => `   - ${guideline}`).join('\n');
+    return commonGuidelines.map((guideline) => `   - ${guideline}`).join('\n');
   }
 
   /**
@@ -406,7 +422,7 @@ Use these patterns to scope guidelines to specific files:
       codeReview: false,
       codeCompletion: false,
       customGuidelines: false,
-      repositoryConfigured: false
+      repositoryConfigured: false,
     };
 
     try {
@@ -415,7 +431,7 @@ Use these patterns to scope guidelines to specific files:
       const remoteOutput = execSync('git remote -v', {
         cwd: this.projectPath,
         encoding: 'utf8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
 
       if (remoteOutput.includes('github.com')) {
@@ -459,7 +475,7 @@ Use these patterns to scope guidelines to specific files:
       configPaths: paths,
       recommendations: detection.recommendations,
       enterpriseRequired: true,
-      setupInstructions: "Configure guidelines in GitHub repository settings"
+      setupInstructions: 'Configure guidelines in GitHub repository settings',
     };
   }
 }

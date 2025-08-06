@@ -5,15 +5,15 @@
  * and common coding patterns used throughout the project.
  */
 
+import chalk from 'chalk';
 import fs from 'fs/promises';
 import path from 'path';
-import chalk from 'chalk';
 
 // Helper functions for parsing specific file types
 import { analyzeJavaScript } from '../analyzers/javascript.js';
-import { analyzeTypeScript } from '../analyzers/typescript.js';
 import { analyzePython } from '../analyzers/python.js';
 import { analyzeSwift } from '../analyzers/swift.js';
+import { analyzeTypeScript } from '../analyzers/typescript.js';
 import { DependencyAnalyzer } from './DependencyAnalyzer.js';
 
 export class PatternDetector {
@@ -28,7 +28,7 @@ export class PatternDetector {
       classes: {},
       components: {},
       files: {},
-      directories: {}
+      directories: {},
     };
 
     this.architecturalPatterns = [];
@@ -38,7 +38,7 @@ export class PatternDetector {
     // Initialize dependency analyzer
     this.dependencyAnalyzer = new DependencyAnalyzer({
       verbose: this.verbose,
-      maxFilesToParse: options.maxFilesToParse || 200
+      maxFilesToParse: options.maxFilesToParse || 200,
     });
   }
 
@@ -77,8 +77,8 @@ export class PatternDetector {
         consistencyMetrics: this.consistencyMetrics,
         dependencyInsights: {
           moduleCount: this.dependencyAnalyzer.dependencyGraph?.size || 0,
-          edgeCount: this.dependencyAnalyzer.countEdges ? this.dependencyAnalyzer.countEdges() : 0
-        }
+          edgeCount: this.dependencyAnalyzer.countEdges ? this.dependencyAnalyzer.countEdges() : 0,
+        },
       };
     } catch (error) {
       if (this.verbose) {
@@ -100,7 +100,7 @@ export class PatternDetector {
       classes: { patterns: {}, total: 0, dominant: null },
       components: { patterns: {}, total: 0, dominant: null },
       files: { patterns: {}, total: 0, dominant: null },
-      directories: { patterns: {}, total: 0, dominant: null }
+      directories: { patterns: {}, total: 0, dominant: null },
     };
 
     // Reset other patterns
@@ -138,7 +138,9 @@ export class PatternDetector {
         console.log(chalk.gray(`File naming convention: ${this.namingConventions.files.dominant}`));
       }
       if (this.namingConventions.directories.dominant) {
-        console.log(chalk.gray(`Directory naming convention: ${this.namingConventions.directories.dominant}`));
+        console.log(
+          chalk.gray(`Directory naming convention: ${this.namingConventions.directories.dominant}`)
+        );
       }
     }
   }
@@ -239,7 +241,11 @@ export class PatternDetector {
     this.architecturalPatterns.sort((a, b) => b.confidence - a.confidence);
 
     if (this.verbose && this.architecturalPatterns.length > 0) {
-      console.log(chalk.gray(`Detected architectural pattern: ${this.architecturalPatterns[0].name} (${this.architecturalPatterns[0].confidence}% confidence)`));
+      console.log(
+        chalk.gray(
+          `Detected architectural pattern: ${this.architecturalPatterns[0].name} (${this.architecturalPatterns[0].confidence}% confidence)`
+        )
+      );
     }
   }
 
@@ -255,7 +261,7 @@ export class PatternDetector {
         name: 'MVC',
         confidence: mvcScore,
         description: 'Model-View-Controller pattern separating data, UI, and application logic.',
-        source: 'directory-structure'
+        source: 'directory-structure',
       });
     }
 
@@ -266,7 +272,7 @@ export class PatternDetector {
         name: 'MVVM',
         confidence: mvvmScore,
         description: 'Model-View-ViewModel pattern with data binding between View and ViewModel.',
-        source: 'directory-structure'
+        source: 'directory-structure',
       });
     }
 
@@ -277,7 +283,7 @@ export class PatternDetector {
         name: 'Layered Architecture',
         confidence: layeredScore,
         description: 'Layered architecture with clear separation of concerns between layers.',
-        source: 'directory-structure'
+        source: 'directory-structure',
       });
     }
 
@@ -288,7 +294,7 @@ export class PatternDetector {
         name: 'Microservices',
         confidence: microservicesScore,
         description: 'Microservices architecture with multiple independent services.',
-        source: 'directory-structure'
+        source: 'directory-structure',
       });
     }
 
@@ -298,8 +304,9 @@ export class PatternDetector {
       this.architecturalPatterns.push({
         name: 'Feature-based',
         confidence: featureBasedScore,
-        description: 'Feature-based organization with code grouped by feature rather than technical layer.',
-        source: 'directory-structure'
+        description:
+          'Feature-based organization with code grouped by feature rather than technical layer.',
+        source: 'directory-structure',
       });
     }
   }
@@ -310,7 +317,7 @@ export class PatternDetector {
    * @returns {number} Confidence score (0-100)
    */
   detectMVCPattern(projectStructure) {
-    const dirNames = projectStructure.directories.map(d => d.name.toLowerCase());
+    const dirNames = projectStructure.directories.map((d) => d.name.toLowerCase());
 
     let score = 0;
 
@@ -320,10 +327,18 @@ export class PatternDetector {
     if (dirNames.includes('controllers') || dirNames.includes('controller')) score += 30;
 
     // Look for files with these names
-    const fileBasenames = projectStructure.files.map(f => path.basename(f.name, path.extname(f.name)).toLowerCase());
-    const modelFiles = fileBasenames.filter(name => name.endsWith('model') || name.endsWith('models'));
-    const viewFiles = fileBasenames.filter(name => name.endsWith('view') || name.endsWith('views'));
-    const controllerFiles = fileBasenames.filter(name => name.endsWith('controller') || name.endsWith('controllers'));
+    const fileBasenames = projectStructure.files.map((f) =>
+      path.basename(f.name, path.extname(f.name)).toLowerCase()
+    );
+    const modelFiles = fileBasenames.filter(
+      (name) => name.endsWith('model') || name.endsWith('models')
+    );
+    const viewFiles = fileBasenames.filter(
+      (name) => name.endsWith('view') || name.endsWith('views')
+    );
+    const controllerFiles = fileBasenames.filter(
+      (name) => name.endsWith('controller') || name.endsWith('controllers')
+    );
 
     if (modelFiles.length > 0) score += 15;
     if (viewFiles.length > 0) score += 15;
@@ -339,7 +354,7 @@ export class PatternDetector {
    * @returns {number} Confidence score (0-100)
    */
   detectMVVMPattern(projectStructure) {
-    const dirNames = projectStructure.directories.map(d => d.name.toLowerCase());
+    const dirNames = projectStructure.directories.map((d) => d.name.toLowerCase());
 
     let score = 0;
 
@@ -349,12 +364,21 @@ export class PatternDetector {
     if (dirNames.includes('viewmodels') || dirNames.includes('viewmodel')) score += 40;
 
     // Look for files with these names
-    const fileBasenames = projectStructure.files.map(f => path.basename(f.name, path.extname(f.name)).toLowerCase());
-    const modelFiles = fileBasenames.filter(name => name.endsWith('model') || name.endsWith('models'));
-    const viewFiles = fileBasenames.filter(name => name.endsWith('view') || name.endsWith('views'));
-    const viewModelFiles = fileBasenames.filter(name =>
-      name.endsWith('viewmodel') || name.endsWith('viewmodels') ||
-      name.includes('_vm') || name.includes('-vm')
+    const fileBasenames = projectStructure.files.map((f) =>
+      path.basename(f.name, path.extname(f.name)).toLowerCase()
+    );
+    const modelFiles = fileBasenames.filter(
+      (name) => name.endsWith('model') || name.endsWith('models')
+    );
+    const viewFiles = fileBasenames.filter(
+      (name) => name.endsWith('view') || name.endsWith('views')
+    );
+    const viewModelFiles = fileBasenames.filter(
+      (name) =>
+        name.endsWith('viewmodel') ||
+        name.endsWith('viewmodels') ||
+        name.includes('_vm') ||
+        name.includes('-vm')
     );
 
     if (modelFiles.length > 0) score += 10;
@@ -371,15 +395,25 @@ export class PatternDetector {
    * @returns {number} Confidence score (0-100)
    */
   detectLayeredPattern(projectStructure) {
-    const dirNames = projectStructure.directories.map(d => d.name.toLowerCase());
+    const dirNames = projectStructure.directories.map((d) => d.name.toLowerCase());
 
     let score = 0;
 
     // Check for various layer names
     const layerNames = [
-      'data', 'domain', 'presentation', 'infrastructure', 'application',
-      'api', 'core', 'services', 'repositories', 'interfaces', 'adapters',
-      'persistence', 'entities'
+      'data',
+      'domain',
+      'presentation',
+      'infrastructure',
+      'application',
+      'api',
+      'core',
+      'services',
+      'repositories',
+      'interfaces',
+      'adapters',
+      'persistence',
+      'entities',
     ];
 
     for (const layer of layerNames) {
@@ -387,11 +421,15 @@ export class PatternDetector {
     }
 
     // Check for common patterns in filenames
-    const fileBasenames = projectStructure.files.map(f => path.basename(f.name, path.extname(f.name)).toLowerCase());
-    const repositoryFiles = fileBasenames.filter(name => name.endsWith('repository') || name.includes('repo'));
-    const serviceFiles = fileBasenames.filter(name => name.endsWith('service'));
-    const entityFiles = fileBasenames.filter(name => name.endsWith('entity'));
-    const dtoFiles = fileBasenames.filter(name => name.endsWith('dto'));
+    const fileBasenames = projectStructure.files.map((f) =>
+      path.basename(f.name, path.extname(f.name)).toLowerCase()
+    );
+    const repositoryFiles = fileBasenames.filter(
+      (name) => name.endsWith('repository') || name.includes('repo')
+    );
+    const serviceFiles = fileBasenames.filter((name) => name.endsWith('service'));
+    const entityFiles = fileBasenames.filter((name) => name.endsWith('entity'));
+    const dtoFiles = fileBasenames.filter((name) => name.endsWith('dto'));
 
     if (repositoryFiles.length > 0) score += 10;
     if (serviceFiles.length > 0) score += 10;
@@ -408,19 +446,22 @@ export class PatternDetector {
    * @returns {number} Confidence score (0-100)
    */
   detectMicroservicesPattern(projectStructure) {
-    const dirNames = projectStructure.directories.map(d => d.name.toLowerCase());
+    const dirNames = projectStructure.directories.map((d) => d.name.toLowerCase());
 
     let score = 0;
 
     // Check for services, apis, or microservices directory
-    if (dirNames.includes('services') || dirNames.includes('apis') || dirNames.includes('microservices')) {
+    if (
+      dirNames.includes('services') ||
+      dirNames.includes('apis') ||
+      dirNames.includes('microservices')
+    ) {
       score += 40;
     }
 
     // Check for multiple API/service directories
-    const servicesDirs = projectStructure.directories.filter(d =>
-      d.name.toLowerCase().includes('service') ||
-      d.name.toLowerCase().includes('api')
+    const servicesDirs = projectStructure.directories.filter(
+      (d) => d.name.toLowerCase().includes('service') || d.name.toLowerCase().includes('api')
     );
 
     if (servicesDirs.length >= 3) {
@@ -428,14 +469,16 @@ export class PatternDetector {
     }
 
     // Check for Docker/Kubernetes configuration
-    const dockerFiles = projectStructure.files.filter(f =>
-      f.name.toLowerCase().includes('dockerfile') ||
-      f.name.toLowerCase().includes('docker-compose')
+    const dockerFiles = projectStructure.files.filter(
+      (f) =>
+        f.name.toLowerCase().includes('dockerfile') ||
+        f.name.toLowerCase().includes('docker-compose')
     );
 
-    const k8sFiles = projectStructure.files.filter(f =>
-      f.name.toLowerCase().includes('kubernetes') ||
-      f.extension === 'yaml' && f.name.toLowerCase().includes('deployment')
+    const k8sFiles = projectStructure.files.filter(
+      (f) =>
+        f.name.toLowerCase().includes('kubernetes') ||
+        (f.extension === 'yaml' && f.name.toLowerCase().includes('deployment'))
     );
 
     if (dockerFiles.length > 0) score += 15;
@@ -451,7 +494,7 @@ export class PatternDetector {
    * @returns {number} Confidence score (0-100)
    */
   detectFeatureBasedPattern(projectStructure) {
-    const dirNames = projectStructure.directories.map(d => d.name.toLowerCase());
+    const dirNames = projectStructure.directories.map((d) => d.name.toLowerCase());
 
     let score = 0;
 
@@ -462,7 +505,7 @@ export class PatternDetector {
 
     // Check if feature directories contain multiple technical aspects
     // (e.g., a feature directory contains model, view, and controller files)
-    const featureDirs = projectStructure.directories.filter(d => {
+    const featureDirs = projectStructure.directories.filter((d) => {
       const path = d.path.toLowerCase();
       return path.includes('/features/') || path.includes('/modules/');
     });
@@ -472,7 +515,7 @@ export class PatternDetector {
     }
 
     // Check for feature-specific files
-    const featureSpecificFiles = projectStructure.files.filter(f => {
+    const featureSpecificFiles = projectStructure.files.filter((f) => {
       const path = f.path.toLowerCase();
       return path.includes('/features/') || path.includes('/modules/');
     });
@@ -492,23 +535,38 @@ export class PatternDetector {
    */
   async detectDependencyBasedPatterns(projectStructure, techData = {}) {
     if (this.verbose) {
-      console.log(chalk.gray('Performing advanced architectural pattern detection with dependency analysis...'));
+      console.log(
+        chalk.gray(
+          'Performing advanced architectural pattern detection with dependency analysis...'
+        )
+      );
     }
 
     try {
       // Use the DependencyAnalyzer to build and analyze the dependency graph
-      const dependencyAnalysis = await this.dependencyAnalyzer.analyzeDependencies(projectStructure, techData);
+      const dependencyAnalysis = await this.dependencyAnalyzer.analyzeDependencies(
+        projectStructure,
+        techData
+      );
 
       // If we couldn't build a dependency graph, return early
       if (!dependencyAnalysis || dependencyAnalysis.moduleCount === 0) {
         if (this.verbose) {
-          console.log(chalk.yellow('No dependencies found for analysis. Using directory-based detection only.'));
+          console.log(
+            chalk.yellow(
+              'No dependencies found for analysis. Using directory-based detection only.'
+            )
+          );
         }
         return;
       }
 
       if (this.verbose) {
-        console.log(chalk.gray(`Dependency graph built with ${dependencyAnalysis.moduleCount} modules and ${dependencyAnalysis.edgeCount} edges`));
+        console.log(
+          chalk.gray(
+            `Dependency graph built with ${dependencyAnalysis.moduleCount} modules and ${dependencyAnalysis.edgeCount} edges`
+          )
+        );
       }
 
       // Add architectural patterns from dependency analysis
@@ -517,7 +575,7 @@ export class PatternDetector {
           name: hint.pattern,
           confidence: hint.confidence,
           description: hint.evidence,
-          source: 'dependency-analysis'
+          source: 'dependency-analysis',
         });
       }
 
@@ -527,15 +585,15 @@ export class PatternDetector {
 
         this.architecturalPatterns.push({
           name: 'Layered Architecture',
-          confidence: Math.min(60 + (layerCount * 10), 90), // More layers increase confidence
+          confidence: Math.min(60 + layerCount * 10, 90), // More layers increase confidence
           description: `Detected ${layerCount} distinct layers in code dependencies with clear separation.`,
           source: 'dependency-analysis',
           details: {
-            layers: dependencyAnalysis.layeredStructure.map(l => ({
+            layers: dependencyAnalysis.layeredStructure.map((l) => ({
               name: l.name,
-              moduleCount: l.modules.length
-            }))
-          }
+              moduleCount: l.modules.length,
+            })),
+          },
         });
       }
 
@@ -543,10 +601,11 @@ export class PatternDetector {
       if (dependencyAnalysis.cyclesDetected) {
         this.codePatterns.push('circular-dependencies');
       }
-
     } catch (error) {
       if (this.verbose) {
-        console.error(chalk.yellow(`Error in dependency-based pattern detection: ${error.message}`));
+        console.error(
+          chalk.yellow(`Error in dependency-based pattern detection: ${error.message}`)
+        );
       }
     }
   }
@@ -579,16 +638,16 @@ export class PatternDetector {
         name,
         // Take highest confidence level and boost it slightly for multiple detections
         confidence: Math.min(
-          Math.max(...patterns.map(p => p.confidence)) + (patterns.length > 1 ? 10 : 0),
+          Math.max(...patterns.map((p) => p.confidence)) + (patterns.length > 1 ? 10 : 0),
           100
         ),
-        description: patterns.map(p => p.description).join(' '),
-        source: patterns.map(p => p.source).join('+'),
-        detectionCount: patterns.length
+        description: patterns.map((p) => p.description).join(' '),
+        source: patterns.map((p) => p.source).join('+'),
+        detectionCount: patterns.length,
       };
 
       // Merge any additional details
-      if (patterns.some(p => p.details)) {
+      if (patterns.some((p) => p.details)) {
         mergedPattern.details = {};
         for (const pattern of patterns) {
           if (pattern.details) {
@@ -626,21 +685,21 @@ export class PatternDetector {
     // Set up language-specific analyzers with correct mapping
     const analyzers = {
       // JavaScript family
-      'javascript': analyzeJavaScript,
+      javascript: analyzeJavaScript,
       'javascript-react': analyzeJavaScript,
-      'jsx': analyzeJavaScript,
-      'js': analyzeJavaScript,
+      jsx: analyzeJavaScript,
+      js: analyzeJavaScript,
 
       // TypeScript family - use TypeScript analyzer
-      'typescript': analyzeTypeScript,
+      typescript: analyzeTypeScript,
       'typescript-react': analyzeTypeScript,
-      'tsx': analyzeTypeScript,
-      'ts': analyzeTypeScript,
+      tsx: analyzeTypeScript,
+      ts: analyzeTypeScript,
 
       // Other languages
-      'python': analyzePython,
-      'py': analyzePython,
-      'swift': analyzeSwift
+      python: analyzePython,
+      py: analyzePython,
+      swift: analyzeSwift,
     };
 
     // Track files analyzed
@@ -649,16 +708,26 @@ export class PatternDetector {
 
     // These are the file types we know how to analyze
     const knownCodeTypes = [
-      'javascript', 'javascript-react', 'jsx', 'js',
-      'typescript', 'typescript-react', 'tsx', 'ts',
-      'python', 'py', 'swift'
+      'javascript',
+      'javascript-react',
+      'jsx',
+      'js',
+      'typescript',
+      'typescript-react',
+      'tsx',
+      'ts',
+      'python',
+      'py',
+      'swift',
     ];
 
     // Analyze samples of each supported language
     for (const [type, files] of Object.entries(filesByType)) {
       // Special handling for TypeScript files - always process with TypeScript analyzer
       const tsExtensions = ['.ts', '.tsx'];
-      const isTypeScript = files.some(file => tsExtensions.some(ext => file.path.endsWith(ext)));
+      const isTypeScript = files.some((file) =>
+        tsExtensions.some((ext) => file.path.endsWith(ext))
+      );
       if (isTypeScript) {
         // For TypeScript files, always use TypeScript analyzer
         const analyzer = analyzeTypeScript;
@@ -667,7 +736,7 @@ export class PatternDetector {
       }
 
       // Skip non-source code files and unknown types
-      const isKnownType = knownCodeTypes.some(knownType => type.includes(knownType));
+      const isKnownType = knownCodeTypes.some((knownType) => type.includes(knownType));
       if (!isKnownType) {
         skippedFiles += files.length;
         continue;
@@ -702,13 +771,13 @@ export class PatternDetector {
 
           // Map file extensions directly to analyzers
           const extensionMap = {
-            'ts': analyzeTypeScript,
-            'tsx': analyzeTypeScript,
-            'js': analyzeJavaScript,
-            'jsx': analyzeJavaScript,
-            'json': null, // Don't try to analyze JSON with JS parser
-            'py': analyzePython,
-            'swift': analyzeSwift
+            ts: analyzeTypeScript,
+            tsx: analyzeTypeScript,
+            js: analyzeJavaScript,
+            jsx: analyzeJavaScript,
+            json: null, // Don't try to analyze JSON with JS parser
+            py: analyzePython,
+            swift: analyzeSwift,
           };
 
           // Use extension-based analyzer if available, otherwise fallback to type-based
@@ -756,7 +825,9 @@ export class PatternDetector {
     }
 
     if (this.verbose) {
-      console.log(chalk.gray(`Analyzed ${totalFilesAnalyzed} files, skipped ${skippedFiles} non-code files`));
+      console.log(
+        chalk.gray(`Analyzed ${totalFilesAnalyzed} files, skipped ${skippedFiles} non-code files`)
+      );
     }
 
     // Determine dominant conventions
@@ -767,13 +838,19 @@ export class PatternDetector {
 
     if (this.verbose) {
       if (this.namingConventions.variables.dominant) {
-        console.log(chalk.gray(`Variable naming convention: ${this.namingConventions.variables.dominant}`));
+        console.log(
+          chalk.gray(`Variable naming convention: ${this.namingConventions.variables.dominant}`)
+        );
       }
       if (this.namingConventions.functions.dominant) {
-        console.log(chalk.gray(`Function naming convention: ${this.namingConventions.functions.dominant}`));
+        console.log(
+          chalk.gray(`Function naming convention: ${this.namingConventions.functions.dominant}`)
+        );
       }
       if (this.namingConventions.classes.dominant) {
-        console.log(chalk.gray(`Class naming convention: ${this.namingConventions.classes.dominant}`));
+        console.log(
+          chalk.gray(`Class naming convention: ${this.namingConventions.classes.dominant}`)
+        );
       }
     }
   }
@@ -800,9 +877,23 @@ export class PatternDetector {
     // Direct match
     if (analyzers[type]) return analyzers[type];
 
-    // Partial match
+    // Specific partial matches to avoid false positives like 'json' matching 'js'
+    const partialMatches = [
+      { pattern: 'javascript', key: 'javascript' },
+      { pattern: 'typescript', key: 'typescript' },
+      { pattern: 'python', key: 'python' },
+      { pattern: 'swift', key: 'swift' }
+    ];
+
+    for (const match of partialMatches) {
+      if (type.includes(match.pattern) && analyzers[match.key]) {
+        return analyzers[match.key];
+      }
+    }
+
+    // Legacy partial match for backward compatibility (more conservative)
     for (const [key, analyzer] of Object.entries(analyzers)) {
-      if (type.includes(key)) return analyzer;
+      if (key.length > 2 && type.includes(key)) return analyzer;
     }
 
     return null;
@@ -876,35 +967,42 @@ export class PatternDetector {
       overallConsistency: 0,
       namingConsistency: 0,
       architecturalConsistency: 0,
-      patternConsistency: 0
+      patternConsistency: 0,
     };
 
     // Calculate naming consistency
-    let namingScores = [];
+    const namingScores = [];
     for (const [category, data] of Object.entries(this.namingConventions)) {
-      if (data.dominant && data.dominant !== 'mixed' && data.patterns && data.patterns[data.dominant]) {
+      if (
+        data.dominant &&
+        data.dominant !== 'mixed' &&
+        data.patterns &&
+        data.patterns[data.dominant]
+      ) {
         namingScores.push(data.patterns[data.dominant] / 100);
       }
     }
 
-    metrics.namingConsistency = namingScores.length > 0
-      ? Math.round(namingScores.reduce((sum, score) => sum + score, 0) / namingScores.length * 100)
-      : 0;
+    metrics.namingConsistency =
+      namingScores.length > 0
+        ? Math.round(
+            (namingScores.reduce((sum, score) => sum + score, 0) / namingScores.length) * 100
+          )
+        : 0;
 
     // Calculate architectural consistency
-    metrics.architecturalConsistency = this.architecturalPatterns.length > 0
-      ? this.architecturalPatterns[0].confidence
-      : 0;
+    metrics.architecturalConsistency =
+      this.architecturalPatterns.length > 0 ? this.architecturalPatterns[0].confidence : 0;
 
     // Calculate overall consistency
-    const scores = [
-      metrics.namingConsistency,
-      metrics.architecturalConsistency
-    ].filter(score => score > 0);
+    const scores = [metrics.namingConsistency, metrics.architecturalConsistency].filter(
+      (score) => score > 0
+    );
 
-    metrics.overallConsistency = scores.length > 0
-      ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
-      : 0;
+    metrics.overallConsistency =
+      scores.length > 0
+        ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+        : 0;
 
     this.consistencyMetrics = metrics;
   }

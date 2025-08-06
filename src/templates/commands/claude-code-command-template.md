@@ -65,6 +65,7 @@ compatibilityNotes: "Requires Claude Code 1.0.38+"
 ## Purpose
 
 Clearly explain what this Claude Code command does and when to use it. Include:
+
 - Primary use case and objectives
 - Expected outcomes and benefits  
 - Prerequisites or setup requirements
@@ -75,6 +76,7 @@ Clearly explain what this Claude Code command does and when to use it. Include:
 ### Slash Command Usage
 
 This command is accessed via the slash command:
+
 ```
 /project:your-command [arguments]
 ```
@@ -84,18 +86,21 @@ This command is accessed via the slash command:
 ### File Reference Support
 
 The command supports Claude Code's `@` file reference syntax:
+
 ```
 /project:your-command @src/components/Button.tsx
 /project:your-command @docs/api-spec.md
 ```
 
 Auto-included files:
+
 - `@CLAUDE.md` - Project context and conventions
 - `@package.json` - Project dependencies and scripts
 
 ### Bash Command Integration
 
 The command can execute and include output from bash commands using `!` syntax:
+
 ```markdown
 Current git status: !`git status`
 Recent commits: !`git log --oneline -5`
@@ -104,13 +109,16 @@ Recent commits: !`git log --oneline -5`
 ### MCP Server Dependencies
 
 **Required MCP Servers:**
+
 - `git` - For repository operations and history analysis
 - `postgres` - For database schema analysis
 
 **Optional MCP Servers:**
+
 - `github` - Enhanced PR and issue integration
 
 Setup MCP servers:
+
 ```bash
 claude mcp add git git-mcp-server
 claude mcp add postgres postgres-mcp-server --env POSTGRES_URL="postgresql://..."
@@ -119,52 +127,61 @@ claude mcp add postgres postgres-mcp-server --env POSTGRES_URL="postgresql://...
 ## Usage Examples
 
 ### Basic Usage
+
 ```
 /project:your-command src/components
 ```
 
 **Context**: Standard component refactoring workflow  
-**What it does**: 
+**What it does**:
+
 1. Analyzes component structure in `src/components/`
 2. Applies project coding standards from `@CLAUDE.md`
 3. Updates imports and exports for consistency
 4. Runs validation checks
 
 **Expected Outcome**:
+
 - Components follow established patterns
 - Consistent import/export structure
 - Updated documentation if needed
 
 ### Advanced Usage with Arguments
+
 ```
 /project:your-command api/users --verbose
 ```
 
 **Context**: Debugging complex API issues  
 **What it does**:
+
 1. Deep analysis of user API endpoints
 2. Checks database integration via MCP
 3. Validates error handling patterns
 4. Provides detailed diagnostic output
 
 **Expected Outcome**:
+
 - Comprehensive API health report
 - Identified bottlenecks or issues
 - Suggested improvements with examples
 
 ### Integration with Git Workflow
+
 ```
 /project:your-command feature/user-auth
 ```
 
 **Context**: Preparing feature branch for review  
 **What it does**:
+
 1. Analyzes changes in feature branch: !`git diff main...feature/user-auth`
 2. Checks code quality and standards compliance
 3. Suggests commit message improvements
 4. Prepares PR description template
 
 **Expected Outcome**:
+
 - Clean, review-ready code
 - Consistent with project standards
 - Ready for team review
@@ -172,6 +189,7 @@ claude mcp add postgres postgres-mcp-server --env POSTGRES_URL="postgresql://...
 ## Command Implementation
 
 ### File Structure
+
 ```
 .claude/commands/your-command.md    # This command file
 .claude/settings.json               # Project permissions
@@ -179,6 +197,7 @@ CLAUDE.md                          # Project context (auto-included)
 ```
 
 ### Permissions Required
+
 ```json
 {
   "permissions": {
@@ -195,35 +214,42 @@ CLAUDE.md                          # Project context (auto-included)
 ```
 
 ### Hook Integration
+
 The command integrates with Claude Code's hook system:
 
 **Pre-execution hooks**:
+
 - `validate-environment` - Ensures git repo and dependencies are ready
 
 **Post-execution hooks**:
+
 - `cleanup-temp-files` - Removes any temporary analysis files
 
 ## Step-by-Step Process
 
 ### Phase 1: Context Gathering
+
 1. **Load project context** from `@CLAUDE.md`
 2. **Analyze target files/directories** specified in arguments
 3. **Gather git context**: !`git status` and recent changes
 4. **Check MCP server connectivity** for required integrations
 
 ### Phase 2: Analysis
+
 1. **Code structure analysis** using Claude Code's Read tool
 2. **Pattern detection** against project standards
 3. **Dependency analysis** via package.json and imports
 4. **Database schema alignment** (if applicable) via MCP
 
 ### Phase 3: Implementation  
+
 1. **Apply transformations** using Claude Code's Write/Edit tools
 2. **Update related files** (imports, exports, documentation)
 3. **Validate changes** with available linters/tests
 4. **Generate summary** of changes made
 
 ### Phase 4: Verification
+
 1. **Run validation checks** via Bash tool if configured
 2. **Check git status** for untracked files
 3. **Provide commit suggestions** if appropriate
@@ -232,12 +258,14 @@ The command integrates with Claude Code's hook system:
 ## Error Handling
 
 ### Common Issues
+
 - **MCP server not available**: Command gracefully degrades without database features
 - **Git repository not found**: Operates in single-file mode without version control features  
 - **Permission denied**: Requests approval for required tools
 - **Invalid arguments**: Provides helpful usage examples
 
 ### Troubleshooting
+
 ```bash
 # Verify MCP servers are running
 claude /mcp
@@ -252,16 +280,19 @@ claude /permissions
 ## Integration with Claude Code Features
 
 ### Memory Management
+
 - Automatically reads `CLAUDE.md` for project context
 - Can update project documentation based on changes
 - Respects `.claudeignore` patterns
 
 ### IDE Integration  
+
 - Works with VS Code, Cursor, Windsurf via Claude Code extension
 - File changes appear in IDE diff viewer
 - Supports IDE's diagnostic sharing
 
 ### Team Collaboration
+
 - Command shared via `.claude/commands/` in source control
 - Consistent behavior across team members
 - Respects project-level permission settings
@@ -276,6 +307,7 @@ claude /permissions
 ## Version History
 
 ### 1.0.0 (2025-01-27)
+
 - Initial implementation
 - Basic file processing and validation
 - MCP integration for git and database

@@ -1,6 +1,7 @@
 # Pull Request
 
 ## Type of Change
+
 <!-- Please check the one that applies -->
 
 - [ ] Rule Contribution (please use the rule-contribution template instead)

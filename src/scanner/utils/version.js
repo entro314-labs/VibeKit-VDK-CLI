@@ -1,6 +1,6 @@
 /**
  * version.js
- * 
+ *
  * Utility for retrieving the package version information.
  */
 

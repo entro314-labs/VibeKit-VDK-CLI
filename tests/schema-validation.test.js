@@ -6,7 +6,11 @@
  * Test the schema validation utility with the new schemas
  */
 
-import { validateCommand, validateBlueprint, getAvailableSchemas } from '../src/utils/schema-validator.js';
+import {
+  getAvailableSchemas,
+  validateBlueprint,
+  validateCommand,
+} from '../src/utils/schema-validator.js';
 
 console.log('🧪 Testing Schema Validation...\n');
 
@@ -20,13 +24,13 @@ const validCommand = {
   target: 'claude-code',
   commandType: 'slash',
   version: '1.0.0',
-  scope: 'project'
+  scope: 'project',
 };
 
 const invalidCommand = {
   id: 'invalid',
   // Missing required fields
-  target: 'invalid-platform'
+  target: 'invalid-platform',
 };
 
 try {
@@ -37,7 +41,10 @@ try {
   }
 
   const invalidResult = await validateCommand(invalidCommand);
-  console.log('❌ Invalid command:', !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED');
+  console.log(
+    '❌ Invalid command:',
+    !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED'
+  );
   if (!invalidResult.valid) {
     console.log('   Expected errors:', invalidResult.errors.slice(0, 3));
   }
@@ -56,13 +63,13 @@ const validBlueprint = {
   platforms: {
     claude_code: {
       supported: true,
-      format: 'markdown'
-    }
-  }
+      format: 'markdown',
+    },
+  },
 };
 
 const invalidBlueprint = {
-  id: 'invalid-blueprint'
+  id: 'invalid-blueprint',
   // Missing required fields
 };
 
@@ -74,7 +81,10 @@ try {
   }
 
   const invalidResult = await validateBlueprint(invalidBlueprint);
-  console.log('❌ Invalid blueprint:', !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED');
+  console.log(
+    '❌ Invalid blueprint:',
+    !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED'
+  );
   if (!invalidResult.valid) {
     console.log('   Expected errors:', invalidResult.errors.slice(0, 3));
   }

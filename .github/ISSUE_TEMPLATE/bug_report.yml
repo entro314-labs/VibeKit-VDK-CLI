@@ -1,7 +1,7 @@
 name: 🐛 Bug Report
 description: Report a bug or issue with VDK CLI
-title: "[Bug]: "
-labels: ["bug"]
+title: '[Bug]: '
+labels: ['bug']
 assignees: []
 
 body:
@@ -80,7 +80,7 @@ body:
     attributes:
       label: Node.js Version
       description: What version of Node.js are you running?
-      placeholder: "22.1.0"
+      placeholder: '22.1.0'
     validations:
       required: true
 
@@ -135,7 +135,7 @@ body:
       description: Please include any relevant error messages or logs
       placeholder: |
         Paste error logs here...
-        
+
         Run with --verbose flag for detailed logs:
         vdk command --verbose
       render: shell
@@ -147,7 +147,7 @@ body:
       description: Please share your VDK configuration (remove any sensitive information)
       placeholder: |
         Run: vdk config list --format json
-        
+
         Paste configuration here...
       render: json
 

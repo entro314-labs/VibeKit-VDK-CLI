@@ -5,10 +5,10 @@
  * Each IDE gets rules in the format that makes the most sense for that platform.
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import os from 'os';
 import chalk from 'chalk';
+import fs from 'fs/promises';
+import os from 'os';
+import path from 'path';
 
 export class RuleAdapter {
   constructor(options = {}) {
@@ -17,23 +17,23 @@ export class RuleAdapter {
 
     // Centralized character limits for each IDE
     this.characterLimits = {
-      'windsurf': {
+      windsurf: {
         perFile: 6000,
         totalWorkspace: 12000,
-        global: 6000
+        global: 6000,
       },
       'github-copilot': {
         perGuideline: 600,
-        maxGuidelines: 6
+        maxGuidelines: 6,
       },
-      'cursor': {
+      cursor: {
         perFile: Infinity, // No specific limit
-        total: Infinity
+        total: Infinity,
       },
-      'claude': {
+      claude: {
         perFile: Infinity, // No specific limit
-        perCommand: 10000  // Reasonable limit for commands
-      }
+        perCommand: 10000, // Reasonable limit for commands
+      },
     };
   }
 
@@ -89,20 +89,23 @@ export class RuleAdapter {
 
     // Smart truncation at sentence boundaries
     const truncationPoint = this.findSmartTruncationPoint(content, limit);
-    const truncatedContent = content.substring(0, truncationPoint) +
+    const truncatedContent =
+      content.substring(0, truncationPoint) +
       (truncationPoint < content.length ? '\n\n*Truncated due to character limit*' : '');
 
     if (this.verbose) {
-      console.warn(chalk.yellow(
-        `Content truncated for ${ideType} (${content.length} → ${truncatedContent.length} chars)`
-      ));
+      console.warn(
+        chalk.yellow(
+          `Content truncated for ${ideType} (${content.length} → ${truncatedContent.length} chars)`
+        )
+      );
     }
 
     return {
       content: truncatedContent,
       truncated: true,
       originalLength: content.length,
-      truncatedLength: truncatedContent.length
+      truncatedLength: truncatedContent.length,
     };
   }
 
@@ -123,14 +126,15 @@ export class RuleAdapter {
     // Try to find good truncation points in order of preference
     const truncationPoints = [
       content.lastIndexOf('\n\n', targetLength), // Paragraph boundary
-      content.lastIndexOf('.\n', targetLength),   // Sentence with newline
-      content.lastIndexOf('. ', targetLength),    // Sentence boundary
-      content.lastIndexOf('\n', targetLength),    // Line boundary
-      targetLength                                 // Hard truncation
+      content.lastIndexOf('.\n', targetLength), // Sentence with newline
+      content.lastIndexOf('. ', targetLength), // Sentence boundary
+      content.lastIndexOf('\n', targetLength), // Line boundary
+      targetLength, // Hard truncation
     ];
 
     for (const point of truncationPoints) {
-      if (point > targetLength * 0.7) { // Keep at least 70% of content
+      if (point > targetLength * 0.7) {
+        // Keep at least 70% of content
         return point;
       }
     }
@@ -152,9 +156,8 @@ export class RuleAdapter {
     const userCommandsDir = path.join(os.homedir(), '.claude', 'commands');
 
     // 1. Global memory (cross-project preferences) - Deploy to ~/.claude/CLAUDE.md
-    const globalRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'core' &&
-      rule.frontmatter?.alwaysApply === true
+    const globalRules = rules.filter(
+      (rule) => rule.frontmatter?.category === 'core' && rule.frontmatter?.alwaysApply === true
     );
 
     if (globalRules.length > 0) {
@@ -164,14 +167,15 @@ export class RuleAdapter {
         content: globalContent,
         type: 'memory',
         scope: 'global',
-        hierarchyLevel: 'global'
+        hierarchyLevel: 'global',
       });
     }
 
     // 2. Main project memory (team-shared conventions) - Deploy to ./CLAUDE.md
-    const coreRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'core' ||
-      (rule.frontmatter?.alwaysApply === true && rule.frontmatter?.category !== 'core')
+    const coreRules = rules.filter(
+      (rule) =>
+        rule.frontmatter?.category === 'core' ||
+        (rule.frontmatter?.alwaysApply === true && rule.frontmatter?.category !== 'core')
     );
 
     if (coreRules.length > 0) {
@@ -181,15 +185,16 @@ export class RuleAdapter {
         content: claudeMainContent,
         type: 'memory',
         scope: 'project',
-        hierarchyLevel: 'project'
+        hierarchyLevel: 'project',
       });
     }
 
     // 3. Technology-specific memory files with import structure
-    const techRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'technology' ||
-      rule.frontmatter?.category === 'framework' ||
-      rule.frontmatter?.category === 'language'
+    const techRules = rules.filter(
+      (rule) =>
+        rule.frontmatter?.category === 'technology' ||
+        rule.frontmatter?.category === 'framework' ||
+        rule.frontmatter?.category === 'language'
     );
 
     if (techRules.length > 0) {
@@ -199,7 +204,7 @@ export class RuleAdapter {
         content: claudeTechContent,
         type: 'memory',
         scope: 'project',
-        hierarchyLevel: 'technology'
+        hierarchyLevel: 'technology',
       });
     }
 
@@ -210,11 +215,11 @@ export class RuleAdapter {
       content: personalPrefsContent,
       type: 'memory',
       scope: 'import',
-      hierarchyLevel: 'personal'
+      hierarchyLevel: 'personal',
     });
 
     // 5. Project commands (namespace: /project:)
-    const taskRules = rules.filter(rule => rule.frontmatter?.category === 'task');
+    const taskRules = rules.filter((rule) => rule.frontmatter?.category === 'task');
 
     for (const rule of taskRules) {
       const commandContent = this.generateClaudeSlashCommand(rule, projectContext);
@@ -226,14 +231,14 @@ export class RuleAdapter {
         type: 'command',
         scope: 'project',
         namespace: 'project',
-        commandName: commandName
+        commandName: commandName,
       });
     }
 
     // 6. User commands (namespace: /user:) - Deploy to ~/.claude/commands/
-    const personalRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'assistant' ||
-      rule.frontmatter?.category === 'workflow'
+    const personalRules = rules.filter(
+      (rule) =>
+        rule.frontmatter?.category === 'assistant' || rule.frontmatter?.category === 'workflow'
     );
 
     for (const rule of personalRules) {
@@ -246,17 +251,17 @@ export class RuleAdapter {
         type: 'command',
         scope: 'user',
         namespace: 'user',
-        commandName: commandName
+        commandName: commandName,
       });
     }
 
     return {
       files: adaptedFiles,
       summary: {
-        memoryFiles: adaptedFiles.filter(f => f.type === 'memory').length,
-        commands: adaptedFiles.filter(f => f.type === 'command').length,
-        totalSize: adaptedFiles.reduce((size, file) => size + file.content.length, 0)
-      }
+        memoryFiles: adaptedFiles.filter((f) => f.type === 'memory').length,
+        commands: adaptedFiles.filter((f) => f.type === 'command').length,
+        totalSize: adaptedFiles.reduce((size, file) => size + file.content.length, 0),
+      },
     };
   }
 
@@ -284,7 +289,7 @@ export class RuleAdapter {
         type: 'rule',
         activation: 'always',
         scope: 'project',
-        priority: 'high'
+        priority: 'high',
       });
     }
 
@@ -300,7 +305,7 @@ export class RuleAdapter {
         activation: 'auto-attached',
         scope: 'project',
         globs: rule.frontmatter?.globs || [],
-        priority: 'medium'
+        priority: 'medium',
       });
     }
 
@@ -316,7 +321,7 @@ export class RuleAdapter {
         activation: 'agent-requested',
         scope: 'project',
         description: rule.frontmatter?.description,
-        priority: 'medium'
+        priority: 'medium',
       });
     }
 
@@ -333,7 +338,7 @@ export class RuleAdapter {
         activation: 'manual',
         scope: 'project',
         ruleName: ruleName,
-        priority: 'low'
+        priority: 'low',
       });
     }
 
@@ -344,8 +349,8 @@ export class RuleAdapter {
         autoAttached: rulesByActivation.autoAttached.length,
         agentRequested: rulesByActivation.agentRequested.length,
         manual: rulesByActivation.manual.length,
-        totalFiles: adaptedFiles.length
-      }
+        totalFiles: adaptedFiles.length,
+      },
     };
   }
 
@@ -395,7 +400,10 @@ ${cleanContent}`;
 
     let baseName = framework || category;
     if (description) {
-      baseName = description.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-');
+      baseName = description
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .replace(/\s+/g, '-');
     }
 
     return `${baseName.toLowerCase().replace(/[^a-z0-9-]/g, '')}.md`;
@@ -411,14 +419,17 @@ ${cleanContent}`;
       always: [],
       autoAttached: [],
       agentRequested: [],
-      manual: []
+      manual: [],
     };
 
     for (const rule of rules) {
       const activationType = this.getCursorActivationType(rule);
-      const groupKey = activationType === 'auto-attached' ? 'autoAttached' :
-                      activationType === 'agent-requested' ? 'agentRequested' :
-                      activationType;
+      const groupKey =
+        activationType === 'auto-attached'
+          ? 'autoAttached'
+          : activationType === 'agent-requested'
+            ? 'agentRequested'
+            : activationType;
 
       if (groups[groupKey]) {
         groups[groupKey].push(rule);
@@ -463,9 +474,8 @@ ${cleanContent}`;
     const projectRuleFile = path.join(this.projectPath, '.windsurfrules.md');
 
     // 1. Global rules (organization-wide standards) - Deploy to ~/.codeium/windsurf/memories/
-    const globalRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'core' ||
-      rule.frontmatter?.alwaysApply === true
+    const globalRules = rules.filter(
+      (rule) => rule.frontmatter?.category === 'core' || rule.frontmatter?.alwaysApply === true
     );
 
     if (globalRules.length > 0) {
@@ -485,14 +495,13 @@ ${cleanContent}`;
         type: 'memory',
         scope: 'global',
         characterCount: globalContent.length,
-        activationType: 'always-on'
+        activationType: 'always-on',
       });
     }
 
     // 2. Workspace rules (project-specific) - Deploy to .windsurf/rules/
-    const workspaceRules = rules.filter(rule =>
-      rule.frontmatter?.category !== 'core' &&
-      rule.frontmatter?.alwaysApply !== true
+    const workspaceRules = rules.filter(
+      (rule) => rule.frontmatter?.category !== 'core' && rule.frontmatter?.alwaysApply !== true
     );
 
     for (const rule of workspaceRules) {
@@ -501,9 +510,12 @@ ${cleanContent}`;
       // Ensure character limit compliance (6K per file)
       if (windsurfContent.length > 6000) {
         if (this.verbose) {
-          console.warn(chalk.yellow(`Rule ${rule.frontmatter?.description} exceeds 6K limit, truncating...`));
+          console.warn(
+            chalk.yellow(`Rule ${rule.frontmatter?.description} exceeds 6K limit, truncating...`)
+          );
         }
-        windsurfContent = windsurfContent.substring(0, 5900) + '\n\n*Truncated due to character limit*';
+        windsurfContent =
+          windsurfContent.substring(0, 5900) + '\n\n*Truncated due to character limit*';
       }
 
       const fileName = this.getWindsurfFileName(rule);
@@ -515,13 +527,16 @@ ${cleanContent}`;
         type: 'rule',
         scope: 'workspace',
         characterCount: windsurfContent.length,
-        activationType: activationType
+        activationType: activationType,
       });
     }
 
     // 3. Project rule file (.windsurfrules.md) - Alternative single-file approach
     if (workspaceRules.length > 0) {
-      const consolidatedContent = this.generateConsolidatedWindsurfRules(workspaceRules, projectContext);
+      const consolidatedContent = this.generateConsolidatedWindsurfRules(
+        workspaceRules,
+        projectContext
+      );
 
       // Check if consolidated approach is better (fewer files, under limits)
       if (consolidatedContent.length <= 6000 && workspaceRules.length > 3) {
@@ -531,27 +546,30 @@ ${cleanContent}`;
           type: 'project-rules',
           scope: 'project',
           characterCount: consolidatedContent.length,
-          activationType: 'model-decision'
+          activationType: 'model-decision',
         });
       }
     }
 
     // Ensure total character limit compliance (12K across all workspace rules)
     const totalChars = adaptedFiles
-      .filter(f => f.scope === 'workspace')
+      .filter((f) => f.scope === 'workspace')
       .reduce((total, file) => total + file.characterCount, 0);
 
     if (totalChars > 12000) {
       if (this.verbose) {
-        console.warn(chalk.yellow(`⚠️ Windsurf workspace rules exceed 12K total limit (${totalChars} chars)`));
+        console.warn(
+          chalk.yellow(`⚠️ Windsurf workspace rules exceed 12K total limit (${totalChars} chars)`)
+        );
       }
 
       // Truncate files proportionally to stay under limit
       const reductionRatio = 11000 / totalChars; // Leave some buffer
-      for (const file of adaptedFiles.filter(f => f.scope === 'workspace')) {
+      for (const file of adaptedFiles.filter((f) => f.scope === 'workspace')) {
         const targetLength = Math.floor(file.characterCount * reductionRatio);
         if (file.content.length > targetLength) {
-          file.content = file.content.substring(0, targetLength - 50) + '\n\n*Truncated for total limit*';
+          file.content =
+            file.content.substring(0, targetLength - 50) + '\n\n*Truncated for total limit*';
           file.characterCount = file.content.length;
         }
       }
@@ -560,11 +578,11 @@ ${cleanContent}`;
     return {
       files: adaptedFiles,
       summary: {
-        globalRules: adaptedFiles.filter(f => f.scope === 'global').length,
-        workspaceRules: adaptedFiles.filter(f => f.scope === 'workspace').length,
+        globalRules: adaptedFiles.filter((f) => f.scope === 'global').length,
+        workspaceRules: adaptedFiles.filter((f) => f.scope === 'workspace').length,
         totalCharacters: adaptedFiles.reduce((total, file) => total + file.characterCount, 0),
-        characterLimit: 12000
-      }
+        characterLimit: 12000,
+      },
     };
   }
 
@@ -584,7 +602,7 @@ ${cleanContent}`;
       number: index + 1,
       name: rule.frontmatter?.description || `Rule ${index + 1}`,
       description: this.truncateToCharLimit(this.stripFrontmatter(rule.content), 600), // 600 char limit
-      filePatterns: rule.frontmatter?.globs || ['**/*']
+      filePatterns: rule.frontmatter?.globs || ['**/*'],
     }));
 
     const instructionsContent = `# GitHub Copilot Setup Instructions
@@ -596,11 +614,15 @@ ${cleanContent}`;
 1. Go to Settings → Code & automation → Copilot → Code review
 2. Add these coding guidelines:
 
-${guidelines.map(guideline => `
+${guidelines
+  .map(
+    (guideline) => `
 ### Guideline ${guideline.number}: ${guideline.name}
 **Description:** ${guideline.description}
 **File patterns:** ${guideline.filePatterns.join(', ')}
-`).join('')}
+`
+  )
+  .join('')}
 
 ## Important Notes
 - Guidelines only apply to code reviews, not code completion
@@ -619,20 +641,22 @@ For file-based AI rule management, consider:
 *Generated by VDK CLI - Setup Instructions Only*`;
 
     return {
-      files: [{
-        path: path.join(this.projectPath, 'GITHUB_COPILOT_SETUP.md'),
-        content: instructionsContent,
-        type: 'instructions',
-        scope: 'repository'
-      }],
+      files: [
+        {
+          path: path.join(this.projectPath, 'GITHUB_COPILOT_SETUP.md'),
+          content: instructionsContent,
+          type: 'instructions',
+          scope: 'repository',
+        },
+      ],
       guidelines,
       summary: {
         totalGuidelines: guidelines.length,
         maxGuidelines: 6,
         requiresManualSetup: true,
         enterpriseOnly: true,
-        approach: 'instructions-only'
-      }
+        approach: 'instructions-only',
+      },
     };
   }
 
@@ -697,7 +721,7 @@ For file-based AI rule management, consider:
     const projectName = path.basename(this.projectPath);
     const techStack = projectContext.techStack || {};
 
-    let content = `# ${projectName} - Claude Code Memory
+    const content = `# ${projectName} - Claude Code Memory
 
 ## Project Overview
 
@@ -768,7 +792,11 @@ This file contains technology and framework-specific patterns for this project.
 
       for (const rule of rules) {
         const cleanContent = this.stripFrontmatter(rule.content);
-        content += this.extractKeySections(cleanContent, ['patterns', 'best practices', 'conventions']);
+        content += this.extractKeySections(cleanContent, [
+          'patterns',
+          'best practices',
+          'conventions',
+        ]);
         content += '\n';
       }
 
@@ -881,7 +909,12 @@ ${cleanContent}
     const category = rule.frontmatter?.category || 'general';
     const xmlTag = this.getWindsurfXMLTag(category);
 
-    const keyContent = this.extractKeySections(content, ['principles', 'guidelines', 'patterns', 'best practices']);
+    const keyContent = this.extractKeySections(content, [
+      'principles',
+      'guidelines',
+      'patterns',
+      'best practices',
+    ]);
 
     return `<${xmlTag}>
 ${this.formatForWindsurf(keyContent)}
@@ -890,13 +923,13 @@ ${this.formatForWindsurf(keyContent)}
 
   getWindsurfXMLTag(category) {
     const tagMap = {
-      'core': 'development-standards',
-      'language': 'language-standards',
-      'technology': 'technology-guidelines',
-      'framework': 'technology-guidelines',
-      'testing': 'testing-patterns',
-      'task': 'task-workflow',
-      'assistant': 'ai-assistance'
+      core: 'development-standards',
+      language: 'language-standards',
+      technology: 'technology-guidelines',
+      framework: 'technology-guidelines',
+      testing: 'testing-patterns',
+      task: 'task-workflow',
+      assistant: 'ai-assistance',
     };
     return tagMap[category] || 'rule';
   }
@@ -905,8 +938,8 @@ ${this.formatForWindsurf(keyContent)}
     // Format content for Windsurf XML sections with proper indentation
     return content
       .split('\n')
-      .map(line => line.trim() ? `- ${line.trim()}` : '')
-      .filter(line => line)
+      .map((line) => (line.trim() ? `- ${line.trim()}` : ''))
+      .filter((line) => line)
       .join('\n');
   }
 
@@ -960,7 +993,7 @@ ${this.formatForWindsurf(keyContent)}
       for (const rule of categoryRules) {
         const cleanContent = this.stripFrontmatter(rule.content);
         const keyPoints = this.extractKeyPoints(cleanContent);
-        content += keyPoints.map(point => `- ${point}`).join('\n') + '\n';
+        content += keyPoints.map((point) => `- ${point}`).join('\n') + '\n';
       }
 
       content += `</${xmlTag}>\n\n`;
@@ -1001,7 +1034,8 @@ ${this.formatForWindsurf(keyContent)}
     const truncated = content.substring(0, limit - 3);
     const lastSentence = truncated.lastIndexOf('.');
 
-    if (lastSentence > limit * 0.7) { // If we can keep at least 70% and end at sentence
+    if (lastSentence > limit * 0.7) {
+      // If we can keep at least 70% and end at sentence
       return truncated.substring(0, lastSentence + 1);
     }
 
@@ -1013,7 +1047,7 @@ ${this.formatForWindsurf(keyContent)}
   prioritizeRulesForCopilot(rules) {
     // Prioritize rules based on their effectiveness for code review
     return rules
-      .filter(rule => rule.frontmatter?.category !== 'assistant') // Skip assistant-specific rules
+      .filter((rule) => rule.frontmatter?.category !== 'assistant') // Skip assistant-specific rules
       .sort((a, b) => {
         const aPriority = this.getCopilotPriority(a);
         const bPriority = this.getCopilotPriority(b);
@@ -1038,14 +1072,15 @@ ${this.formatForWindsurf(keyContent)}
   }
 
   generateCopilotGuideline(rule, projectContext) {
-    const title = this.extractTitle(this.stripFrontmatter(rule.content)) || rule.frontmatter?.description;
+    const title =
+      this.extractTitle(this.stripFrontmatter(rule.content)) || rule.frontmatter?.description;
     const description = this.generateCopilotDescription(rule);
     const paths = rule.frontmatter?.globs || [];
 
     return {
       title: title.substring(0, 100), // Reasonable title length
       description: description.substring(0, 600), // GitHub Copilot limit
-      paths: paths
+      paths: paths,
     };
   }
 
@@ -1083,7 +1118,7 @@ This directory contains GitHub Copilot Enterprise coding guidelines generated by
 
 `;
       if (guideline.paths.length > 0) {
-        content += `**File Patterns**: ${guideline.paths.map(p => `\`${p}\``).join(', ')}
+        content += `**File Patterns**: ${guideline.paths.map((p) => `\`${p}\``).join(', ')}
 
 `;
       }
@@ -1120,7 +1155,7 @@ This directory contains GitHub Copilot Enterprise coding guidelines generated by
 
   extractTitle(content) {
     const lines = content.split('\n');
-    const titleLine = lines.find(line => line.startsWith('# '));
+    const titleLine = lines.find((line) => line.startsWith('# '));
     return titleLine ? titleLine.replace('# ', '').trim() : 'Untitled';
   }
 
@@ -1132,7 +1167,7 @@ This directory contains GitHub Copilot Enterprise coding guidelines generated by
     for (const line of lines) {
       if (line.startsWith('## ')) {
         const sectionTitle = line.toLowerCase();
-        inTargetSection = sectionTypes.some(type => sectionTitle.includes(type));
+        inTargetSection = sectionTypes.some((type) => sectionTitle.includes(type));
       }
 
       if (inTargetSection && !line.startsWith('#')) {
@@ -1146,9 +1181,9 @@ This directory contains GitHub Copilot Enterprise coding guidelines generated by
   extractKeyPoints(content) {
     const lines = content.split('\n');
     return lines
-      .filter(line => line.trim().startsWith('-') || line.trim().startsWith('*'))
-      .map(line => line.replace(/^[-*]\s*/, '').trim())
-      .filter(line => line.length > 10); // Filter out very short points
+      .filter((line) => line.trim().startsWith('-') || line.trim().startsWith('*'))
+      .map((line) => line.replace(/^[-*]\s*/, '').trim())
+      .filter((line) => line.length > 10); // Filter out very short points
   }
 
   groupRulesByTechnology(rules) {

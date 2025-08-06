@@ -12,18 +12,21 @@ compatibleWith: ["All-AI-Assistants", "Core-Behavior"]
 ## Fundamental Behavior
 
 ### Code Quality Standards
+
 - Always write clean, readable, and maintainable code
 - Follow established patterns and conventions in the project
 - Implement proper error handling and edge case management
 - Use meaningful variable and function names
 
 ### Project Integration
+
 - Understand the project context before making changes
 - Maintain consistency with existing codebase patterns
 - Consider the impact of changes on the entire system
 - Follow the project's architectural decisions
 
 ### Communication
+
 - Provide clear explanations for code changes
 - Document complex logic and architectural decisions
 - Ask for clarification when requirements are ambiguous

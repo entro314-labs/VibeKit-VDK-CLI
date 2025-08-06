@@ -1,9 +1,10 @@
-import path from 'path';
+import chalk from 'chalk';
 import fs from 'fs-extra';
 import os from 'os';
-import chalk from 'chalk';
-import { RuleAdapter } from './RuleAdapter.js';
+import path from 'path';
+
 import { validateCommand } from '../../utils/schema-validator.js';
+import { RuleAdapter } from './RuleAdapter.js';
 
 /**
  * Enhanced Claude Code Adapter
@@ -35,7 +36,7 @@ export class ClaudeCodeAdapter extends RuleAdapter {
       memoryHierarchy: await this.generateMemoryHierarchy(rules, projectContext, categoryFilter),
       slashCommands: await this.generateSlashCommands(rules, projectContext, categoryFilter),
       mcpIntegrations: await this.generateMcpIntegrations(rules, projectContext),
-      settings: await this.generateClaudeSettings(rules, projectContext)
+      settings: await this.generateClaudeSettings(rules, projectContext),
     };
 
     // Ensure .claude directory exists
@@ -80,14 +81,14 @@ export class ClaudeCodeAdapter extends RuleAdapter {
         console.log('🔍 Fetching technology-specific rules for Claude Code...');
         // Use the full projectContext as analysisData since it contains technologyData
         technologyRules = await this.ruleGenerator.fetchFromRepository(
-          projectContext, 
-          'rules', 
+          projectContext,
+          'rules',
           null, // No specific platform filter for rules
           categoryFilter
         );
         console.log(`📚 Fetched ${technologyRules.length} technology-specific rules`);
         if (technologyRules.length > 0) {
-          console.log(`📋 Rule names: ${technologyRules.map(r => r.name).join(', ')}`);
+          console.log(`📋 Rule names: ${technologyRules.map((r) => r.name).join(', ')}`);
         }
       } catch (error) {
         console.warn(`⚠️ Failed to fetch technology rules: ${error.message}`);
@@ -95,12 +96,16 @@ export class ClaudeCodeAdapter extends RuleAdapter {
     }
 
     // Main project memory with CORRECT Claude Code structure and technology rules
-    const mainMemory = await this.generateCorrectClaudeMainMemory(rules, projectContext, technologyRules);
+    const mainMemory = await this.generateCorrectClaudeMainMemory(
+      rules,
+      projectContext,
+      technologyRules
+    );
     memories.push({
       path: path.join(this.projectPath, 'CLAUDE.md'),
       content: mainMemory,
       type: 'project',
-      priority: 'high'
+      priority: 'high',
     });
 
     return memories;
@@ -121,7 +126,10 @@ export class ClaudeCodeAdapter extends RuleAdapter {
     const testFramework = techData.testFramework || 'jest';
 
     // Extract technology-specific guidelines from remote rules
-    const technologyGuidelines = await this.extractTechnologyGuidelines(technologyRules, projectContext);
+    const technologyGuidelines = await this.extractTechnologyGuidelines(
+      technologyRules,
+      projectContext
+    );
 
     return `# ${projectName} - Claude Code Memory
 
@@ -219,9 +227,11 @@ ${technologyGuidelines}
 - Use project-specific conventions`;
     }
 
-    console.log(`🔍 Processing ${technologyRules.length} technology rules for guidelines extraction`);
+    console.log(
+      `🔍 Processing ${technologyRules.length} technology rules for guidelines extraction`
+    );
     if (this.verbose) {
-      technologyRules.forEach(rule => {
+      technologyRules.forEach((rule) => {
         console.log(`   📄 Rule: ${rule.name}, Content length: ${rule.content?.length || 0}`);
       });
     }
@@ -242,27 +252,28 @@ ${technologyGuidelines}
       const frameworkAliases = {
         'tailwind css': ['tailwind', 'tailwindcss'],
         'next.js': ['nextjs'],
-        'supabase': ['supabase'],
-        'react': ['react'],
-        'typescript': ['typescript', 'ts'],
-        'shadcn/ui': ['shadcn', 'shadcnui']
+        supabase: ['supabase'],
+        react: ['react'],
+        typescript: ['typescript', 'ts'],
+        'shadcn/ui': ['shadcn', 'shadcnui'],
       };
-      
+
       const searchTerms = [frameworkLower];
       if (frameworkAliases[frameworkLower]) {
         searchTerms.push(...frameworkAliases[frameworkLower]);
       }
-      
-      const frameworkRules = technologyRules.filter(rule => 
-        searchTerms.some(term => 
-          rule.name.toLowerCase().includes(term) ||
-          rule.path?.toLowerCase().includes(term)
+
+      const frameworkRules = technologyRules.filter((rule) =>
+        searchTerms.some(
+          (term) =>
+            rule.name.toLowerCase().includes(term) || rule.path?.toLowerCase().includes(term)
         )
       );
-      
+
       if (frameworkRules.length > 0) {
         guidelines.push(`### ${framework} Guidelines`);
-        for (const rule of frameworkRules.slice(0, 3)) { // Limit to 3 most relevant
+        for (const rule of frameworkRules.slice(0, 3)) {
+          // Limit to 3 most relevant
           const extractedContent = this.extractRuleContent(rule.content, projectContext);
           if (extractedContent) {
             guidelines.push(extractedContent);
@@ -274,14 +285,16 @@ ${technologyGuidelines}
 
     // Extract language-specific guidelines
     for (const language of languages) {
-      const languageRules = technologyRules.filter(rule => 
-        rule.name.toLowerCase().includes(language.toLowerCase()) ||
-        rule.path?.toLowerCase().includes(language.toLowerCase())
+      const languageRules = technologyRules.filter(
+        (rule) =>
+          rule.name.toLowerCase().includes(language.toLowerCase()) ||
+          rule.path?.toLowerCase().includes(language.toLowerCase())
       );
-      
+
       if (languageRules.length > 0) {
         guidelines.push(`### ${language} Guidelines`);
-        for (const rule of languageRules.slice(0, 2)) { // Limit to 2 most relevant
+        for (const rule of languageRules.slice(0, 2)) {
+          // Limit to 2 most relevant
           const extractedContent = this.extractRuleContent(rule.content, projectContext);
           if (extractedContent) {
             guidelines.push(extractedContent);
@@ -299,24 +312,25 @@ ${technologyGuidelines}
         'shadcn/ui': ['shadcn', 'shadcnui'],
         'tailwind css': ['tailwind', 'tailwindcss'],
         'radix ui': ['radix'],
-        'framer motion': ['framer']
+        'framer motion': ['framer'],
       };
-      
+
       const searchTerms = [libraryLower];
       if (libraryAliases[libraryLower]) {
         searchTerms.push(...libraryAliases[libraryLower]);
       }
-      
-      const libraryRules = technologyRules.filter(rule => 
-        searchTerms.some(term => 
-          rule.name.toLowerCase().includes(term) ||
-          rule.path?.toLowerCase().includes(term)
+
+      const libraryRules = technologyRules.filter((rule) =>
+        searchTerms.some(
+          (term) =>
+            rule.name.toLowerCase().includes(term) || rule.path?.toLowerCase().includes(term)
         )
       );
-      
+
       if (libraryRules.length > 0) {
         guidelines.push(`### ${library} Guidelines`);
-        for (const rule of libraryRules.slice(0, 2)) { // Limit to 2 most relevant
+        for (const rule of libraryRules.slice(0, 2)) {
+          // Limit to 2 most relevant
           const extractedContent = this.extractRuleContent(rule.content, projectContext);
           if (extractedContent) {
             guidelines.push(extractedContent);
@@ -327,10 +341,9 @@ ${technologyGuidelines}
     }
 
     // Add core/general rules
-    const coreRules = technologyRules.filter(rule => 
-      rule.path?.includes('core/') ||
-      rule.name.includes('core') ||
-      rule.name.includes('general')
+    const coreRules = technologyRules.filter(
+      (rule) =>
+        rule.path?.includes('core/') || rule.name.includes('core') || rule.name.includes('general')
     );
 
     if (coreRules.length > 0) {
@@ -343,8 +356,9 @@ ${technologyGuidelines}
       }
     }
 
-    return guidelines.length > 0 ? guidelines.join('\n') : 
-      `### Project-Specific Guidelines
+    return guidelines.length > 0
+      ? guidelines.join('\n')
+      : `### Project-Specific Guidelines
 - Follow patterns established in this ${frameworks.join('/')} codebase
 - Maintain consistency with existing ${languages.join('/')} code
 - Reference remote rules: ${technologyRules.length} rules available`;
@@ -355,58 +369,70 @@ ${technologyGuidelines}
    */
   extractRuleContent(content, projectContext = null) {
     if (!content) return null;
-    
+
     try {
       // Remove frontmatter (YAML between ---)
       const withoutFrontmatter = this.stripFrontmatter(content);
-      
+
       // Split into lines and process
       const lines = withoutFrontmatter.split('\n');
       const relevantLines = [];
       let currentSection = null;
       let captureContent = false;
-      
+
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmed = line.trim();
-        
+
         if (!trimmed) continue;
-        
+
         // Check for section headers that indicate useful content
-        if (trimmed.match(/^#+\s*(core principles|best practices|guidelines|rules|conventions|patterns|key concepts|important|essential|recommendations|development practices|coding standards)/i)) {
+        if (
+          trimmed.match(
+            /^#+\s*(core principles|best practices|guidelines|rules|conventions|patterns|key concepts|important|essential|recommendations|development practices|coding standards)/i
+          )
+        ) {
           currentSection = trimmed.replace(/^#+\s*/, '');
           captureContent = true;
           continue;
         }
-        
+
         // Check for technology-specific sections
-        if (trimmed.match(/^#+\s*(typescript|nextjs|supabase|react|development|code)\s+(guidelines|best practices|rules|patterns|conventions)/i)) {
-          currentSection = trimmed.replace(/^#+\s*/, '');  
+        if (
+          trimmed.match(
+            /^#+\s*(typescript|nextjs|supabase|react|development|code)\s+(guidelines|best practices|rules|patterns|conventions)/i
+          )
+        ) {
+          currentSection = trimmed.replace(/^#+\s*/, '');
           captureContent = true;
           continue;
         }
-        
+
         // Stop capturing if we hit unrelated sections or tech stacks (which are just lists)
-        if (trimmed.match(/^#+\s+(meta|compatibility|examples|implementation|setup|overview|tech stack|technology stack|recommended|stack)/i)) {
+        if (
+          trimmed.match(
+            /^#+\s+(meta|compatibility|examples|implementation|setup|overview|tech stack|technology stack|recommended|stack)/i
+          )
+        ) {
           captureContent = false;
           continue;
         }
-        
+
         // Capture content if we're in a relevant section
         if (captureContent) {
           // CRITICAL: Filter out mobile/native patterns for web projects
           const isMobilePattern = this.isMobilePattern(trimmed);
           const isWebProject = this.isWebProject(projectContext);
-          
+
           if (isWebProject && isMobilePattern) {
             continue; // Skip mobile patterns for web projects
           }
-          
+
           // Skip technology lists that start with **Technology** (like **Next.js 15+**)
           if (trimmed.match(/^-\s*\*\*[A-Z][^*]+\*\*\s*(with|for|v?\d)/i)) {
             continue; // Skip technology stack items
           }
-          
+
           // Capture bullet points that are actual guidelines (contain action words)
           if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
             if (this.isActionableGuideline(trimmed)) {
@@ -421,29 +447,38 @@ ${technologyGuidelines}
             }
           }
           // Capture important standalone statements
-          else if (trimmed.length > 25 && !trimmed.startsWith('#') && 
-                   (trimmed.includes('should') || trimmed.includes('must') || 
-                    trimmed.includes('prefer') || trimmed.includes('avoid') ||
-                    trimmed.includes('use') || trimmed.includes('always') ||
-                    trimmed.includes('never') || trimmed.includes('implement'))) {
+          else if (
+            trimmed.length > 25 &&
+            !trimmed.startsWith('#') &&
+            (trimmed.includes('should') ||
+              trimmed.includes('must') ||
+              trimmed.includes('prefer') ||
+              trimmed.includes('avoid') ||
+              trimmed.includes('use') ||
+              trimmed.includes('always') ||
+              trimmed.includes('never') ||
+              trimmed.includes('implement'))
+          ) {
             relevantLines.push(`- ${trimmed}`);
           }
         }
-        
+
         // Limit content extraction
         if (relevantLines.length >= 10) break;
       }
-      
+
       // If no structured content found, extract first few bullet points from anywhere
       if (relevantLines.length === 0) {
-        const bullets = lines.filter(line => {
-          const trimmed = line.trim();
-          return (trimmed.startsWith('- ') || trimmed.startsWith('* ')) && trimmed.length > 15;
-        }).slice(0, 5);
-        
+        const bullets = lines
+          .filter((line) => {
+            const trimmed = line.trim();
+            return (trimmed.startsWith('- ') || trimmed.startsWith('* ')) && trimmed.length > 15;
+          })
+          .slice(0, 5);
+
         return bullets.length > 0 ? bullets.join('\n') : null;
       }
-      
+
       return relevantLines.slice(0, 8).join('\n'); // Limit to 8 most relevant points
     } catch (error) {
       console.warn(`Failed to extract content from rule: ${error.message}`);
@@ -470,16 +505,19 @@ ${technologyGuidelines}
     return (
       mobilePatternsLower.includes('expo-font') ||
       mobilePatternsLower.includes('react-native') ||
-      mobilePatternsLower.includes('usecolorscheme') && mobilePatternsLower.includes('react-native') ||
+      (mobilePatternsLower.includes('usecolorscheme') &&
+        mobilePatternsLower.includes('react-native')) ||
       mobilePatternsLower.includes('expo router') ||
       mobilePatternsLower.includes('@expo/') ||
-      mobilePatternsLower.includes('error boundaries') && mobilePatternsLower.includes('navigation tree') ||
-      mobilePatternsLower.includes('ios') && mobilePatternsLower.includes('android') ||
-      mobilePatternsLower.includes('mobile') && (mobilePatternsLower.includes('app') || mobilePatternsLower.includes('device')) ||
-      mobilePatternsLower.includes('native') && !mobilePatternsLower.includes('native web') ||
+      (mobilePatternsLower.includes('error boundaries') &&
+        mobilePatternsLower.includes('navigation tree')) ||
+      (mobilePatternsLower.includes('ios') && mobilePatternsLower.includes('android')) ||
+      (mobilePatternsLower.includes('mobile') &&
+        (mobilePatternsLower.includes('app') || mobilePatternsLower.includes('device'))) ||
+      (mobilePatternsLower.includes('native') && !mobilePatternsLower.includes('native web')) ||
       mobilePatternsLower.includes('capacitor') ||
       mobilePatternsLower.includes('cordova') ||
-      mobilePatternsLower.includes('ionic') && !mobilePatternsLower.includes('ionic') // Keep general ionic references
+      (mobilePatternsLower.includes('ionic') && !mobilePatternsLower.includes('ionic')) // Keep general ionic references
     );
   }
 
@@ -489,14 +527,20 @@ ${technologyGuidelines}
   isWebProject(projectContext) {
     const techData = projectContext.techStack || projectContext.technologyData || {};
     const frameworks = techData.frameworks || [];
-    
-    return frameworks.some(framework => {
+
+    return frameworks.some((framework) => {
       const fw = framework.toLowerCase();
-      return fw.includes('next.js') || fw.includes('nextjs') || 
-             (fw.includes('react') && !fw.includes('react native')) ||
-             fw.includes('vue.js') || fw.includes('angular') ||
-             fw.includes('nuxt') || fw.includes('remix') || fw.includes('gatsby') ||
-             fw.includes('supabase') && !fw.includes('mobile');
+      return (
+        fw.includes('next.js') ||
+        fw.includes('nextjs') ||
+        (fw.includes('react') && !fw.includes('react native')) ||
+        fw.includes('vue.js') ||
+        fw.includes('angular') ||
+        fw.includes('nuxt') ||
+        fw.includes('remix') ||
+        fw.includes('gatsby') ||
+        (fw.includes('supabase') && !fw.includes('mobile'))
+      );
     });
   }
 
@@ -505,29 +549,56 @@ ${technologyGuidelines}
    */
   isActionableGuideline(line) {
     const lineLower = line.toLowerCase();
-    
+
     // Skip technology stack items that just list versions/tools
     const techStackPatterns = [
-      /\*\*[^*]+\*\*\s*(with|for|v?\d+)/i,          // **Next.js 15+** with App Router
-      /\*\*[^*]+\*\*\s*for\s+/i,                    // **Supabase** for backend services
-      /\*\*[^*]+\d+\.\d+\*\*/i,                     // **TypeScript 5.4+**
-      /^-?\s*\*\*[A-Z]/                             // **React 19+** 
+      /\*\*[^*]+\*\*\s*(with|for|v?\d+)/i, // **Next.js 15+** with App Router
+      /\*\*[^*]+\*\*\s*for\s+/i, // **Supabase** for backend services
+      /\*\*[^*]+\d+\.\d+\*\*/i, // **TypeScript 5.4+**
+      /^-?\s*\*\*[A-Z]/, // **React 19+**
     ];
-    
-    if (techStackPatterns.some(pattern => pattern.test(line))) {
+
+    if (techStackPatterns.some((pattern) => pattern.test(line))) {
       return false;
     }
-    
+
     // Look for actionable language that indicates actual guidelines
     const actionableWords = [
-      'use', 'avoid', 'prefer', 'should', 'must', 'always', 'never', 
-      'implement', 'ensure', 'configure', 'setup', 'create', 'define',
-      'follow', 'apply', 'enable', 'disable', 'keep', 'make', 'write',
-      'structure', 'organize', 'split', 'extract', 'handle', 'manage',
-      'validate', 'sanitize', 'optimize', 'test', 'document', 'review'
+      'use',
+      'avoid',
+      'prefer',
+      'should',
+      'must',
+      'always',
+      'never',
+      'implement',
+      'ensure',
+      'configure',
+      'setup',
+      'create',
+      'define',
+      'follow',
+      'apply',
+      'enable',
+      'disable',
+      'keep',
+      'make',
+      'write',
+      'structure',
+      'organize',
+      'split',
+      'extract',
+      'handle',
+      'manage',
+      'validate',
+      'sanitize',
+      'optimize',
+      'test',
+      'document',
+      'review',
     ];
-    
-    return actionableWords.some(word => lineLower.includes(word)) && line.length > 20;
+
+    return actionableWords.some((word) => lineLower.includes(word)) && line.length > 20;
   }
 
   /**
@@ -540,7 +611,7 @@ ${technologyGuidelines}
       stacks: [],
       technologies: [],
       core: [],
-      other: []
+      other: [],
     };
 
     for (const rule of rules) {
@@ -574,30 +645,30 @@ ${technologyGuidelines}
 
     const settings = {
       allowedTools: [
-        "Read(src/**)",
-        "Edit(src/**)",
+        'Read(src/**)',
+        'Edit(src/**)',
         `Bash(${packageManager} run:*)`,
-        "Bash(git status)",
-        "Bash(git add:*)",
-        "Bash(git commit:*)",
-        "Bash(git diff:*)",
-        "Bash(git log:*)",
-        "Glob(**/*.js)",
-        "Glob(**/*.ts)",
-        "Glob(**/*.tsx)",
-        "Grep(*)"
+        'Bash(git status)',
+        'Bash(git add:*)',
+        'Bash(git commit:*)',
+        'Bash(git diff:*)',
+        'Bash(git log:*)',
+        'Glob(**/*.js)',
+        'Glob(**/*.ts)',
+        'Glob(**/*.tsx)',
+        'Grep(*)',
       ],
       deniedTools: [
-        "Bash(rm -rf:*)",
-        "Bash(sudo:*)",
-        "Edit(.env*)",
-        "Write(node_modules/**/*)",
-        "Write(.git/**/*)"
+        'Bash(rm -rf:*)',
+        'Bash(sudo:*)',
+        'Edit(.env*)',
+        'Write(node_modules/**/*)',
+        'Write(.git/**/*)',
       ],
       env: {
         BASH_DEFAULT_TIMEOUT_MS: this.getOptimalTimeout(projectContext),
-        PROJECT_NAME: projectContext.name || path.basename(this.projectPath)
-      }
+        PROJECT_NAME: projectContext.name || path.basename(this.projectPath),
+      },
     };
 
     // Add framework-specific permissions
@@ -608,11 +679,11 @@ ${technologyGuidelines}
 
     // Add project-specific environment variables
     if (projectContext.techStack?.buildTools?.includes('vite')) {
-      settings.env.VITE_DEV_MODE = "true";
+      settings.env.VITE_DEV_MODE = 'true';
     }
 
     if (projectContext.techStack?.testingFrameworks?.includes('jest')) {
-      settings.allowedTools.push("Bash(npm run test:*)", "Bash(jest:*)");
+      settings.allowedTools.push('Bash(npm run test:*)', 'Bash(jest:*)');
     }
 
     return settings;
@@ -656,16 +727,16 @@ ${technologyGuidelines}
   async detectPrimaryIDE(projectContext) {
     try {
       const projectPath = projectContext.projectPath || this.projectPath;
-      
+
       // Check for IDE-specific files and folders
       const ideIndicators = {
         'VS Code': ['.vscode/', '.vscode/settings.json', '.vscode/launch.json'],
-        'Cursor': ['.cursor/', 'cursor.json', '.cursorrules'],
-        'Windsurf': ['.windsurf/', '.windsurfrules.md', '.codeium/'],
-        'JetBrains': ['.idea/', '*.iml'],
-        'Zed': ['.zed/', 'zed.json']
+        Cursor: ['.cursor/', 'cursor.json', '.cursorrules'],
+        Windsurf: ['.windsurf/', '.windsurfrules.md', '.codeium/'],
+        JetBrains: ['.idea/', '*.iml'],
+        Zed: ['.zed/', 'zed.json'],
       };
-      
+
       for (const [ide, indicators] of Object.entries(ideIndicators)) {
         for (const indicator of indicators) {
           if (await this.fileExists(path.join(projectPath, indicator))) {
@@ -673,29 +744,32 @@ ${technologyGuidelines}
           }
         }
       }
-      
+
       // Additional detection methods for VS Code without .vscode folder:
       // 1. Check for VS Code specific extensions in package.json
       const packageJsonPath = path.join(projectPath, 'package.json');
       if (await this.fileExists(packageJsonPath)) {
         const packageContent = await fs.readFile(packageJsonPath, 'utf8');
         const packageData = JSON.parse(packageContent);
-        
+
         // Check for VS Code extension development
-        if (packageData.contributes || packageData.engines?.vscode || 
-            packageData.categories?.includes('Extension Packs') ||
-            packageData.main?.includes('extension.js')) {
+        if (
+          packageData.contributes ||
+          packageData.engines?.vscode ||
+          packageData.categories?.includes('Extension Packs') ||
+          packageData.main?.includes('extension.js')
+        ) {
           return 'VS Code';
         }
-        
+
         // Check for common VS Code specific dev dependencies
         const vscodeDevDeps = ['@types/vscode', 'vscode-test', '@vscode/test-electron'];
         const allDeps = { ...packageData.dependencies, ...packageData.devDependencies };
-        if (vscodeDevDeps.some(dep => allDeps[dep])) {
+        if (vscodeDevDeps.some((dep) => allDeps[dep])) {
           return 'VS Code';
         }
       }
-      
+
       // 2. Check for common workspace files that suggest VS Code
       const vscodeWorkspaceFiles = ['*.code-workspace', 'workspace.json'];
       for (const pattern of vscodeWorkspaceFiles) {
@@ -704,7 +778,7 @@ ${technologyGuidelines}
           return 'VS Code';
         }
       }
-      
+
       return 'Not specified';
     } catch (error) {
       return 'Not specified';
@@ -717,7 +791,7 @@ ${technologyGuidelines}
   async detectPackageManager(projectContext) {
     try {
       const projectPath = projectContext.projectPath || this.projectPath;
-      
+
       // Check for lock files in order of preference
       if (await this.fileExists(path.join(projectPath, 'pnpm-lock.yaml'))) {
         return 'pnpm';
@@ -731,7 +805,7 @@ ${technologyGuidelines}
       if (await this.fileExists(path.join(projectPath, 'package-lock.json'))) {
         return 'npm';
       }
-      
+
       // Default fallback
       return 'npm';
     } catch (error) {
@@ -758,7 +832,7 @@ ${technologyGuidelines}
     try {
       const projectPath = projectContext.projectPath || this.projectPath;
       const packageJsonPath = path.join(projectPath, 'package.json');
-      
+
       if (await this.fileExists(packageJsonPath)) {
         const packageJsonContent = await fs.readFile(packageJsonPath, 'utf8');
         const packageData = JSON.parse(packageJsonContent);
@@ -773,41 +847,45 @@ ${technologyGuidelines}
   async detectDevCommand(projectContext) {
     const pm = await this.detectPackageManager(projectContext);
     const scripts = await this.extractPackageScripts(projectContext);
-    
+
     // Check for common dev script variations
     if (scripts.dev) return `${pm} run dev`;
     if (scripts.start) return `${pm} run start`;
     if (scripts.serve) return `${pm} run serve`;
-    
+
     return `${pm} run dev`;
   }
 
   async detectTestCommand(projectContext) {
     const pm = await this.detectPackageManager(projectContext);
     const scripts = await this.extractPackageScripts(projectContext);
-    
+
     if (scripts.test) return `${pm} run test`;
     if (scripts['test:unit']) return `${pm} run test:unit`;
-    
+
     return `${pm} run test`;
   }
 
   async detectBuildCommand(projectContext) {
     const pm = await this.detectPackageManager(projectContext);
     const scripts = await this.extractPackageScripts(projectContext);
-    
+
     if (scripts.build) return `${pm} run build`;
     if (scripts['build:prod']) return `${pm} run build:prod`;
-    
+
     return `${pm} run build`;
   }
 
   async detectBuildTool(projectContext) {
     const techData = projectContext.techStack || projectContext.technologyData || {};
     const frameworks = techData.frameworks || [];
-    
+
     // Check for turbopack in Next.js projects
-    if (frameworks.some(fw => fw.toLowerCase().includes('next.js') || fw.toLowerCase().includes('nextjs'))) {
+    if (
+      frameworks.some(
+        (fw) => fw.toLowerCase().includes('next.js') || fw.toLowerCase().includes('nextjs')
+      )
+    ) {
       const scripts = await this.extractPackageScripts(projectContext);
       // Check if dev script uses --turbo flag
       if (scripts.dev && scripts.dev.includes('--turbo')) {
@@ -815,16 +893,16 @@ ${technologyGuidelines}
       }
       return 'Next.js';
     }
-    if (frameworks.some(fw => fw.toLowerCase().includes('nuxt'))) {
+    if (frameworks.some((fw) => fw.toLowerCase().includes('nuxt'))) {
       return 'Nuxt.js';
     }
-    if (frameworks.some(fw => fw.toLowerCase().includes('gatsby'))) {
+    if (frameworks.some((fw) => fw.toLowerCase().includes('gatsby'))) {
       return 'Gatsby';
     }
-    if (frameworks.some(fw => fw.toLowerCase().includes('astro'))) {
+    if (frameworks.some((fw) => fw.toLowerCase().includes('astro'))) {
       return 'Astro';
     }
-    
+
     // Check for build tools in libraries/buildTools
     const buildTools = techData.buildTools || [];
     if (buildTools.includes('Vite')) return 'Vite';
@@ -832,7 +910,7 @@ ${technologyGuidelines}
     if (buildTools.includes('esbuild')) return 'esbuild';
     if (buildTools.includes('Rollup')) return 'Rollup';
     if (buildTools.includes('Parcel')) return 'Parcel';
-    
+
     // Default fallback
     return 'npm scripts';
   }
@@ -866,8 +944,8 @@ ${this.generateFrameworkSpecificGuidelines(projectContext)}`;
 
   getOptimalTimeout(projectContext) {
     // Longer timeout for complex builds
-    if (projectContext.techStack?.frameworks?.includes('Next.js')) return "180000";
-    return "120000";
+    if (projectContext.techStack?.frameworks?.includes('Next.js')) return '180000';
+    return '120000';
   }
 
   /**
@@ -992,23 +1070,25 @@ ${await this.generateExternalServices(rules, projectContext)}
       // Use the centralized repository fetch method from RuleGenerator
       if (this.ruleGenerator && this.ruleGenerator.fetchFromRepository) {
         const remoteCommands = await this.ruleGenerator.fetchFromRepository(
-          projectContext, 
-          'commands', 
+          projectContext,
+          'commands',
           'claude-code',
           categoryFilter
         );
-        
+
         if (remoteCommands.length > 0) {
           console.log(`✅ Fetched ${remoteCommands.length} commands from repository`);
           // Transform the templates into command format
           return this.transformTemplatesIntoCommands(remoteCommands, projectContext);
         }
       }
-      
+
       console.log('⚠️ No remote commands found, no fallback commands will be generated');
       console.log(chalk.yellow('💡 To get Claude Code commands when available:'));
       console.log(chalk.gray('   • Check your GitHub token: VDK_GITHUB_TOKEN in .env.local'));
-      console.log(chalk.gray('   • Use --interactive for category selection when commands are available'));
+      console.log(
+        chalk.gray('   • Use --interactive for category selection when commands are available')
+      );
       console.log(chalk.gray('   • Use --preset development for curated command sets'));
       return [];
     } catch (error) {
@@ -1031,7 +1111,7 @@ ${await this.generateExternalServices(rules, projectContext)}
    */
   transformTemplatesIntoCommands(templates, projectContext) {
     const commands = [];
-    
+
     for (const template of templates) {
       try {
         // Parse the template content as a command
@@ -1043,14 +1123,14 @@ ${await this.generateExternalServices(rules, projectContext)}
             metadata: parsedCommand,
             category: this.getCategoryFromPath(template.path),
             source: 'repository',
-            relevanceScore: template.relevanceScore || 0.5
+            relevanceScore: template.relevanceScore || 0.5,
           });
         }
       } catch (error) {
         console.log(`Warning: Could not parse command ${template.name}: ${error.message}`);
       }
     }
-    
+
     return commands.sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0));
   }
 
@@ -1081,27 +1161,27 @@ ${await this.generateExternalServices(rules, projectContext)}
       if (!response.ok) return [];
 
       const categories = await response.json();
-      
+
       // Fetch commands from each category
-      for (const category of categories.filter(item => item.type === 'dir')) {
+      for (const category of categories.filter((item) => item.type === 'dir')) {
         try {
           const categoryResponse = await fetch(category.url);
           if (categoryResponse.ok) {
             const commandFiles = await categoryResponse.json();
-            
-            for (const file of commandFiles.filter(f => f.name.endsWith('.md'))) {
+
+            for (const file of commandFiles.filter((f) => f.name.endsWith('.md'))) {
               const commandContent = await this.downloadFile(file.download_url);
               if (commandContent) {
                 // Parse and validate command content
                 const parsedCommand = this.parseClaudeCodeCommand(commandContent);
-                if (parsedCommand && await this.validateClaudeCodeCommand(parsedCommand)) {
+                if (parsedCommand && (await this.validateClaudeCodeCommand(parsedCommand))) {
                   commands.push({
                     name: file.name.replace('.md', ''),
                     content: commandContent,
                     metadata: parsedCommand,
                     category: category.name,
                     source: 'repository',
-                    relevanceScore: this.calculateCommandRelevance(parsedCommand, projectContext)
+                    relevanceScore: this.calculateCommandRelevance(parsedCommand, projectContext),
                   });
                 }
               }
@@ -1130,17 +1210,18 @@ ${await this.generateExternalServices(rules, projectContext)}
       // Simple YAML parsing for the schema fields
       const yamlContent = frontmatterMatch[1];
       const parsed = {};
-      
+
       const lines = yamlContent.split('\n');
       let currentKey = null;
       let currentObject = null;
-      
+
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed || trimmed.startsWith('#')) continue;
-        
-        if (line.match(/^[a-zA-Z]/)) { // Top-level key
-          const [key, value] = trimmed.split(':').map(s => s.trim());
+
+        if (line.match(/^[a-zA-Z]/)) {
+          // Top-level key
+          const [key, value] = trimmed.split(':').map((s) => s.trim());
           if (value && value !== '') {
             parsed[key] = value.replace(/['"]/g, '');
           } else {
@@ -1148,14 +1229,15 @@ ${await this.generateExternalServices(rules, projectContext)}
             currentObject = {};
             parsed[key] = currentObject;
           }
-        } else if (currentObject && line.match(/^\s+[a-zA-Z]/)) { // Nested key
-          const [key, value] = trimmed.split(':').map(s => s.trim());
+        } else if (currentObject && line.match(/^\s+[a-zA-Z]/)) {
+          // Nested key
+          const [key, value] = trimmed.split(':').map((s) => s.trim());
           if (value && value !== '') {
             currentObject[key] = value.replace(/['"]/g, '');
           }
         }
       }
-      
+
       return parsed;
     } catch (error) {
       console.log(`Failed to parse command frontmatter: ${error.message}`);
@@ -1168,18 +1250,18 @@ ${await this.generateExternalServices(rules, projectContext)}
    */
   async validateClaudeCodeCommand(commandData) {
     if (!commandData) return false;
-    
+
     try {
       const validation = await validateCommand(commandData);
-      
+
       if (!validation.valid) {
         if (this.verbose) {
           console.log(`Command validation failed:`);
-          validation.errors.forEach(error => console.log(`  - ${error}`));
+          validation.errors.forEach((error) => console.log(`  - ${error}`));
         }
         return false;
       }
-      
+
       return true;
     } catch (error) {
       console.log(`Schema validation error: ${error.message}`);
@@ -1192,33 +1274,33 @@ ${await this.generateExternalServices(rules, projectContext)}
    */
   calculateCommandRelevance(commandData, projectContext) {
     let score = 0.5; // Base score
-    
+
     const frameworks = projectContext.techStack?.frameworks || [];
     const languages = projectContext.techStack?.primaryLanguages || [];
     const tags = commandData.tags || [];
     const category = commandData.category || '';
-    
+
     // Framework matching
-    frameworks.forEach(framework => {
-      if (tags.some(tag => tag.toLowerCase().includes(framework.toLowerCase()))) {
+    frameworks.forEach((framework) => {
+      if (tags.some((tag) => tag.toLowerCase().includes(framework.toLowerCase()))) {
         score += 0.3;
       }
     });
-    
+
     // Language matching
-    languages.forEach(language => {
-      if (tags.some(tag => tag.toLowerCase().includes(language.toLowerCase()))) {
+    languages.forEach((language) => {
+      if (tags.some((tag) => tag.toLowerCase().includes(language.toLowerCase()))) {
         score += 0.2;
       }
     });
-    
+
     // Category relevance
     if (category === 'development') score += 0.2;
     if (category === 'testing') score += 0.1;
-    
+
     // Command type preference
     if (commandData.commandType === 'slash') score += 0.1;
-    
+
     return Math.min(score, 1.0);
   }
 
@@ -1244,7 +1326,7 @@ ${await this.generateExternalServices(rules, projectContext)}
   generateFallbackCommands(projectContext) {
     const frameworks = projectContext.techStack?.frameworks || [];
     const languages = projectContext.techStack?.primaryLanguages || ['JavaScript'];
-    
+
     return [
       {
         name: 'create-component',
@@ -1261,32 +1343,32 @@ ${await this.generateExternalServices(rules, projectContext)}
             arguments: {
               supports: true,
               placeholder: '$ARGUMENTS',
-              examples: ['Button', 'UserProfile', 'Modal']
+              examples: ['Button', 'UserProfile', 'Modal'],
             },
             fileReferences: {
               supports: true,
-              autoInclude: ['CLAUDE.md', 'package.json']
-            }
+              autoInclude: ['CLAUDE.md', 'package.json'],
+            },
           },
           permissions: {
             allowedTools: ['Read', 'Write', 'Edit'],
-            requiredApproval: false
+            requiredApproval: false,
           },
           examples: [
             {
               usage: '/create-component Button',
               description: 'Create a Button component with proper TypeScript types',
               context: 'When building reusable UI components',
-              expectedOutcome: 'Component file with tests and proper exports'
-            }
+              expectedOutcome: 'Component file with tests and proper exports',
+            },
           ],
           category: 'development',
           tags: ['component', 'react', 'typescript'],
           frameworks: frameworks,
-          languages: languages
+          languages: languages,
         }),
         category: 'workflow',
-        source: 'fallback'
+        source: 'fallback',
       },
       {
         name: 'review-code',
@@ -1301,33 +1383,33 @@ ${await this.generateExternalServices(rules, projectContext)}
           claudeCode: {
             slashCommand: '/review-code',
             arguments: {
-              supports: false
+              supports: false,
             },
             fileReferences: {
               supports: true,
-              autoInclude: ['CLAUDE.md']
-            }
+              autoInclude: ['CLAUDE.md'],
+            },
           },
           permissions: {
             allowedTools: ['Read', 'Bash(git:*)'],
-            requiredApproval: false
+            requiredApproval: false,
           },
           examples: [
             {
               usage: '/review-code',
               description: 'Review current changes for code quality',
               context: 'Before committing changes',
-              expectedOutcome: 'Detailed review with improvement suggestions'
-            }
+              expectedOutcome: 'Detailed review with improvement suggestions',
+            },
           ],
           category: 'analysis',
           tags: ['review', 'quality', 'best-practices'],
           frameworks: frameworks,
-          languages: languages
+          languages: languages,
         }),
         category: 'quality',
-        source: 'fallback'
-      }
+        source: 'fallback',
+      },
     ];
   }
 
@@ -1336,7 +1418,7 @@ ${await this.generateExternalServices(rules, projectContext)}
    */
   generateClaudeCodeCommand(commandData) {
     const { claudeCode, examples, permissions, frameworks, languages } = commandData;
-    
+
     return `---
 id: "${commandData.id}"
 name: "${commandData.name}"
@@ -1349,22 +1431,40 @@ scope: "${commandData.scope}"
 claudeCode:
   slashCommand: "${claudeCode.slashCommand}"
   arguments:
-    supports: ${claudeCode.arguments?.supports || false}${claudeCode.arguments?.placeholder ? `
-    placeholder: "${claudeCode.arguments.placeholder}"` : ''}${claudeCode.arguments?.examples ? `
-    examples: ${JSON.stringify(claudeCode.arguments.examples)}` : ''}
+    supports: ${claudeCode.arguments?.supports || false}${
+      claudeCode.arguments?.placeholder
+        ? `
+    placeholder: "${claudeCode.arguments.placeholder}"`
+        : ''
+    }${
+      claudeCode.arguments?.examples
+        ? `
+    examples: ${JSON.stringify(claudeCode.arguments.examples)}`
+        : ''
+    }
   fileReferences:
-    supports: ${claudeCode.fileReferences?.supports || true}${claudeCode.fileReferences?.autoInclude ? `
-    autoInclude: ${JSON.stringify(claudeCode.fileReferences.autoInclude)}` : ''}
+    supports: ${claudeCode.fileReferences?.supports || true}${
+      claudeCode.fileReferences?.autoInclude
+        ? `
+    autoInclude: ${JSON.stringify(claudeCode.fileReferences.autoInclude)}`
+        : ''
+    }
 
 permissions:
   allowedTools: ${JSON.stringify(permissions?.allowedTools || [])}
   requiredApproval: ${permissions?.requiredApproval || false}
 
-examples:${examples?.map(ex => `
+examples:${
+      examples
+        ?.map(
+          (ex) => `
   - usage: "${ex.usage}"
     description: "${ex.description}"
     context: "${ex.context}"
-    expectedOutcome: "${ex.expectedOutcome}"`).join('') || ''}
+    expectedOutcome: "${ex.expectedOutcome}"`
+        )
+        .join('') || ''
+    }
 
 category: "${commandData.category}"
 tags: ${JSON.stringify(commandData.tags || [])}
@@ -1390,12 +1490,16 @@ ${commandData.description}
 ${claudeCode.slashCommand}${claudeCode.arguments?.supports ? ' [arguments]' : ''}
 \`\`\`
 
-${claudeCode.fileReferences?.supports ? `### File References
+${
+  claudeCode.fileReferences?.supports
+    ? `### File References
 This command supports Claude Code's \`@\` file reference syntax:
 \`\`\`
 ${claudeCode.slashCommand} @src/components/Example.tsx
 \`\`\`
-` : ''}
+`
+    : ''
+}
 
 ## Implementation
 
@@ -1407,13 +1511,19 @@ This command will:
 
 ## Examples
 
-${examples?.map(ex => `### ${ex.description}
+${
+  examples
+    ?.map(
+      (ex) => `### ${ex.description}
 \`\`\`
 ${ex.usage}
 \`\`\`
 **Context**: ${ex.context}
 **Expected Outcome**: ${ex.expectedOutcome}
-`).join('\n') || ''}
+`
+    )
+    .join('\n') || ''
+}
 
 ---
 *Generated by VDK CLI - Claude Code Integration*`;
@@ -1470,7 +1580,7 @@ Create a new component following established project patterns.
 ## Usage
 \`/project:create-component ButtonComponent\`
 \`/project:create-component Modal --type=functional\`
-`
+`,
     });
 
     // Code review command
@@ -1516,7 +1626,7 @@ Perform comprehensive code review based on project-specific standards.
 ## Usage
 \`/project:review-code\` - Review current changes
 \`/project:review-code path/to/specific/file.js\` - Review specific file
-`
+`,
     });
 
     // Performance analysis command
@@ -1557,7 +1667,7 @@ Analyze performance characteristics and identify optimization opportunities.
 ## Usage
 \`/project:analyze-performance\` - Full performance analysis
 \`/project:analyze-performance frontend\` - Focus on frontend performance
-`
+`,
     });
 
     return commands;
@@ -1573,24 +1683,24 @@ Analyze performance characteristics and identify optimization opportunities.
     for (const framework of frameworks) {
       switch (framework.toLowerCase()) {
         case 'react':
-          commands.push(...await this.generateReactCommands(projectContext));
+          commands.push(...(await this.generateReactCommands(projectContext)));
           break;
         case 'nextjs':
         case 'next.js':
-          commands.push(...await this.generateNextJSCommands(projectContext));
+          commands.push(...(await this.generateNextJSCommands(projectContext)));
           break;
         case 'vue':
         case 'vue.js':
-          commands.push(...await this.generateVueCommands(projectContext));
+          commands.push(...(await this.generateVueCommands(projectContext)));
           break;
         case 'angular':
-          commands.push(...await this.generateAngularCommands(projectContext));
+          commands.push(...(await this.generateAngularCommands(projectContext)));
           break;
         case 'express':
-          commands.push(...await this.generateExpressCommands(projectContext));
+          commands.push(...(await this.generateExpressCommands(projectContext)));
           break;
         case 'fastapi':
-          commands.push(...await this.generateFastAPICommands(projectContext));
+          commands.push(...(await this.generateFastAPICommands(projectContext)));
           break;
       }
     }
@@ -1602,9 +1712,10 @@ Analyze performance characteristics and identify optimization opportunities.
    * Generate React-specific commands
    */
   async generateReactCommands(projectContext) {
-    return [{
-      name: 'create-react-hook',
-      content: `---
+    return [
+      {
+        name: 'create-react-hook',
+        content: `---
 allowed-tools: ["Read", "Write", "Edit"]
 description: "Create custom React hook following project patterns"
 priority: "medium"
@@ -1642,8 +1753,9 @@ Create a custom React hook following established patterns.
 ## Usage
 \`/project:create-react-hook useLocalStorage\`
 \`/project:create-react-hook useApi\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   /**
@@ -1651,16 +1763,14 @@ Create a custom React hook following established patterns.
    */
   async generateTaskCommands(rules, projectContext) {
     const commands = [];
-    const taskRules = rules.filter(rule =>
-      rule.frontmatter?.category === 'task' ||
-      rule.frontmatter?.type?.includes('task')
+    const taskRules = rules.filter(
+      (rule) => rule.frontmatter?.category === 'task' || rule.frontmatter?.type?.includes('task')
     );
 
     for (const rule of taskRules) {
       const commandName = this.generateCommandName(rule.frontmatter.description || rule.name);
       const allowedTools = rule.frontmatter['allowed-tools'] ||
-                          rule.frontmatter.allowedTools ||
-                          ["Read", "Write", "Edit"];
+        rule.frontmatter.allowedTools || ['Read', 'Write', 'Edit'];
 
       commands.push({
         name: commandName,
@@ -1681,7 +1791,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
 
 ## Usage
 \`/project:${commandName} \$ARGUMENTS\`
-`
+`,
       });
     }
 
@@ -1695,23 +1805,23 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const integrations = {
       servers: {},
       tools: [],
-      configuration: {}
+      configuration: {},
     };
 
     // File system MCP for project access
     integrations.servers.filesystem = {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-filesystem", this.projectPath],
-      env: {}
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-filesystem', this.projectPath],
+      env: {},
     };
 
     // Git MCP for version control
     integrations.servers.git = {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-git"],
-      env: {}
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-git'],
+      env: {},
     };
 
     // Database MCP if database detected
@@ -1738,33 +1848,33 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const settings = {
       permissions: {
         allow: [
-          "Read(*)",
-          "Write(src/**/*)",
-          "Write(components/**/*)",
-          "Write(pages/**/*)",
-          "Write(tests/**/*)",
-          "Write(test/**/*)",
-          "Write(docs/**/*)",
-          "Edit(**/CLAUDE*.md)",
-          "Bash(npm run:*)",
-          "Bash(pnpm run:*)",
-          "Bash(yarn run:*)",
-          "Bash(git status)",
-          "Bash(git add:*)",
-          "Bash(git commit:*)",
-          "Bash(git diff:*)",
-          "Bash(git log:*)"
+          'Read(*)',
+          'Write(src/**/*)',
+          'Write(components/**/*)',
+          'Write(pages/**/*)',
+          'Write(tests/**/*)',
+          'Write(test/**/*)',
+          'Write(docs/**/*)',
+          'Edit(**/CLAUDE*.md)',
+          'Bash(npm run:*)',
+          'Bash(pnpm run:*)',
+          'Bash(yarn run:*)',
+          'Bash(git status)',
+          'Bash(git add:*)',
+          'Bash(git commit:*)',
+          'Bash(git diff:*)',
+          'Bash(git log:*)',
         ],
         deny: [
-          "Bash(rm -rf:*)",
-          "Bash(sudo:*)",
-          "Write(.env*)",
-          "Write(node_modules/**/*)",
-          "Write(.git/**/*)"
-        ]
+          'Bash(rm -rf:*)',
+          'Bash(sudo:*)',
+          'Write(.env*)',
+          'Write(node_modules/**/*)',
+          'Write(.git/**/*)',
+        ],
       },
       env: {},
-      cleanupPeriodDays: 30
+      cleanupPeriodDays: 30,
     };
 
     // Add framework-specific permissions
@@ -1776,11 +1886,11 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
 
     // Add project-specific environment variables
     if (projectContext.techStack?.buildTools?.includes('vite')) {
-      settings.env.VITE_DEV_MODE = "true";
+      settings.env.VITE_DEV_MODE = 'true';
     }
 
     if (projectContext.techStack?.testingFrameworks?.includes('jest')) {
-      settings.permissions.allow.push("Bash(npm run test:*)", "Bash(jest:*)");
+      settings.permissions.allow.push('Bash(npm run test:*)', 'Bash(jest:*)');
     }
 
     return settings;
@@ -1797,7 +1907,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
   }
 
   capitalizeWords(str) {
-    return str.replace(/\b\w/g, l => l.toUpperCase());
+    return str.replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
   getComponentsDirectory(projectContext) {
@@ -1807,13 +1917,14 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       'components',
       'src/app/components',
       'app/components',
-      'lib/components'
+      'lib/components',
     ];
 
     // Use project structure analysis if available
     if (projectContext.projectStructure?.directories) {
-      const componentDir = projectContext.projectStructure.directories
-        .find(dir => dir.name.toLowerCase().includes('component'));
+      const componentDir = projectContext.projectStructure.directories.find((dir) =>
+        dir.name.toLowerCase().includes('component')
+      );
       if (componentDir) return componentDir.path;
     }
 
@@ -1823,10 +1934,10 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
   detectPrimaryIDE(projectContext) {
     // Detection logic for primary IDE
     const ideIndicators = {
-      'vscode': ['.vscode/', 'settings.json'],
-      'cursor': ['.cursor/', 'cursor.json'],
-      'windsurf': ['.windsurf/', '.windsurfrules.md'],
-      'jetbrains': ['.idea/', '*.iml']
+      vscode: ['.vscode/', 'settings.json'],
+      cursor: ['.cursor/', 'cursor.json'],
+      windsurf: ['.windsurf/', '.windsurfrules.md'],
+      jetbrains: ['.idea/', '*.iml'],
     };
 
     // Simple detection based on config files
@@ -1836,20 +1947,18 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
   detectsDatabase(projectContext) {
     const dbIndicators = ['prisma', 'sequelize', 'mongoose', 'postgresql', 'mysql', 'sqlite'];
     const libraries = projectContext.techStack?.libraries || [];
-    return libraries.some(lib =>
-      dbIndicators.some(indicator =>
-        lib.toLowerCase().includes(indicator)
-      )
+    return libraries.some((lib) =>
+      dbIndicators.some((indicator) => lib.toLowerCase().includes(indicator))
     );
   }
 
   getFrameworkPermissions(framework) {
     const permissions = {
-      'react': ["Bash(npm run start)", "Bash(npm run build)"],
-      'nextjs': ["Bash(npm run dev)", "Bash(npm run build)", "Bash(npm run start)"],
-      'vue': ["Bash(npm run serve)", "Bash(npm run build)"],
-      'angular': ["Bash(ng serve)", "Bash(ng build)", "Bash(ng test)"],
-      'express': ["Bash(npm run dev)", "Bash(npm run start)"]
+      react: ['Bash(npm run start)', 'Bash(npm run build)'],
+      nextjs: ['Bash(npm run dev)', 'Bash(npm run build)', 'Bash(npm run start)'],
+      vue: ['Bash(npm run serve)', 'Bash(npm run build)'],
+      angular: ['Bash(ng serve)', 'Bash(ng build)', 'Bash(ng test)'],
+      express: ['Bash(npm run dev)', 'Bash(npm run start)'],
     };
 
     return permissions[framework.toLowerCase()] || [];
@@ -1861,7 +1970,9 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const commands = [];
 
     // Add common project commands
-    commands.push(`- \`/project:create-component\` - Create new component following project patterns`);
+    commands.push(
+      `- \`/project:create-component\` - Create new component following project patterns`
+    );
     commands.push(`- \`/project:review-code\` - Comprehensive code review`);
     commands.push(`- \`/project:analyze-performance\` - Performance analysis and optimization`);
 
@@ -1882,7 +1993,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
 
     // Add main directories
     const mainDirs = structure.directories?.slice(0, 8) || [];
-    mainDirs.forEach(dir => {
+    mainDirs.forEach((dir) => {
       const depth = '  '.repeat(dir.depth || 0);
       summary.push(`${depth}${dir.name}/`);
     });
@@ -1898,8 +2009,10 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const commands = [];
     const packageCommands = this.extractPackageCommands(projectContext);
 
-    if (packageCommands.dev) commands.push(`- \`${packageCommands.dev}\` - Start development server`);
-    if (packageCommands.build) commands.push(`- \`${packageCommands.build}\` - Build for production`);
+    if (packageCommands.dev)
+      commands.push(`- \`${packageCommands.dev}\` - Start development server`);
+    if (packageCommands.build)
+      commands.push(`- \`${packageCommands.build}\` - Build for production`);
     if (packageCommands.test) commands.push(`- \`${packageCommands.test}\` - Run test suite`);
     if (packageCommands.lint) commands.push(`- \`${packageCommands.lint}\` - Run code linting`);
 
@@ -1912,7 +2025,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       dev: 'npm run dev',
       build: 'npm run build',
       test: 'npm run test',
-      lint: 'npm run lint'
+      lint: 'npm run lint',
     };
   }
 
@@ -1937,26 +2050,28 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       standards.push(...frameworkStandards);
     }
 
-    return standards.length > 0 ? standards.join('\n') : '- Follow established project patterns\n- Maintain consistency with existing code';
+    return standards.length > 0
+      ? standards.join('\n')
+      : '- Follow established project patterns\n- Maintain consistency with existing code';
   }
 
   getFrameworkStandards(framework) {
     const standards = {
-      'React': [
+      React: [
         '- Use functional components with hooks',
         '- Implement proper prop interfaces with TypeScript',
-        '- Follow component composition patterns'
+        '- Follow component composition patterns',
       ],
       'Next.js': [
         '- Use App Router for new pages',
         '- Implement proper SEO metadata',
-        '- Optimize for Core Web Vitals'
+        '- Optimize for Core Web Vitals',
       ],
-      'Vue': [
+      Vue: [
         '- Use Composition API for new components',
         '- Implement proper reactive patterns',
-        '- Follow Vue 3 best practices'
-      ]
+        '- Follow Vue 3 best practices',
+      ],
     };
 
     return standards[framework] || [];
@@ -1972,15 +2087,21 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const sections = [];
 
     if (namingConventions.variables) {
-      sections.push(`### Variables\n- **Preferred**: ${namingConventions.variables.dominant}\n- **Confidence**: ${namingConventions.variables.confidence}%`);
+      sections.push(
+        `### Variables\n- **Preferred**: ${namingConventions.variables.dominant}\n- **Confidence**: ${namingConventions.variables.confidence}%`
+      );
     }
 
     if (namingConventions.functions) {
-      sections.push(`### Functions\n- **Preferred**: ${namingConventions.functions.dominant}\n- **Confidence**: ${namingConventions.functions.confidence}%`);
+      sections.push(
+        `### Functions\n- **Preferred**: ${namingConventions.functions.dominant}\n- **Confidence**: ${namingConventions.functions.confidence}%`
+      );
     }
 
     if (namingConventions.files) {
-      sections.push(`### Files\n- **Preferred**: ${namingConventions.files.dominant}\n- **Confidence**: ${namingConventions.files.confidence}%`);
+      sections.push(
+        `### Files\n- **Preferred**: ${namingConventions.files.dominant}\n- **Confidence**: ${namingConventions.files.confidence}%`
+      );
     }
 
     return sections.join('\n\n');
@@ -1991,9 +2112,12 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       return '- Follow established architectural patterns discovered in codebase';
     }
 
-    return patterns.map(pattern =>
-      `- **${pattern.name}**: ${pattern.confidence}% confidence${pattern.description ? ` - ${pattern.description}` : ''}`
-    ).join('\n');
+    return patterns
+      .map(
+        (pattern) =>
+          `- **${pattern.name}**: ${pattern.confidence}% confidence${pattern.description ? ` - ${pattern.description}` : ''}`
+      )
+      .join('\n');
   }
 
   async generateCodeOrganization(projectContext) {
@@ -2003,18 +2127,21 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const organization = [];
 
     // Analyze directory patterns
-    const srcDirs = structure.directories?.filter(dir =>
-      dir.name.includes('src') || dir.name.includes('app') || dir.name.includes('lib')
-    ) || [];
+    const srcDirs =
+      structure.directories?.filter(
+        (dir) => dir.name.includes('src') || dir.name.includes('app') || dir.name.includes('lib')
+      ) || [];
 
     if (srcDirs.length > 0) {
       organization.push('### Source Organization');
-      srcDirs.forEach(dir => {
+      srcDirs.forEach((dir) => {
         organization.push(`- **${dir.name}**: ${dir.path}`);
       });
     }
 
-    return organization.length > 0 ? organization.join('\n') : '- Follow established directory structure';
+    return organization.length > 0
+      ? organization.join('\n')
+      : '- Follow established directory structure';
   }
 
   async generateFrameworkPatterns(rules, projectContext) {
@@ -2022,14 +2149,15 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     const patterns = [];
 
     for (const framework of frameworks) {
-      const frameworkRules = rules.filter(rule =>
-        rule.frontmatter?.framework?.toLowerCase() === framework.toLowerCase() ||
-        rule.frontmatter?.tags?.includes(framework.toLowerCase())
+      const frameworkRules = rules.filter(
+        (rule) =>
+          rule.frontmatter?.framework?.toLowerCase() === framework.toLowerCase() ||
+          rule.frontmatter?.tags?.includes(framework.toLowerCase())
       );
 
       if (frameworkRules.length > 0) {
         patterns.push(`### ${framework} Patterns`);
-        frameworkRules.forEach(rule => {
+        frameworkRules.forEach((rule) => {
           patterns.push(`- ${rule.frontmatter?.description || rule.name}`);
         });
         patterns.push('');
@@ -2076,7 +2204,9 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       patterns.push('- Implement proper logging for error tracking');
     }
 
-    return patterns.length > 0 ? patterns.join('\n') : '- Follow language-specific error handling best practices';
+    return patterns.length > 0
+      ? patterns.join('\n')
+      : '- Follow language-specific error handling best practices';
   }
 
   async generatePerformancePatterns(rules, projectContext) {
@@ -2095,7 +2225,9 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       patterns.push('- Implement proper caching strategies');
     }
 
-    return patterns.length > 0 ? patterns.join('\n') : '- Optimize for performance following framework best practices';
+    return patterns.length > 0
+      ? patterns.join('\n')
+      : '- Optimize for performance following framework best practices';
   }
 
   // Additional methods for MCP and configuration generation...
@@ -2166,7 +2298,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
       services.push('- **Database**: MCP integration for schema and query operations');
     }
 
-    if (projectContext.techStack?.libraries?.some(lib => lib.includes('api'))) {
+    if (projectContext.techStack?.libraries?.some((lib) => lib.includes('api'))) {
       services.push('- **APIs**: External API integration capabilities');
     }
 
@@ -2189,7 +2321,7 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
           path: path.join(this.projectPath, `CLAUDE-${framework.toLowerCase()}.md`),
           content: memoryContent,
           type: 'technology',
-          priority: 'medium'
+          priority: 'medium',
         });
       }
     }
@@ -2223,17 +2355,17 @@ ${this.getFrameworkPerformancePatterns(framework).join('\n')}
   }
 
   async getFrameworkSpecificPatterns(framework, rules) {
-    const frameworkRules = rules.filter(rule =>
-      rule.frontmatter?.framework?.toLowerCase() === framework.toLowerCase()
+    const frameworkRules = rules.filter(
+      (rule) => rule.frontmatter?.framework?.toLowerCase() === framework.toLowerCase()
     );
 
     if (frameworkRules.length === 0) {
       return `- Follow ${framework} best practices and conventions`;
     }
 
-    return frameworkRules.map(rule =>
-      `- ${rule.frontmatter?.description || rule.name}`
-    ).join('\n');
+    return frameworkRules
+      .map((rule) => `- ${rule.frontmatter?.description || rule.name}`)
+      .join('\n');
   }
 
   getFrameworkBestPractices(framework) {
@@ -2242,20 +2374,20 @@ ${this.getFrameworkPerformancePatterns(framework).join('\n')}
         '- Use App Router for new applications',
         '- Implement proper SEO with metadata API',
         '- Optimize images with next/image component',
-        '- Use server components when possible'
+        '- Use server components when possible',
       ],
-      'React': [
+      React: [
         '- Use functional components with hooks',
         '- Implement proper key props for lists',
         '- Use React.memo for performance optimization',
-        '- Follow component composition patterns'
+        '- Follow component composition patterns',
       ],
-      'Angular': [
+      Angular: [
         '- Use Angular CLI for code generation',
         '- Implement proper dependency injection',
         '- Use reactive forms for complex forms',
-        '- Follow Angular style guide'
-      ]
+        '- Follow Angular style guide',
+      ],
     };
 
     return practices[framework] || [`- Follow ${framework} recommended practices`];
@@ -2274,14 +2406,14 @@ ${this.getFrameworkPerformancePatterns(framework).join('\n')}
         '- Use dynamic imports for code splitting',
         '- Implement proper caching strategies',
         '- Optimize Core Web Vitals',
-        '- Use streaming for better perceived performance'
+        '- Use streaming for better perceived performance',
       ],
-      'React': [
+      React: [
         '- Use React.memo and useMemo appropriately',
         '- Implement virtualization for large lists',
         '- Optimize re-renders with proper dependency arrays',
-        '- Use React.lazy for component lazy loading'
-      ]
+        '- Use React.lazy for component lazy loading',
+      ],
     };
 
     return patterns[framework] || [`- Optimize ${framework} applications following best practices`];
@@ -2290,44 +2422,45 @@ ${this.getFrameworkPerformancePatterns(framework).join('\n')}
   async generateDatabaseMCP(projectContext) {
     const libraries = projectContext.techStack?.libraries || [];
 
-    if (libraries.some(lib => lib.includes('prisma'))) {
+    if (libraries.some((lib) => lib.includes('prisma'))) {
       return {
-        type: "stdio",
-        command: "npx",
-        args: ["-y", "@modelcontextprotocol/server-prisma"],
+        type: 'stdio',
+        command: 'npx',
+        args: ['-y', '@modelcontextprotocol/server-prisma'],
         env: {
-          DATABASE_URL: "${DATABASE_URL}"
-        }
+          DATABASE_URL: '${DATABASE_URL}',
+        },
       };
     }
 
     // Default database MCP
     return {
-      type: "stdio",
-      command: "npx",
-      args: ["-y", "@modelcontextprotocol/server-database"],
-      env: {}
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-database'],
+      env: {},
     };
   }
 
   async generateFrameworkMCP(framework, projectContext) {
     // Framework-specific MCP servers
     const mcpServers = {
-      'react': {
-        type: "stdio",
-        command: "npx",
-        args: ["-y", "@modelcontextprotocol/server-react-devtools"],
-        env: {}
-      }
+      react: {
+        type: 'stdio',
+        command: 'npx',
+        args: ['-y', '@modelcontextprotocol/server-react-devtools'],
+        env: {},
+      },
     };
 
     return mcpServers[framework.toLowerCase()] || null;
   }
 
   async generateNextJSCommands(projectContext) {
-    return [{
-      name: 'create-nextjs-page',
-      content: `---
+    return [
+      {
+        name: 'create-nextjs-page',
+        content: `---
 allowed-tools: ["Read", "Write", "Edit"]
 description: "Create Next.js page following App Router patterns"
 priority: "medium"
@@ -2364,14 +2497,16 @@ Create a new page following Next.js App Router conventions.
 ## Usage
 \`/project:create-nextjs-page about\`
 \`/project:create-nextjs-page blog/[slug]\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   async generateVueCommands(projectContext) {
-    return [{
-      name: 'create-vue-component',
-      content: `---
+    return [
+      {
+        name: 'create-vue-component',
+        content: `---
 allowed-tools: ["Read", "Write", "Edit"]
 description: "Create Vue component using Composition API"
 priority: "medium"
@@ -2408,14 +2543,16 @@ Create a new Vue component following Composition API patterns.
 ## Usage
 \`/project:create-vue-component BaseButton\`
 \`/project:create-vue-component UserProfile\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   async generateAngularCommands(projectContext) {
-    return [{
-      name: 'create-angular-component',
-      content: `---
+    return [
+      {
+        name: 'create-angular-component',
+        content: `---
 allowed-tools: ["Read", "Write", "Bash(ng generate:*)"]
 description: "Create Angular component using Angular CLI"
 priority: "medium"
@@ -2451,14 +2588,16 @@ Create a new Angular component following Angular best practices.
 ## Usage
 \`/project:create-angular-component user-profile\`
 \`/project:create-angular-component shared/button\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   async generateExpressCommands(projectContext) {
-    return [{
-      name: 'create-express-route',
-      content: `---
+    return [
+      {
+        name: 'create-express-route',
+        content: `---
 allowed-tools: ["Read", "Write", "Edit"]
 description: "Create Express route with middleware and validation"
 priority: "medium"
@@ -2495,14 +2634,16 @@ Create a new Express route following established patterns.
 ## Usage
 \`/project:create-express-route users\`
 \`/project:create-express-route api/auth\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   async generateFastAPICommands(projectContext) {
-    return [{
-      name: 'create-fastapi-endpoint',
-      content: `---
+    return [
+      {
+        name: 'create-fastapi-endpoint',
+        content: `---
 allowed-tools: ["Read", "Write", "Edit"]
 description: "Create FastAPI endpoint with Pydantic models"
 priority: "medium"
@@ -2539,8 +2680,9 @@ Create a new FastAPI endpoint following best practices.
 ## Usage
 \`/project:create-fastapi-endpoint users\`
 \`/project:create-fastapi-endpoint auth/login\`
-`
-    }];
+`,
+      },
+    ];
   }
 
   async generateArchitectureCommands(rules, projectContext) {
@@ -2549,7 +2691,8 @@ Create a new FastAPI endpoint following best practices.
 
     // Generate commands based on detected architectural patterns
     for (const pattern of architecturalPatterns) {
-      if (pattern.confidence > 70) { // Only for high-confidence patterns
+      if (pattern.confidence > 70) {
+        // Only for high-confidence patterns
         const command = await this.generatePatternCommand(pattern, projectContext);
         if (command) commands.push(command);
       }
@@ -2596,7 +2739,7 @@ Analyze the implementation of ${pattern.name} architectural pattern in the codeb
 
 ## Usage
 \`/project:analyze-${patternName}\`
-`
+`,
     };
   }
 
@@ -2608,7 +2751,7 @@ Analyze the implementation of ${pattern.name} architectural pattern in the codeb
     const technologies = projectContext.techStack?.libraries || [];
 
     // TypeScript commands
-    if (technologies.some(tech => tech.includes('typescript'))) {
+    if (technologies.some((tech) => tech.includes('typescript'))) {
       commands.push({
         name: 'fix-typescript-errors',
         content: `---
@@ -2642,7 +2785,7 @@ Systematically identify and fix TypeScript compilation errors.
 ## Usage
 \`/project:fix-typescript-errors\`
 \`/project:fix-typescript-errors src/components\`
-`
+`,
       });
 
       commands.push({
@@ -2677,12 +2820,12 @@ Create comprehensive TypeScript type definitions based on code analysis.
 ## Usage
 \`/project:generate-types ComponentProps\`
 \`/project:generate-types APIResponse\`
-`
+`,
       });
     }
 
     // TailwindCSS commands
-    if (technologies.some(tech => tech.includes('tailwind'))) {
+    if (technologies.some((tech) => tech.includes('tailwind'))) {
       commands.push({
         name: 'optimize-tailwind',
         content: `---
@@ -2715,12 +2858,12 @@ Analyze and optimize TailwindCSS usage across the project.
 ## Usage
 \`/project:optimize-tailwind\`
 \`/project:optimize-tailwind components\`
-`
+`,
       });
     }
 
     // State management commands
-    if (technologies.some(tech => tech.includes('zustand') || tech.includes('redux'))) {
+    if (technologies.some((tech) => tech.includes('zustand') || tech.includes('redux'))) {
       commands.push({
         name: 'create-store',
         content: `---
@@ -2754,7 +2897,7 @@ Create a new state management store following established patterns.
 ## Usage
 \`/project:create-store UserStore\`
 \`/project:create-store CartStore\`
-`
+`,
       });
     }
 
@@ -2799,12 +2942,12 @@ Create comprehensive tests following project testing patterns.
    - Add accessibility tests if applicable
 
 ## Test Types Generated
-${testingFrameworks.map(fw => `- ${fw} tests`).join('\n') || '- Framework-agnostic tests'}
+${testingFrameworks.map((fw) => `- ${fw} tests`).join('\n') || '- Framework-agnostic tests'}
 
 ## Usage
 \`/project:generate-tests UserComponent\`
 \`/project:generate-tests utils/helpers.js\`
-`
+`,
     });
 
     commands.push({
@@ -2839,7 +2982,7 @@ Systematically identify and fix failing tests.
 ## Usage
 \`/project:fix-failing-tests\`
 \`/project:fix-failing-tests integration\`
-`
+`,
     });
 
     commands.push({
@@ -2874,7 +3017,7 @@ Analyze test coverage and systematically improve it.
 ## Usage
 \`/project:improve-coverage\`
 \`/project:improve-coverage src/utils\`
-`
+`,
     });
 
     return commands;
@@ -2888,7 +3031,7 @@ Analyze test coverage and systematically improve it.
     const technologies = projectContext.techStack?.libraries || [];
 
     // Docker commands
-    if (technologies.some(tech => tech.includes('docker'))) {
+    if (technologies.some((tech) => tech.includes('docker'))) {
       commands.push({
         name: 'optimize-docker',
         content: `---
@@ -2924,7 +3067,7 @@ Analyze and optimize Docker configuration for better performance and security.
 ## Usage
 \`/project:optimize-docker\`
 \`/project:optimize-docker frontend\`
-`
+`,
       });
     }
 
@@ -2964,7 +3107,7 @@ Create or improve continuous integration and deployment pipeline.
 ## Usage
 \`/project:setup-cicd github-actions\`
 \`/project:setup-cicd gitlab-ci\`
-`
+`,
     });
 
     commands.push({
@@ -3002,7 +3145,7 @@ Perform comprehensive security analysis of the project.
 ## Usage
 \`/project:security-audit\`
 \`/project:security-audit dependencies\`
-`
+`,
     });
 
     return commands;
@@ -3016,7 +3159,7 @@ Perform comprehensive security analysis of the project.
     const technologies = projectContext.techStack?.libraries || [];
 
     // Prisma commands
-    if (technologies.some(tech => tech.includes('prisma'))) {
+    if (technologies.some((tech) => tech.includes('prisma'))) {
       commands.push({
         name: 'generate-prisma-schema',
         content: `---
@@ -3051,7 +3194,7 @@ Create or update Prisma database schema following best practices.
 ## Usage
 \`/project:generate-prisma-schema User\`
 \`/project:generate-prisma-schema BlogPost\`
-`
+`,
       });
 
       commands.push({
@@ -3089,7 +3232,7 @@ Analyze and optimize database queries for better performance.
 ## Usage
 \`/project:optimize-queries\`
 \`/project:optimize-queries user-queries\`
-`
+`,
       });
     }
 
@@ -3129,7 +3272,7 @@ Create comprehensive data model with validation and type safety.
 ## Usage
 \`/project:create-data-model UserProfile\`
 \`/project:create-data-model ProductCatalog\`
-`
+`,
     });
 
     return commands;

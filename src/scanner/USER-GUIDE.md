@@ -5,7 +5,7 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/Version-2.0.0-brightgreen.svg)](https://github.com/entro314-labs/VDK-CLI)
 
-*A powerful tool for analyzing project structures and generating customized AI coding rules*
+_A powerful tool for analyzing project structures and generating customized AI coding rules_
 
 </div>
 
@@ -107,7 +107,7 @@ async function run() {
       projectPath: '/path/to/your/project',
       outputDir: './.ai/rules',
       deep: true,
-      validateRules: true
+      validateRules: true,
     });
     console.log('Generated rules:', results.generatedRules);
   } catch (error) {
@@ -122,13 +122,13 @@ run();
 
 ### Command Line Options
 
-| Option | Description |
-|--------|-------------|
-| `--path`, `-p` | Specify path to scan (default: current directory) |
-| `--output`, `-o` | Specify output directory for generated rules |
-| `--deep`, `-d` | Enable deep scanning for thorough analysis |
-| `--verbose`, `-v` | Enable verbose output |
-| `--help`, `-h` | Display help information |
+| Option            | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `--path`, `-p`    | Specify path to scan (default: current directory) |
+| `--output`, `-o`  | Specify output directory for generated rules      |
+| `--deep`, `-d`    | Enable deep scanning for thorough analysis        |
+| `--verbose`, `-v` | Enable verbose output                             |
+| `--help`, `-h`    | Display help information                          |
 
 ### Example Commands
 

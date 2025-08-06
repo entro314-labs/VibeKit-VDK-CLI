@@ -6,8 +6,9 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import os from 'os';
+import path from 'path';
+
 import { BaseIntegration } from './base-integration.js';
 
 /**
@@ -39,7 +40,6 @@ export class ClaudeCodeIntegration extends BaseIntegration {
       // Custom slash commands
       projectCommands: path.join(this.claudeConfigPath, 'commands'),
       userCommands: path.join(os.homedir(), '.claude', 'commands'),
-
     };
   }
 
@@ -52,7 +52,7 @@ export class ClaudeCodeIntegration extends BaseIntegration {
       isUsed: false,
       confidence: 'none', // none, low, medium, high
       indicators: [],
-      recommendations: []
+      recommendations: [],
     };
 
     // 1. Check for .claude directory structure
@@ -62,13 +62,9 @@ export class ClaudeCodeIntegration extends BaseIntegration {
       detection.isUsed = true;
 
       // Check for specific Claude Code files
-      const claudeFiles = [
-        'settings.json',
-        'settings.local.json',
-        'commands/'
-      ];
+      const claudeFiles = ['settings.json', 'settings.local.json', 'commands/'];
 
-      claudeFiles.forEach(file => {
+      claudeFiles.forEach((file) => {
         const filePath = path.join(this.claudeConfigPath, file);
         if (this.fileExists(filePath) || this.directoryExists(filePath)) {
           detection.indicators.push(`Found .claude/${file}`);
@@ -82,10 +78,10 @@ export class ClaudeCodeIntegration extends BaseIntegration {
     // 2. Check for CLAUDE.md files (main indicator)
     const memoryPaths = [
       path.join(this.projectPath, 'CLAUDE.md'),
-      path.join(this.projectPath, 'CLAUDE.local.md')
+      path.join(this.projectPath, 'CLAUDE.local.md'),
     ];
 
-    memoryPaths.forEach(memoryPath => {
+    memoryPaths.forEach((memoryPath) => {
       if (this.fileExists(memoryPath)) {
         detection.indicators.push(`Found ${path.basename(memoryPath)}`);
         detection.confidence = 'high';
@@ -104,14 +100,20 @@ export class ClaudeCodeIntegration extends BaseIntegration {
 
     // Check if we're currently running in Claude Code context
     const claudeEnvVars = [
-      'CLAUDE_CODE_SESSION', 'CLAUDE_CODE_SSE_PORT', 'CLAUDE_CODE_ENTRYPOINT', 
-      'CLAUDECODE', 'ANTHROPIC_SMALL_FAST_MODEL'
+      'CLAUDE_CODE_SESSION',
+      'CLAUDE_CODE_SSE_PORT',
+      'CLAUDE_CODE_ENTRYPOINT',
+      'CLAUDECODE',
+      'ANTHROPIC_SMALL_FAST_MODEL',
     ];
-    const hasClaudeEnv = claudeEnvVars.some(envVar => process.env[envVar]);
-    
-    if (hasClaudeEnv || process.env.ANTHROPIC_API_KEY || 
-        process.env.USER_AGENT?.includes('claude') || 
-        process.argv[0]?.includes('claude')) {
+    const hasClaudeEnv = claudeEnvVars.some((envVar) => process.env[envVar]);
+
+    if (
+      hasClaudeEnv ||
+      process.env.ANTHROPIC_API_KEY ||
+      process.env.USER_AGENT?.includes('claude') ||
+      process.argv[0]?.includes('claude')
+    ) {
       detection.indicators.push('Currently running in Claude Code context');
       detection.confidence = 'high';
       detection.isUsed = true;
@@ -136,12 +138,12 @@ export class ClaudeCodeIntegration extends BaseIntegration {
       '.claude/commands/',
       '.claude/settings.json',
       'CLAUDE.md',
-      '.gitignore' // Check if .claude is gitignored
+      '.gitignore', // Check if .claude is gitignored
     ];
 
     // Check workspace structure
     const workspaceChecks = ['.claude/commands/', '.claude/settings.json', 'CLAUDE.md'];
-    workspaceChecks.forEach(indicator => {
+    workspaceChecks.forEach((indicator) => {
       const indicatorPath = path.join(this.projectPath, indicator);
       if (this.directoryExists(indicatorPath)) {
         detection.indicators.push(`Workspace has ${indicator}`);
@@ -155,7 +157,9 @@ export class ClaudeCodeIntegration extends BaseIntegration {
     // Check .gitignore for Claude Code patterns
     const gitignorePatterns = this.checkGitignore(['.claude', 'claude-code']);
     if (gitignorePatterns.length > 0) {
-      detection.indicators.push(`Claude Code paths found in .gitignore: ${gitignorePatterns.join(', ')}`);
+      detection.indicators.push(
+        `Claude Code paths found in .gitignore: ${gitignorePatterns.join(', ')}`
+      );
     }
 
     // 5. Check for recent Claude Code activity
@@ -163,10 +167,10 @@ export class ClaudeCodeIntegration extends BaseIntegration {
     const claudeLogPaths = [
       path.join(platformPaths.home, '.claude', 'logs'),
       path.join(platformPaths.logs, 'claude-code'),
-      path.join(this.claudeConfigPath, 'logs')
+      path.join(this.claudeConfigPath, 'logs'),
     ];
 
-    claudeLogPaths.forEach(logPath => {
+    claudeLogPaths.forEach((logPath) => {
       const recentLogs = this.getRecentActivity(logPath, 7);
       if (recentLogs.length > 0) {
         detection.indicators.push(`Recent Claude Code activity (${recentLogs.length} log files)`);
@@ -177,21 +181,26 @@ export class ClaudeCodeIntegration extends BaseIntegration {
 
     // 6. Generate recommendations based on detection
     if (detection.confidence === 'none') {
-      detection.recommendations.push('Claude Code not detected. Install with: npm install -g @anthropic-ai/claude-code');
+      detection.recommendations.push(
+        'Claude Code not detected. Install with: npm install -g @anthropic-ai/claude-code'
+      );
     } else if (detection.confidence === 'low') {
-      detection.recommendations.push('Claude Code may be installed but not configured for this project');
+      detection.recommendations.push(
+        'Claude Code may be installed but not configured for this project'
+      );
       detection.recommendations.push('Run: vdk claude-code --setup to configure integration');
     } else if (detection.confidence === 'medium') {
       detection.recommendations.push('Claude Code appears to be configured');
       detection.recommendations.push('Run: vdk claude-code --check to verify integration');
     } else if (detection.confidence === 'high') {
       detection.recommendations.push('Claude Code is actively configured and being used');
-      detection.recommendations.push('Consider running: vdk claude-code --update-memory to sync latest project context');
+      detection.recommendations.push(
+        'Consider running: vdk claude-code --update-memory to sync latest project context'
+      );
     }
 
     return detection;
   }
-
 
   /**
    * Check if Claude Code global installation is available
@@ -200,7 +209,6 @@ export class ClaudeCodeIntegration extends BaseIntegration {
   isClaudeCodeInstalled() {
     return this.commandExists('claude');
   }
-
 
   /**
    * Initialize Claude Code configuration for VDK integration
@@ -217,46 +225,43 @@ export class ClaudeCodeIntegration extends BaseIntegration {
 
       // Create project-specific Claude Code settings following official format
       const claudeSettings = {
-        "allowedTools": [
-          "Bash",
-          "Edit",
-          "MultiEdit",
-          "Read",
-          "Write",
-          "Glob",
-          "Grep",
-          "LS",
-          "WebFetch",
-          "WebSearch"
+        allowedTools: [
+          'Bash',
+          'Edit',
+          'MultiEdit',
+          'Read',
+          'Write',
+          'Glob',
+          'Grep',
+          'LS',
+          'WebFetch',
+          'WebSearch',
         ],
-        "disallowedTools": [
-          "Bash(rm:*)",
-          "Bash(sudo:*)"
-        ],
-        "hooks": {}
+        disallowedTools: ['Bash(rm:*)', 'Bash(sudo:*)'],
+        hooks: {},
       };
 
       // Create separate VDK configuration file for our custom settings
       const vdkConfig = {
-        "enabled": true,
-        "version": "1.0.0",
-        "integration": "claude-code",
-        "projectName": options.projectName || path.basename(this.projectPath),
-        "memory": {
-          "enabled": true,
-          "persistence": "project",
-          "autoSave": true
+        enabled: true,
+        version: '1.0.0',
+        integration: 'claude-code',
+        projectName: options.projectName || path.basename(this.projectPath),
+        memory: {
+          enabled: true,
+          persistence: 'project',
+          autoSave: true,
         },
-        "rules": {
-          "directory": "./rules",
-          "autoLoad": true,
-          "format": "md"
+        rules: {
+          directory: './rules',
+          autoLoad: true,
+          format: 'md',
         },
-        "tools": {
-          "fileOperations": true,
-          "codeAnalysis": true,
-          "projectScanning": true
-        }
+        tools: {
+          fileOperations: true,
+          codeAnalysis: true,
+          projectScanning: true,
+        },
       };
 
       const settingsPath = paths.projectSettings;
@@ -274,7 +279,9 @@ export class ClaudeCodeIntegration extends BaseIntegration {
       if (!this.fileExists(claudeMemoryPath)) {
         await this.createProjectMemoryFile(options);
       } else if (this.verbose) {
-        console.log(`CLAUDE.md already exists, skipping basic template creation (likely created by ClaudeCodeAdapter)`);
+        console.log(
+          `CLAUDE.md already exists, skipping basic template creation (likely created by ClaudeCodeAdapter)`
+        );
       }
 
       // Ensure .claude/settings.local.json is in .gitignore
@@ -634,14 +641,25 @@ Includes recent changes: !\`git status\` and !\`git log --oneline -10\`
     const vdkContext = `# VDK Project Context Update
 
 ## Technology Stack
-${projectContext.techStack ? Object.entries(projectContext.techStack).map(([key, value]) =>
-  `- **${key}**: ${Array.isArray(value) ? value.join(', ') : value}`
-).join('\n') : 'Not analyzed'}
+${
+  projectContext.techStack
+    ? Object.entries(projectContext.techStack)
+        .map(([key, value]) => `- **${key}**: ${Array.isArray(value) ? value.join(', ') : value}`)
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ## Architecture Patterns
-${projectContext.patterns ? Object.entries(projectContext.patterns).map(([key, value]) =>
-  `- **${key}**: ${Array.isArray(value) ? value.join(', ') : JSON.stringify(value)}`
-).join('\n') : 'Not analyzed'}
+${
+  projectContext.patterns
+    ? Object.entries(projectContext.patterns)
+        .map(
+          ([key, value]) =>
+            `- **${key}**: ${Array.isArray(value) ? value.join(', ') : JSON.stringify(value)}`
+        )
+        .join('\n')
+    : 'Not analyzed'
+}
 
 ## Project Structure
 - **Root Directory**: ${this.projectPath}
@@ -662,7 +680,6 @@ ${projectContext.patterns ? Object.entries(projectContext.patterns).map(([key, v
     await fs.promises.writeFile(memoryPath, vdkContext, 'utf8');
   }
 
-
   /**
    * Check Claude Code version compatibility
    * @returns {Object} Version information and compatibility status
@@ -678,14 +695,14 @@ ${projectContext.patterns ? Object.entries(projectContext.patterns).map(([key, v
           memory: true,
           slashCommands: true,
           projectConfig: true,
-          hooks: true
-        }
+          hooks: true,
+        },
       };
     } else {
       return {
         version: null,
         compatible: false,
-        error: 'Claude Code not found or not accessible'
+        error: 'Claude Code not found or not accessible',
       };
     }
   }
@@ -712,7 +729,7 @@ export async function setupClaudeCodeIntegration(projectPath, projectContext = {
     projectName: projectContext.projectName || path.basename(projectPath),
     projectType: projectContext.projectType,
     primaryLanguage: projectContext.techStack?.primaryLanguages?.[0],
-    framework: projectContext.techStack?.frameworks?.[0]
+    framework: projectContext.techStack?.frameworks?.[0],
   });
 
   if (initSuccess && projectContext) {

@@ -9,9 +9,16 @@
  * Repository: https://github.com/entro314-labs/VDK-CLI
  */
 
+import chalk from 'chalk';
+import { Command } from 'commander';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
+import fs from 'fs/promises';
+import { createRequire } from 'module';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+import { downloadRule, fetchRuleList } from './src/blueprints-client.js';
+import { runScanner } from './src/scanner/index.js';
 
 // Get the directory where cli.js is located (VDK CLI directory)
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,13 +27,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '.env.local') });
 dotenv.config({ path: path.join(__dirname, '.env') });
 
-import { Command } from 'commander';
-import chalk from 'chalk';
-import { createRequire } from 'module';
-import { runScanner } from './src/scanner/index.js';
-import { fetchRuleList, downloadRule } from './src/blueprints-client.js';
-import fs from 'fs/promises';
-
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 
@@ -34,7 +34,7 @@ const program = new Command();
 
 program
   .name('vdk')
-  .description("VDK CLI: The world's first Vibe Development Kit - Make your AI assistant project-aware")
+  .description("VDK CLI: The world's first Vibe Development Kit - One Context, All AI Assistants")
   .version(pkg.version);
 
 program
@@ -43,15 +43,30 @@ program
   .option('-p, --projectPath <path>', 'Path to the project to scan', process.cwd())
   .option('-o, --outputPath <path>', 'Path where generated rules should be saved', './.ai/rules')
   .option('-d, --deep', 'Enable deep scanning for more thorough pattern detection', false)
-  .option('-i, --ignorePattern <patterns...>', 'Glob patterns to ignore', ['**/node_modules/**', '**/dist/**', '**/build/**'])
-  .option('--use-gitignore', 'Automatically parse .gitignore files for additional ignore patterns', true)
+  .option('-i, --ignorePattern <patterns...>', 'Glob patterns to ignore', [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+  ])
+  .option(
+    '--use-gitignore',
+    'Automatically parse .gitignore files for additional ignore patterns',
+    true
+  )
   .option('-t, --template <name>', 'Name of the rule template to use', 'default')
   .option('--overwrite', 'Overwrite existing rule files without prompting', false)
   .option('--ide-integration', 'Enable IDE integration setup', true)
   .option('--watch', 'Enable watch mode for continuous IDE integration updates', false)
   .option('-v, --verbose', 'Enable verbose output for debugging', false)
-  .option('--categories <categories...>', 'Specific command categories to fetch (e.g., development, testing, workflow)')
-  .option('--preset <preset>', 'Preset command collection (minimal, full, development, production)', 'auto')
+  .option(
+    '--categories <categories...>',
+    'Specific command categories to fetch (e.g., development, testing, workflow)'
+  )
+  .option(
+    '--preset <preset>',
+    'Preset command collection (minimal, full, development, production)',
+    'auto'
+  )
   .option('--interactive', 'Enable interactive category selection', false)
   .action(async (options) => {
     try {
@@ -109,7 +124,9 @@ program
 
       const remoteRules = await fetchRuleList();
       if (remoteRules.length === 0) {
-        console.log(chalk.yellow('No blueprints found in the VDK-Blueprints repository or failed to connect.'));
+        console.log(
+          chalk.yellow('No blueprints found in the VDK-Blueprints repository or failed to connect.')
+        );
         return;
       }
 
@@ -117,7 +134,11 @@ program
       let updatedCount = 0;
       let newCount = 0;
 
-      console.log(chalk.blue(`Found ${remoteRules.length} blueprints in the repository. Comparing with local rules...`));
+      console.log(
+        chalk.blue(
+          `Found ${remoteRules.length} blueprints in the repository. Comparing with local rules...`
+        )
+      );
 
       for (const remoteRule of remoteRules) {
         const localPath = path.join(rulesDir, remoteRule.name);
@@ -135,13 +156,13 @@ program
       }
 
       if (newCount > 0 || updatedCount > 0) {
-         console.log(chalk.green(`✅ Update complete!`));
-         if (newCount > 0) console.log(chalk.green(`   - Added ${newCount} new rule(s).`));
-         if (updatedCount > 0) console.log(chalk.green(`   - Updated ${updatedCount} existing rule(s).`));
+        console.log(chalk.green(`✅ Update complete!`));
+        if (newCount > 0) console.log(chalk.green(`   - Added ${newCount} new rule(s).`));
+        if (updatedCount > 0)
+          console.log(chalk.green(`   - Updated ${updatedCount} existing rule(s).`));
       } else {
         console.log(chalk.green('✅ Your rules are already up to date.'));
       }
-
     } catch (error) {
       console.error(chalk.red(`An error occurred during the update: ${error.message}`));
       process.exit(1);
@@ -175,23 +196,31 @@ program
     // 2. Check local and remote rules
     try {
       const localRules = await fs.readdir(rulesDir).catch(() => []);
-      console.log(`\n${chalk.green('✅ Local Rules:')} Found ${chalk.cyan(localRules.length)} rule(s) in ${chalk.dim(rulesDir)}`);
+      console.log(
+        `\n${chalk.green('✅ Local Rules:')} Found ${chalk.cyan(localRules.length)} rule(s) in ${chalk.dim(rulesDir)}`
+      );
 
       const remoteRules = await fetchRuleList();
       if (remoteRules.length > 0) {
-        const remoteRuleNames = remoteRules.map(r => r.name);
-        const newRules = remoteRuleNames.filter(r => !localRules.includes(r));
+        const remoteRuleNames = remoteRules.map((r) => r.name);
+        const newRules = remoteRuleNames.filter((r) => !localRules.includes(r));
 
-        console.log(`\n${chalk.green('✅ VDK Hub Status:')} Hub contains ${chalk.cyan(remoteRules.length)} total rules.`);
+        console.log(
+          `\n${chalk.green('✅ VDK Hub Status:')} Hub contains ${chalk.cyan(remoteRules.length)} total rules.`
+        );
         if (newRules.length > 0) {
-          console.log(chalk.yellow(`   - Updates available: ${chalk.cyan(newRules.length)} new or updated rule(s).`));
+          console.log(
+            chalk.yellow(
+              `   - Updates available: ${chalk.cyan(newRules.length)} new or updated rule(s).`
+            )
+          );
           console.log(`   - Run ${chalk.cyan('vdk update')} to get the latest rules.`);
         } else {
           console.log(chalk.green('   - Your local rules are up to date.'));
         }
       }
     } catch (error) {
-        console.log(chalk.red(`\n❌ Could not check rule status: ${error.message}`));
+      console.log(chalk.red(`\n❌ Could not check rule status: ${error.message}`));
     }
   });
 

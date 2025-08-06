@@ -12,7 +12,7 @@ import path from 'path';
 export class TypeScriptParser {
   /**
    * Determine if a file is likely TypeScript based on extension
-   * 
+   *
    * @param {string} filePath - Path to the file
    * @returns {boolean} - True if file is TypeScript
    */
@@ -20,10 +20,10 @@ export class TypeScriptParser {
     const ext = path.extname(filePath).toLowerCase();
     return ext === '.ts' || ext === '.tsx' || ext === '.d.ts';
   }
-  
+
   /**
    * Safely parse TypeScript file content
-   * 
+   *
    * @param {string} filePath - Path to the TypeScript file
    * @returns {Promise<{content: string, success: boolean, error: Error|null}>} - Parse result
    */
@@ -37,10 +37,10 @@ export class TypeScriptParser {
       return { content: '', success: false, error };
     }
   }
-  
+
   /**
    * Extract imports from TypeScript file
-   * 
+   *
    * @param {string} content - File content
    * @returns {string[]} - Array of imported modules
    */
@@ -50,17 +50,17 @@ export class TypeScriptParser {
     const importRegex = /import\s+(?:{[^}]*}|\*\s+as\s+\w+|\w+)\s+from\s+['"]([^'"]+)['"]/g;
     const imports = [];
     let match;
-    
+
     while ((match = importRegex.exec(content)) !== null) {
       imports.push(match[1]);
     }
-    
+
     return imports;
   }
-  
+
   /**
    * Extract exports from TypeScript file
-   * 
+   *
    * @param {string} content - File content
    * @returns {string[]} - Array of exported items
    */
@@ -69,11 +69,11 @@ export class TypeScriptParser {
     const exportRegex = /export\s+(const|let|var|function|class|interface|type|enum)\s+(\w+)/g;
     const exports = [];
     let match;
-    
+
     while ((match = exportRegex.exec(content)) !== null) {
       exports.push(match[2]);
     }
-    
+
     return exports;
   }
 }

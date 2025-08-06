@@ -7,13 +7,14 @@
 
 import fs from 'fs';
 import path from 'path';
-import { BaseIntegration } from './base-integration.js';
-import { 
-  IDE_CONFIGURATIONS, 
-  detectIDEs, 
+
+import {
+  detectIDEs,
   ensureRuleDirectory,
-  getIDEConfigById 
+  getIDEConfigById,
+  IDE_CONFIGURATIONS,
 } from '../shared/ide-configuration.js';
+import { BaseIntegration } from './base-integration.js';
 
 /**
  * Generic IDE integration that detects and manages multiple IDEs
@@ -35,20 +36,20 @@ export class GenericIDEIntegration extends BaseIntegration {
       confidence: 'none',
       indicators: [],
       recommendations: [],
-      detectedIDEs: []
+      detectedIDEs: [],
     };
 
     try {
       // Use the modernized detectIDEs function
       const detectedIDEConfigs = await detectIDEs(this.projectPath);
-      
+
       for (const ideConfig of detectedIDEConfigs) {
         const ideDetection = await this.detectSpecificIDE(ideConfig);
         if (ideDetection.isUsed) {
           detection.detectedIDEs.push(ideDetection);
           detection.isUsed = true;
           detection.indicators.push(...ideDetection.indicators);
-          
+
           // Upgrade confidence based on strongest detection
           if (ideDetection.confidence === 'high' && detection.confidence !== 'high') {
             detection.confidence = 'high';
@@ -65,17 +66,23 @@ export class GenericIDEIntegration extends BaseIntegration {
 
     // Generate recommendations
     if (detection.detectedIDEs.length === 0) {
-      detection.recommendations.push('No IDE configurations detected. VDK works with VS Code, Cursor, Windsurf, and other editors');
+      detection.recommendations.push(
+        'No IDE configurations detected. VDK works with VS Code, Cursor, Windsurf, and other editors'
+      );
       detection.recommendations.push('Run: vdk init to set up rules for your preferred IDE');
     } else if (detection.confidence === 'low') {
       detection.recommendations.push('IDE configurations detected but not fully configured');
       detection.recommendations.push('Run: vdk init --ide-integration to set up IDE rules');
     } else if (detection.confidence === 'medium') {
       detection.recommendations.push('IDE configurations found - consider optimizing rule setup');
-      detection.recommendations.push('Review generated rules in your IDE for optimal AI assistance');
+      detection.recommendations.push(
+        'Review generated rules in your IDE for optimal AI assistance'
+      );
     } else {
       detection.recommendations.push('IDE integrations are well configured');
-      detection.recommendations.push('Consider updating rules periodically as your project evolves');
+      detection.recommendations.push(
+        'Consider updating rules periodically as your project evolves'
+      );
     }
 
     return detection;
@@ -94,7 +101,7 @@ export class GenericIDEIntegration extends BaseIntegration {
       confidence: 'none',
       indicators: [],
       configPath: null,
-      rulesPath: null
+      rulesPath: null,
     };
 
     // Check for config folder
@@ -106,13 +113,13 @@ export class GenericIDEIntegration extends BaseIntegration {
       detection.confidence = 'medium';
     }
 
-    // Check for specific config files  
+    // Check for specific config files
     if (ide.configFiles) {
       for (const configFile of ide.configFiles) {
-        const fullPath = configFile.startsWith('~') 
+        const fullPath = configFile.startsWith('~')
           ? this.expandPath(configFile)
           : path.join(this.projectPath, configFile);
-          
+
         if (await this.fileExistsAsync(fullPath)) {
           detection.indicators.push(`${ide.name} config file: ${configFile}`);
           detection.isUsed = true;
@@ -129,11 +136,11 @@ export class GenericIDEIntegration extends BaseIntegration {
       detection.indicators.push(`${ide.name} rules directory found`);
       detection.rulesPath = rulesPath;
       detection.confidence = 'high';
-      
+
       // Check if rules directory has content
       try {
         const ruleFiles = await fs.promises.readdir(rulesPath);
-        const mdFiles = ruleFiles.filter(f => f.endsWith('.md'));
+        const mdFiles = ruleFiles.filter((f) => f.endsWith('.md'));
         if (mdFiles.length > 0) {
           detection.indicators.push(`${ide.name} has ${mdFiles.length} rule files`);
         }
@@ -163,18 +170,19 @@ export class GenericIDEIntegration extends BaseIntegration {
   getConfigPaths() {
     const paths = {};
     const detectionResult = this.getCachedDetection();
-    
+
     if (detectionResult.detectedIDEs) {
       for (const ideDetection of detectionResult.detectedIDEs) {
-        const ide = this.ideConfigurations.find(i => i.id === ideDetection.id);
+        const ide = this.ideConfigurations.find((i) => i.id === ideDetection.id);
         if (ide) {
           paths[ide.id] = {
             name: ide.name,
             configFolder: path.join(this.projectPath, ide.configFolder),
             rulesFolder: path.join(this.projectPath, ide.rulesFolder),
-            configFiles: ide.configFiles?.map(f => 
-              f.startsWith('~') ? this.expandPath(f) : path.join(this.projectPath, f)
-            ) || []
+            configFiles:
+              ide.configFiles?.map((f) =>
+                f.startsWith('~') ? this.expandPath(f) : path.join(this.projectPath, f)
+              ) || [],
           };
         }
       }
@@ -191,7 +199,7 @@ export class GenericIDEIntegration extends BaseIntegration {
   async initialize(options = {}) {
     const { verbose = false } = options;
     const detectionResult = this.getCachedDetection();
-    
+
     if (!detectionResult.isUsed) {
       if (verbose) {
         console.log('No IDEs detected - setting up generic configuration');
@@ -249,15 +257,15 @@ export class GenericIDEIntegration extends BaseIntegration {
   async createInitialRules(rulesPath, ideId) {
     // Creates basic rules structure as needed
     const vdkConfigPath = path.join(rulesPath, '.vdk-config.json');
-    
+
     if (!this.fileExists(vdkConfigPath)) {
       const config = {
         ide: ideId,
         rulesFormat: 'md',
         lastUpdated: new Date().toISOString(),
-        vdkVersion: '1.0.0'
+        vdkVersion: '1.0.0',
       };
-      
+
       await this.writeJsonFile(vdkConfigPath, config);
     }
   }
@@ -278,7 +286,7 @@ export class GenericIDEIntegration extends BaseIntegration {
    */
   isIDEDetected(ideId) {
     const detectedIDEs = this.getDetectedIDEs();
-    return detectedIDEs.some(ide => ide.id === ideId);
+    return detectedIDEs.some((ide) => ide.id === ideId);
   }
 
   /**

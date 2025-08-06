@@ -6,16 +6,17 @@
  * Part of Phase 3 implementation for the Project-Specific Rule Generator.
  */
 
-import fs from 'fs';
-import path from 'path';
 import chalk from 'chalk';
 import { spawn } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
 import {
-  IDE_CONFIGURATIONS,
   detectIDEs as detectIDEConfigs,
+  ensureRuleDirectory,
   getIDEConfigById,
   getIDEConfigPaths,
-  ensureRuleDirectory
+  IDE_CONFIGURATIONS,
 } from '../../shared/ide-configuration.js';
 
 /**
@@ -25,10 +26,10 @@ import {
 class IDEIntegrationManager {
   constructor(options = {}) {
     this.options = {
-      supportedIDEs: options.supportedIDEs || IDE_CONFIGURATIONS.map(ide => ide.id),
+      supportedIDEs: options.supportedIDEs || IDE_CONFIGURATIONS.map((ide) => ide.id),
       watchMode: options.watchMode || false,
       pollingInterval: options.pollingInterval || 5000, // 5 seconds default
-      verbose: options.verbose || false
+      verbose: options.verbose || false,
     };
 
     this.integrations = {};
@@ -48,7 +49,9 @@ class IDEIntegrationManager {
     const detectedIDEs = await this.detectIDEs(projectPath);
 
     if (detectedIDEs.length === 0) {
-      console.log(chalk.yellow('No supported IDE configurations detected. Using generic integration.'));
+      console.log(
+        chalk.yellow('No supported IDE configurations detected. Using generic integration.')
+      );
       detectedIDEs.push('generic');
     }
 
@@ -57,7 +60,9 @@ class IDEIntegrationManager {
       await this.initializeIntegration(ideId, projectPath);
     }
 
-    console.log(chalk.green(`IDE integrations initialized: ${Object.keys(this.integrations).join(', ')}`));
+    console.log(
+      chalk.green(`IDE integrations initialized: ${Object.keys(this.integrations).join(', ')}`)
+    );
 
     return Object.keys(this.integrations);
   }
@@ -73,8 +78,8 @@ class IDEIntegrationManager {
 
     // Filter by supported IDEs and return IDs only
     return detectedConfigs
-      .filter(config => this.options.supportedIDEs.includes(config.id))
-      .map(config => config.id);
+      .filter((config) => this.options.supportedIDEs.includes(config.id))
+      .map((config) => config.id);
   }
 
   /**
@@ -93,14 +98,16 @@ class IDEIntegrationManager {
       name: ideConfig ? ideConfig.name : ideId,
       configPath: paths.configPath,
       rulePath: paths.rulePath,
-      handlers: this.getHandlers(ideId)
+      handlers: this.getHandlers(ideId),
     };
 
     // Create rule directories if they don't exist
     const rulePath = this.integrations[ideId].rulePath;
     if (!fs.existsSync(rulePath)) {
       fs.mkdirSync(rulePath, { recursive: true });
-      console.log(chalk.green(`Created rule directory for ${this.integrations[ideId].name}: ${rulePath}`));
+      console.log(
+        chalk.green(`Created rule directory for ${this.integrations[ideId].name}: ${rulePath}`)
+      );
     }
 
     // If in watch mode, start file watchers for IDE config changes
@@ -109,7 +116,9 @@ class IDEIntegrationManager {
     }
 
     if (this.options.verbose) {
-      console.log(chalk.gray(`Initialized ${this.integrations[ideId].name} integration at ${rulePath}`));
+      console.log(
+        chalk.gray(`Initialized ${this.integrations[ideId].name} integration at ${rulePath}`)
+      );
     }
   }
 
@@ -179,7 +188,7 @@ class IDEIntegrationManager {
             console.log(chalk.gray(`[${ide} notification] Rules updated at ${rulePath}`));
             break;
         }
-      }
+      },
     };
   }
 
@@ -224,7 +233,7 @@ class IDEIntegrationManager {
           }
           delete this.changeBuffer[ide];
           this.lastScanTimestamp = Date.now();
-        }, 2000) // 2 second debounce
+        }, 2000), // 2 second debounce
       };
     }
   }
@@ -244,15 +253,21 @@ class IDEIntegrationManager {
     console.log(chalk.blue(`Regenerating rules for ${ide}...`));
 
     // Launch the scanner process as a background task
-    const scanner = spawn('node', [
-      path.join(process.cwd(), 'src', 'index.js'),
-      '--path', projectPath,
-      '--output', rulePath,
-      '--verbose'
-    ], {
-      detached: true,
-      stdio: 'ignore'
-    });
+    const scanner = spawn(
+      'node',
+      [
+        path.join(process.cwd(), 'src', 'index.js'),
+        '--path',
+        projectPath,
+        '--output',
+        rulePath,
+        '--verbose',
+      ],
+      {
+        detached: true,
+        stdio: 'ignore',
+      }
+    );
 
     // Don't wait for the process to complete, let it run in background
     scanner.unref();
@@ -267,7 +282,11 @@ class IDEIntegrationManager {
    */
   notifyVSCode(rulePath, variant = 'vscode') {
     // This would use the VS Code extension API when implemented
-    console.log(chalk.gray(`[${variant === 'vscode-insiders' ? 'VS Code Insiders' : 'VS Code'} notification] Rules updated at ${rulePath}`));
+    console.log(
+      chalk.gray(
+        `[${variant === 'vscode-insiders' ? 'VS Code Insiders' : 'VS Code'} notification] Rules updated at ${rulePath}`
+      )
+    );
   }
 
   /**

@@ -6,8 +6,9 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import os from 'os';
+import path from 'path';
+
 import { BaseIntegration } from './base-integration.js';
 
 /**
@@ -46,7 +47,7 @@ export class CursorIntegration extends BaseIntegration {
       isUsed: false,
       confidence: 'none', // none, low, medium, high
       indicators: [],
-      recommendations: []
+      recommendations: [],
     };
 
     // 1. Check for .cursor directory structure
@@ -56,14 +57,9 @@ export class CursorIntegration extends BaseIntegration {
       detection.isUsed = true;
 
       // Check for specific Cursor files
-      const cursorFiles = [
-        'settings.json',
-        'settings.local.json',
-        'extensions.json',
-        'mcp.json'
-      ];
+      const cursorFiles = ['settings.json', 'settings.local.json', 'extensions.json', 'mcp.json'];
 
-      cursorFiles.forEach(file => {
+      cursorFiles.forEach((file) => {
         const filePath = path.join(this.cursorConfigPath, file);
         if (this.fileExists(filePath)) {
           detection.indicators.push(`Found .cursor/${file}`);
@@ -90,10 +86,10 @@ export class CursorIntegration extends BaseIntegration {
       platformPaths.applications ? path.join(platformPaths.applications, 'Cursor.app') : null,
       platformPaths.home ? path.join(platformPaths.home, '.cursor') : null,
       platformPaths.config ? path.join(platformPaths.config, 'Cursor') : null,
-      platformPaths.appData ? path.join(platformPaths.appData, 'Cursor') : null
+      platformPaths.appData ? path.join(platformPaths.appData, 'Cursor') : null,
     ].filter(Boolean);
 
-    cursorPaths.forEach(cursorPath => {
+    cursorPaths.forEach((cursorPath) => {
       if (this.directoryExists(cursorPath)) {
         detection.indicators.push(`Cursor installation found at ${cursorPath}`);
         if (detection.confidence === 'none') {
@@ -118,11 +114,11 @@ export class CursorIntegration extends BaseIntegration {
     // 5. Check for Cursor-specific workspace indicators
     const workspaceIndicators = [
       '.cursor/',
-      '.cursor/rules/',  // Native Cursor rules location
-      '.cursorignore'
+      '.cursor/rules/', // Native Cursor rules location
+      '.cursorignore',
     ];
 
-    workspaceIndicators.forEach(indicator => {
+    workspaceIndicators.forEach((indicator) => {
       const indicatorPath = path.join(this.projectPath, indicator);
       if (this.directoryExists(indicatorPath) || this.fileExists(indicatorPath)) {
         detection.indicators.push(`Workspace has ${indicator}`);
@@ -140,16 +136,18 @@ export class CursorIntegration extends BaseIntegration {
     // 6. Check .gitignore for Cursor patterns
     const gitignorePatterns = this.checkGitignore(['.cursor', '.cursorignore']);
     if (gitignorePatterns.length > 0) {
-      detection.indicators.push(`Cursor paths found in .gitignore: ${gitignorePatterns.join(', ')}`);
+      detection.indicators.push(
+        `Cursor paths found in .gitignore: ${gitignorePatterns.join(', ')}`
+      );
     }
 
     // 7. Check for recent Cursor activity
     const cursorLogPaths = [
       platformPaths.logs ? path.join(platformPaths.logs, 'Cursor') : null,
-      platformPaths.home ? path.join(platformPaths.home, '.cursor', 'logs') : null
+      platformPaths.home ? path.join(platformPaths.home, '.cursor', 'logs') : null,
     ].filter(Boolean);
 
-    cursorLogPaths.forEach(logPath => {
+    cursorLogPaths.forEach((logPath) => {
       const recentLogs = this.getRecentActivity(logPath, 7);
       if (recentLogs.length > 0) {
         detection.indicators.push(`Recent Cursor activity (${recentLogs.length} log files)`);
@@ -162,14 +160,20 @@ export class CursorIntegration extends BaseIntegration {
     if (detection.confidence === 'none') {
       detection.recommendations.push('Cursor AI not detected. Install from: https://cursor.sh');
     } else if (detection.confidence === 'low') {
-      detection.recommendations.push('Cursor AI may be installed but not configured for this project');
-      detection.recommendations.push('Run: vdk init --ide-integration to configure Cursor integration');
+      detection.recommendations.push(
+        'Cursor AI may be installed but not configured for this project'
+      );
+      detection.recommendations.push(
+        'Run: vdk init --ide-integration to configure Cursor integration'
+      );
     } else if (detection.confidence === 'medium') {
       detection.recommendations.push('Cursor AI appears to be configured');
       detection.recommendations.push('Consider optimizing .ai/rules for better AI assistance');
     } else if (detection.confidence === 'high') {
       detection.recommendations.push('Cursor AI is actively configured and being used');
-      detection.recommendations.push('Consider creating custom AI rules for your specific project patterns');
+      detection.recommendations.push(
+        'Consider creating custom AI rules for your specific project patterns'
+      );
     }
 
     return detection;
@@ -191,20 +195,20 @@ export class CursorIntegration extends BaseIntegration {
       // Create VDK-specific configuration file (separate from main Cursor settings)
       const vdkConfigPath = path.join(this.cursorConfigPath, 'vdk.config.json');
       const vdkConfig = {
-        "enabled": true,
-        "version": "1.0.0",
-        "integration": "cursor",
-        "projectName": options.projectName || path.basename(this.projectPath),
-        "rules": {
-          "directory": "./rules",
-          "format": "mdc",
-          "autoLoad": true
+        enabled: true,
+        version: '1.0.0',
+        integration: 'cursor',
+        projectName: options.projectName || path.basename(this.projectPath),
+        rules: {
+          directory: './rules',
+          format: 'mdc',
+          autoLoad: true,
         },
-        "ai": {
-          "codeCompletions": true,
-          "chat": true,
-          "rules": true
-        }
+        ai: {
+          codeCompletions: true,
+          chat: true,
+          rules: true,
+        },
       };
 
       await this.writeJsonFile(vdkConfigPath, vdkConfig);
@@ -320,23 +324,23 @@ temp/
     }
 
     const mcpConfig = {
-      "mcpServers": {
-        "filesystem": {
-          "command": "npx",
-          "args": ["-y", "@modelcontextprotocol/server-filesystem", this.projectPath],
-          "env": {}
+      mcpServers: {
+        filesystem: {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-filesystem', this.projectPath],
+          env: {},
         },
-        "git": {
-          "command": "npx",
-          "args": ["-y", "@modelcontextprotocol/server-git", "--repository", this.projectPath],
-          "env": {}
-        }
+        git: {
+          command: 'npx',
+          args: ['-y', '@modelcontextprotocol/server-git', '--repository', this.projectPath],
+          env: {},
+        },
       },
-      "vdk": {
-        "enabled": true,
-        "projectName": options.projectName || path.basename(this.projectPath),
-        "rulesPath": ".cursor/rules"
-      }
+      vdk: {
+        enabled: true,
+        projectName: options.projectName || path.basename(this.projectPath),
+        rulesPath: '.cursor/rules',
+      },
     };
 
     await this.writeJsonFile(paths.projectMcp, mcpConfig);
@@ -508,9 +512,9 @@ Reference this rule with @vdk-integration when working with VDK CLI.
       const content = await fs.promises.readFile(paths.cursorIgnore, 'utf8');
       return content
         .split('\n')
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith('#'))
-        .map(line => line.endsWith('/') ? line + '**' : line);
+        .map((line) => line.trim())
+        .filter((line) => line && !line.startsWith('#'))
+        .map((line) => (line.endsWith('/') ? line + '**' : line));
     } catch (error) {
       return [];
     }
@@ -527,7 +531,7 @@ Reference this rule with @vdk-integration when working with VDK CLI.
       codeCompletions: false,
       chatEnabled: false,
       mcpConfigured: false,
-      rulesConfigured: false
+      rulesConfigured: false,
     };
 
     try {
@@ -540,7 +544,6 @@ Reference this rule with @vdk-integration when working with VDK CLI.
 
       features.mcpConfigured = this.fileExists(paths.projectMcp);
       features.rulesConfigured = await this.directoryExistsAsync(paths.rulesDirectory);
-
     } catch (error) {
       // Features remain false if we can't read config
     }
@@ -562,7 +565,7 @@ Reference this rule with @vdk-integration when working with VDK CLI.
       confidence: detection.confidence,
       features,
       configPaths: paths,
-      recommendations: detection.recommendations
+      recommendations: detection.recommendations,
     };
   }
 }

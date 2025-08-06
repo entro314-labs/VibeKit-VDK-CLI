@@ -21,7 +21,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.vscode/ai-rules',
     configFiles: ['.vscode/settings.json', '.vscode/extensions.json'],
     mcpConfigFile: '.vscode/mcp.json',
-    description: 'Works with VS Code AI extensions.'
+    description: 'Works with VS Code AI extensions.',
   },
   {
     id: 'vscode-insiders',
@@ -30,7 +30,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.vscode-insiders/ai-rules',
     configFiles: ['.vscode-insiders/settings.json', '.vscode-insiders/extensions.json'],
     mcpConfigFile: '.vscode-insiders/mcp.json',
-    description: 'Works with VS Code Insiders AI extensions.'
+    description: 'Works with VS Code Insiders AI extensions.',
   },
   {
     id: 'cursor',
@@ -41,7 +41,7 @@ export const IDE_CONFIGURATIONS = [
     mcpConfigFile: '.cursor/mcp.json',
     ignoreFile: '.cursorignore',
     globalConfigPath: '~/.cursor/mcp.json',
-    description: 'Optimized for Cursor AI Editor with automatic rule detection.'
+    description: 'Optimized for Cursor AI Editor with automatic rule detection.',
   },
   {
     id: 'windsurf',
@@ -50,7 +50,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.windsurf/rules',
     configFiles: ['.windsurf/config.json'],
     mcpConfigFile: '~/.codeium/windsurf/mcp_config.json',
-    description: 'Specifically formatted for Windsurf AI integration.'
+    description: 'Specifically formatted for Windsurf AI integration.',
   },
   {
     id: 'windsurf-next',
@@ -59,7 +59,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.windsurf-next/rules',
     configFiles: ['.windsurf-next/config.json'],
     mcpConfigFile: '~/.codeium/windsurf-next/mcp_config.json',
-    description: 'Specifically formatted for Windsurf Next AI integration.'
+    description: 'Specifically formatted for Windsurf Next AI integration.',
   },
   {
     id: 'github-copilot',
@@ -67,7 +67,7 @@ export const IDE_CONFIGURATIONS = [
     configFolder: '.github/copilot',
     rulesFolder: '.github/copilot/rules',
     configFiles: ['.github/copilot/config.json'],
-    description: 'Structure for GitHub Copilot integration.'
+    description: 'Structure for GitHub Copilot integration.',
   },
   {
     id: 'claude-desktop',
@@ -77,7 +77,7 @@ export const IDE_CONFIGURATIONS = [
     configFiles: ['.claude-desktop/config.json'],
     mcpConfigFile: '~/Library/Application Support/Claude/claude_desktop_config.json',
     logPath: '~/Library/Logs/Claude/mcp-server-*.log',
-    description: 'Optimized for Claude Desktop integration.'
+    description: 'Optimized for Claude Desktop integration.',
   },
   {
     id: 'claude',
@@ -87,7 +87,7 @@ export const IDE_CONFIGURATIONS = [
     configFiles: ['.claude/settings.json', '.claude/settings.local.json'],
     globalConfigPath: '~/.claude/settings.json',
     enterpriseConfigPath: '/Library/Application Support/ClaudeCode/policies.json',
-    description: 'Optimized for Claude Code integration.'
+    description: 'Optimized for Claude Code integration.',
   },
   {
     id: 'zed',
@@ -96,7 +96,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.zed/ai-rules',
     configFiles: ['~/.zed/settings.json', '~/.zed/keymap.json'],
     logPath: '~/Library/Logs/Zed/Zed.log',
-    description: 'For use with Zed Editor AI features.'
+    description: 'For use with Zed Editor AI features.',
   },
   {
     id: 'jetbrains',
@@ -105,7 +105,7 @@ export const IDE_CONFIGURATIONS = [
     rulesFolder: '.idea/ai-rules',
     configFiles: ['.idea/workspace.xml'],
     mcpConfigPath: 'Settings | Tools | AI Assistant | Model Context Protocol (MCP)',
-    description: 'Compatible with JetBrains AI assistant integration.'
+    description: 'Compatible with JetBrains AI assistant integration.',
   },
   {
     id: 'openai',
@@ -113,7 +113,7 @@ export const IDE_CONFIGURATIONS = [
     configFolder: '.openai',
     rulesFolder: '.openai/rules',
     configFiles: ['.openai/config.json'],
-    description: 'Structure for OpenAI Codex integration.'
+    description: 'Structure for OpenAI Codex integration.',
   },
   {
     id: 'generic',
@@ -121,8 +121,8 @@ export const IDE_CONFIGURATIONS = [
     configFolder: '.ai',
     rulesFolder: '.ai/rules',
     configFiles: ['.ai/config.json'],
-    description: 'Works with most AI coding assistants and is the VDK standard.'
-  }
+    description: 'Works with most AI coding assistants and is the VDK standard.',
+  },
 ];
 
 /**
@@ -131,7 +131,7 @@ export const IDE_CONFIGURATIONS = [
  * @returns {Object} IDE configuration object or null if not found
  */
 export function getIDEConfigById(id) {
-  return IDE_CONFIGURATIONS.find(ide => ide.id === id) || null;
+  return IDE_CONFIGURATIONS.find((ide) => ide.id === id) || null;
 }
 
 /**
@@ -141,11 +141,11 @@ export function getIDEConfigById(id) {
  * @returns {Object} Configuration paths or default paths if IDE not found
  */
 export function getIDEConfigPaths(id, projectPath) {
-  const config = getIDEConfigById(id) || IDE_CONFIGURATIONS.find(ide => ide.id === 'generic');
+  const config = getIDEConfigById(id) || IDE_CONFIGURATIONS.find((ide) => ide.id === 'generic');
 
   return {
     configPath: path.join(projectPath, config.configFolder),
-    rulePath: path.join(projectPath, config.rulesFolder)
+    rulePath: path.join(projectPath, config.rulesFolder),
   };
 }
 
@@ -166,8 +166,8 @@ export function detectIDEs(projectPath) {
 
     // If config folder doesn't exist, check specific config files
     if (ide.configFiles && ide.configFiles.length > 0) {
-      const configFileExists = ide.configFiles.some(
-        filePath => fs.existsSync(path.join(projectPath, filePath))
+      const configFileExists = ide.configFiles.some((filePath) =>
+        fs.existsSync(path.join(projectPath, filePath))
       );
       if (configFileExists) {
         detectedIDEs.push(ide);
@@ -185,7 +185,7 @@ export function detectIDEs(projectPath) {
  * @returns {string} Path to rule directory
  */
 export function ensureRuleDirectory(id, projectPath) {
-  const config = getIDEConfigById(id) || IDE_CONFIGURATIONS.find(ide => ide.id === 'generic');
+  const config = getIDEConfigById(id) || IDE_CONFIGURATIONS.find((ide) => ide.id === 'generic');
 
   const rulePath = path.join(projectPath, config.rulesFolder);
   if (!fs.existsSync(rulePath)) {
@@ -200,5 +200,5 @@ export default {
   getIDEConfigById,
   getIDEConfigPaths,
   detectIDEs,
-  ensureRuleDirectory
+  ensureRuleDirectory,
 };

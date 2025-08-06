@@ -76,18 +76,22 @@ We follow a consistent code style across the project:
 
 ```markdown
 ## Description
+
 Brief description of the changes in this PR.
 
 ## Related Issue
+
 Fixes #[issue number]
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
 - [ ] Refactoring
 
 ## Testing
+
 Describe the manual testing performed to verify your changes.
 ```
 

@@ -17,7 +17,7 @@ const colors = {
   yellow: '\x1b[33m',
   red: '\x1b[31m',
   reset: '\x1b[0m',
-  bright: '\x1b[1m'
+  bright: '\x1b[1m',
 };
 
 function log(message, color = 'reset') {
@@ -31,11 +31,11 @@ function log(message, color = 'reset') {
  */
 function generateProjectInsights(projectPath = process.cwd()) {
   const rulesPath = path.join(projectPath, '.ai', 'rules');
-  
+
   if (!fs.existsSync(rulesPath)) {
     return {
       error: 'No VDK rules found. Run `vdk` to set up rules first.',
-      hasRules: false
+      hasRules: false,
     };
   }
 
@@ -48,20 +48,20 @@ function generateProjectInsights(projectPath = process.cwd()) {
     languages: new Set(),
     lastUpdated: null,
     projectSize: 'unknown',
-    recommendations: []
+    recommendations: [],
   };
 
   try {
     // Analyze rule files
-    const ruleFiles = fs.readdirSync(rulesPath).filter(f => f.endsWith('.mdc'));
+    const ruleFiles = fs.readdirSync(rulesPath).filter((f) => f.endsWith('.mdc'));
     insights.rulesCount = ruleFiles.length;
 
     let latestTime = 0;
-    
+
     for (const file of ruleFiles) {
       const filePath = path.join(rulesPath, file);
       const stats = fs.statSync(filePath);
-      
+
       if (stats.mtime.getTime() > latestTime) {
         latestTime = stats.mtime.getTime();
         insights.lastUpdated = stats.mtime.toISOString();
@@ -69,11 +69,16 @@ function generateProjectInsights(projectPath = process.cwd()) {
 
       // Categorize rule types
       const content = fs.readFileSync(filePath, 'utf8');
-      
+
       if (file.includes('project-context')) insights.ruleTypes.context = true;
-      if (file.includes('framework') || content.includes('React') || content.includes('Vue') || content.includes('Angular')) {
+      if (
+        file.includes('framework') ||
+        content.includes('React') ||
+        content.includes('Vue') ||
+        content.includes('Angular')
+      ) {
         insights.ruleTypes.framework = true;
-        
+
         // Extract framework info
         if (content.includes('React')) insights.frameworks.add('React');
         if (content.includes('Vue')) insights.frameworks.add('Vue');
@@ -82,18 +87,22 @@ function generateProjectInsights(projectPath = process.cwd()) {
         if (content.includes('Django')) insights.frameworks.add('Django');
         if (content.includes('Express')) insights.frameworks.add('Express');
       }
-      
-      if (file.includes('language') || content.includes('TypeScript') || content.includes('Python')) {
+
+      if (
+        file.includes('language') ||
+        content.includes('TypeScript') ||
+        content.includes('Python')
+      ) {
         insights.ruleTypes.language = true;
-        
-        // Extract language info  
+
+        // Extract language info
         if (content.includes('TypeScript')) insights.languages.add('TypeScript');
         if (content.includes('JavaScript')) insights.languages.add('JavaScript');
         if (content.includes('Python')) insights.languages.add('Python');
         if (content.includes('Java')) insights.languages.add('Java');
         if (content.includes('Go')) insights.languages.add('Go');
       }
-      
+
       if (file.includes('common-errors')) insights.ruleTypes.errorHandling = true;
       if (file.includes('mcp-configuration')) insights.ruleTypes.mcpConfig = true;
     }
@@ -105,13 +114,15 @@ function generateProjectInsights(projectPath = process.cwd()) {
 
     // Generate recommendations
     if (insights.rulesCount < 3) {
-      insights.recommendations.push('Consider running the setup wizard again to generate more comprehensive rules');
+      insights.recommendations.push(
+        'Consider running the setup wizard again to generate more comprehensive rules'
+      );
     }
-    
+
     if (!insights.ruleTypes.errorHandling) {
       insights.recommendations.push('Add common error handling patterns to improve AI suggestions');
     }
-    
+
     if (!insights.ruleTypes.mcpConfig && insights.frameworks.length > 0) {
       insights.recommendations.push('Configure MCP settings for better IDE integration');
     }
@@ -124,7 +135,6 @@ function generateProjectInsights(projectPath = process.cwd()) {
     } else {
       insights.projectSize = 'small';
     }
-
   } catch (error) {
     insights.error = `Failed to analyze rules: ${error.message}`;
   }
@@ -146,19 +156,22 @@ function displayInsights(insights) {
   log('📊 Project Insights', 'blue');
   log('==================', 'blue');
   log('');
-  
+
   log(`Rules Count: ${insights.rulesCount}`, 'green');
   log(`Project Size: ${insights.projectSize}`, 'green');
-  log(`Last Updated: ${insights.lastUpdated ? new Date(insights.lastUpdated).toLocaleDateString() : 'Unknown'}`, 'green');
-  
+  log(
+    `Last Updated: ${insights.lastUpdated ? new Date(insights.lastUpdated).toLocaleDateString() : 'Unknown'}`,
+    'green'
+  );
+
   if (insights.languages.length > 0) {
     log(`Languages: ${insights.languages.join(', ')}`, 'green');
   }
-  
+
   if (insights.frameworks.length > 0) {
     log(`Frameworks: ${insights.frameworks.join(', ')}`, 'green');
   }
-  
+
   log('');
   log('Rule Types:', 'yellow');
   if (insights.ruleTypes.context) log('  ✅ Project Context', 'green');
@@ -166,7 +179,7 @@ function displayInsights(insights) {
   if (insights.ruleTypes.language) log('  ✅ Language Rules', 'green');
   if (insights.ruleTypes.errorHandling) log('  ✅ Error Handling', 'green');
   if (insights.ruleTypes.mcpConfig) log('  ✅ MCP Configuration', 'green');
-  
+
   if (insights.recommendations.length > 0) {
     log('');
     log('💡 Recommendations:', 'yellow');
@@ -180,7 +193,7 @@ function displayInsights(insights) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const projectPath = process.argv[2] || process.cwd();
   const insights = generateProjectInsights(projectPath);
-  
+
   if (process.argv.includes('--json')) {
     console.log(JSON.stringify(insights, null, 2));
   } else {
@@ -188,4 +201,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 }
 
-export { generateProjectInsights, displayInsights }; 
+export { displayInsights,generateProjectInsights };

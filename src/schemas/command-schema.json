@@ -200,7 +200,17 @@
     },
     "category": {
       "type": "string",
-      "enum": ["development", "testing", "debugging", "refactoring", "documentation", "git", "analysis", "security", "performance"],
+      "enum": [
+        "development",
+        "testing",
+        "debugging",
+        "refactoring",
+        "documentation",
+        "git",
+        "analysis",
+        "security",
+        "performance"
+      ],
       "description": "Primary category for the command"
     },
     "author": {

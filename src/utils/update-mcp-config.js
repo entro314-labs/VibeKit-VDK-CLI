@@ -7,11 +7,12 @@
  * in the 03-mcp-configuration.mdc file based on the current environment.
  */
 
-import path from 'path';
-import fs from 'fs';
 import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
+
 import { updateMCPConfigurationFile } from '../shared/editor-path-resolver.js';
 import * as ideConfig from '../shared/ide-configuration.js';
 
@@ -28,7 +29,7 @@ const colors = {
   yellow: '\x1b[33m',
   red: '\x1b[31m',
   cyan: '\x1b[36m',
-  magenta: '\x1b[35m'
+  magenta: '\x1b[35m',
 };
 
 // Parse command line arguments
@@ -37,11 +38,11 @@ const options = {
   path: process.cwd(),
   quiet: false,
   help: false,
-  force: false
+  force: false,
 };
 
 // Parse arguments
-args.forEach(arg => {
+args.forEach((arg) => {
   if (arg.startsWith('--path=')) {
     options.path = arg.substring('--path='.length);
   } else if (arg === '--quiet') {
@@ -92,7 +93,9 @@ async function updateMCPConfig() {
 
   // Ensure the path exists and is a directory
   if (!fs.existsSync(options.path) || !fs.statSync(options.path).isDirectory()) {
-    console.error(`${colors.red}Error: Path does not exist or is not a directory: ${options.path}${colors.reset}`);
+    console.error(
+      `${colors.red}Error: Path does not exist or is not a directory: ${options.path}${colors.reset}`
+    );
     process.exit(1);
   }
 
@@ -100,7 +103,9 @@ async function updateMCPConfig() {
   const detectedIDEs = ideConfig.detectIDEs(options.path);
 
   if (detectedIDEs.length === 0 && !options.force) {
-    console.error(`${colors.yellow}Warning: No IDE configurations detected in the project.${colors.reset}`);
+    console.error(
+      `${colors.yellow}Warning: No IDE configurations detected in the project.${colors.reset}`
+    );
     console.error(`Use --force to update configuration anyway.`);
     process.exit(1);
   }
@@ -114,34 +119,29 @@ async function updateMCPConfig() {
   }
 
   // Find rule directories
-  let ruleDirectories = [];
+  const ruleDirectories = [];
 
   // First, check detected IDE rule directories
-  detectedIDEs.forEach(ide => {
+  detectedIDEs.forEach((ide) => {
     const rulePath = path.join(options.path, ide.rulesFolder);
     if (fs.existsSync(rulePath)) {
       ruleDirectories.push({
         path: rulePath,
-        source: ide.name
+        source: ide.name,
       });
     }
   });
 
   // Then, check common rule directories if none found from IDEs
   if (ruleDirectories.length === 0) {
-    const commonPaths = [
-      '.ai/rules',
-      '.vscode/ai-rules',
-      '.cursor/rules',
-      '.claude/rules'
-    ];
+    const commonPaths = ['.ai/rules', '.vscode/ai-rules', '.cursor/rules', '.claude/rules'];
 
-    commonPaths.forEach(rulePath => {
+    commonPaths.forEach((rulePath) => {
       const fullPath = path.join(options.path, rulePath);
       if (fs.existsSync(fullPath)) {
         ruleDirectories.push({
           path: fullPath,
-          source: 'Common Path'
+          source: 'Common Path',
         });
       }
     });
@@ -162,7 +162,7 @@ async function updateMCPConfig() {
 
       ruleDirectories.push({
         path: defaultPath,
-        source: 'Default'
+        source: 'Default',
       });
     } else {
       console.error(`Use --force to create a default rule directory.`);
@@ -174,7 +174,9 @@ async function updateMCPConfig() {
   let successCount = 0;
 
   for (const ruleDir of ruleDirectories) {
-    log(`Updating MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset} (from ${ruleDir.source})...`);
+    log(
+      `Updating MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset} (from ${ruleDir.source})...`
+    );
 
     // Check for the MCP configuration file
     const mcpFilePath = path.join(ruleDir.path, '03-mcp-configuration.mdc');
@@ -190,7 +192,9 @@ async function updateMCPConfig() {
         fs.copyFileSync(templatePath, mcpFilePath);
       } else {
         log(`${colors.yellow}Template not found, creating empty file...${colors.reset}`);
-        fs.writeFileSync(mcpFilePath, `---
+        fs.writeFileSync(
+          mcpFilePath,
+          `---
 description: Defines the available Model Context Protocol (MCP) servers and their capabilities.
 globs:
 alwaysApply: false
@@ -202,7 +206,9 @@ compatibleWith: ["Memory-MCP", "Sequential-Thinking-Advanced", "MCP-Integration"
 
 This file documents the Model Context Protocol (MCP) servers available in your environment.
 
-`, 'utf8');
+`,
+          'utf8'
+        );
       }
     }
 
@@ -210,23 +216,31 @@ This file documents the Model Context Protocol (MCP) servers available in your e
     const success = updateMCPConfigurationFile(options.path, ruleDir.path);
 
     if (success) {
-      log(`${colors.green}✓${colors.reset} Successfully updated MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset}`);
+      log(
+        `${colors.green}✓${colors.reset} Successfully updated MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset}`
+      );
       successCount++;
     } else {
-      log(`${colors.red}✗${colors.reset} Failed to update MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset}`);
+      log(
+        `${colors.red}✗${colors.reset} Failed to update MCP configuration in ${colors.cyan}${ruleDir.path}${colors.reset}`
+      );
     }
   }
 
   if (successCount > 0) {
-    log(`${colors.green}${colors.bright}MCP configuration updated successfully in ${successCount} directories.${colors.reset}`);
+    log(
+      `${colors.green}${colors.bright}MCP configuration updated successfully in ${successCount} directories.${colors.reset}`
+    );
   } else {
-    console.error(`${colors.red}${colors.bright}Failed to update MCP configuration in any directory.${colors.reset}`);
+    console.error(
+      `${colors.red}${colors.bright}Failed to update MCP configuration in any directory.${colors.reset}`
+    );
     process.exit(1);
   }
 }
 
 // Run the main function
-updateMCPConfig().catch(error => {
+updateMCPConfig().catch((error) => {
   console.error(`${colors.red}Error: ${error.message}${colors.reset}`);
   process.exit(1);
 });

@@ -19,7 +19,7 @@ const express = require('express');
 
 // Set up Markdown renderer for terminal
 marked.setOptions({
-  renderer: new TerminalRenderer()
+  renderer: new TerminalRenderer(),
 });
 
 // Get the rule file path from command line arguments
@@ -51,10 +51,14 @@ async function previewRule() {
     console.log(chalk.cyan.bold('Metadata:\n'));
 
     console.log(chalk.cyan('Title: ') + chalk.white(frontMatter.title || 'Not specified'));
-    console.log(chalk.cyan('Description: ') + chalk.white(frontMatter.description || 'Not specified'));
+    console.log(
+      chalk.cyan('Description: ') + chalk.white(frontMatter.description || 'Not specified')
+    );
     console.log(chalk.cyan('Version: ') + chalk.white(frontMatter.version || 'Not specified'));
     console.log(chalk.cyan('Author: ') + chalk.white(frontMatter.author || 'Not specified'));
-    console.log(chalk.cyan('Last Updated: ') + chalk.white(frontMatter.lastUpdated || 'Not specified'));
+    console.log(
+      chalk.cyan('Last Updated: ') + chalk.white(frontMatter.lastUpdated || 'Not specified')
+    );
 
     if (frontMatter.tags && frontMatter.tags.length > 0) {
       console.log(chalk.cyan('Tags: ') + chalk.white(frontMatter.tags.join(', ')));
@@ -70,15 +74,29 @@ async function previewRule() {
       console.log(chalk.cyan('Compatible With:'));
 
       if (frontMatter.compatibleWith.ides && frontMatter.compatibleWith.ides.length > 0) {
-        console.log(chalk.cyan('  IDEs: ') + chalk.white(frontMatter.compatibleWith.ides.join(', ')));
+        console.log(
+          chalk.cyan('  IDEs: ') + chalk.white(frontMatter.compatibleWith.ides.join(', '))
+        );
       }
 
-      if (frontMatter.compatibleWith.aiAssistants && frontMatter.compatibleWith.aiAssistants.length > 0) {
-        console.log(chalk.cyan('  AI Assistants: ') + chalk.white(frontMatter.compatibleWith.aiAssistants.join(', ')));
+      if (
+        frontMatter.compatibleWith.aiAssistants &&
+        frontMatter.compatibleWith.aiAssistants.length > 0
+      ) {
+        console.log(
+          chalk.cyan('  AI Assistants: ') +
+            chalk.white(frontMatter.compatibleWith.aiAssistants.join(', '))
+        );
       }
 
-      if (frontMatter.compatibleWith.frameworks && frontMatter.compatibleWith.frameworks.length > 0) {
-        console.log(chalk.cyan('  Frameworks: ') + chalk.white(frontMatter.compatibleWith.frameworks.join(', ')));
+      if (
+        frontMatter.compatibleWith.frameworks &&
+        frontMatter.compatibleWith.frameworks.length > 0
+      ) {
+        console.log(
+          chalk.cyan('  Frameworks: ') +
+            chalk.white(frontMatter.compatibleWith.frameworks.join(', '))
+        );
       }
     }
 
@@ -91,7 +109,7 @@ async function previewRule() {
 
     process.stdin.setRawMode(true);
     process.stdin.resume();
-    process.stdin.once('data', async function(data) {
+    process.stdin.once('data', async function (data) {
       if (data.toString().toLowerCase() === 'y') {
         await openHtmlPreview(frontMatter, content);
       } else {
@@ -261,45 +279,71 @@ async function openHtmlPreview(frontMatter, content) {
             <span class="label">Always Apply:</span> ${frontMatter.alwaysApply ? 'Yes' : 'No'}
           </div>
 
-          ${frontMatter.tags && frontMatter.tags.length > 0 ? `
+          ${
+            frontMatter.tags && frontMatter.tags.length > 0
+              ? `
           <div class="metadata-item">
             <span class="label">Tags:</span><br />
-            ${frontMatter.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            ${frontMatter.tags.map((tag) => `<span class="tag">${tag}</span>`).join('')}
           </div>
-          ` : ''}
+          `
+              : ''
+          }
 
-          ${frontMatter.globs && frontMatter.globs.length > 0 ? `
+          ${
+            frontMatter.globs && frontMatter.globs.length > 0
+              ? `
           <div class="metadata-item">
             <span class="label">Globs:</span><br />
-            ${frontMatter.globs.map(glob => `<code>${glob}</code>`).join(', ')}
+            ${frontMatter.globs.map((glob) => `<code>${glob}</code>`).join(', ')}
           </div>
-          ` : ''}
+          `
+              : ''
+          }
 
-          ${frontMatter.compatibleWith ? `
+          ${
+            frontMatter.compatibleWith
+              ? `
           <div class="metadata-item">
             <span class="label">Compatible With:</span><br />
-            ${frontMatter.compatibleWith.ides && frontMatter.compatibleWith.ides.length > 0 ? `
+            ${
+              frontMatter.compatibleWith.ides && frontMatter.compatibleWith.ides.length > 0
+                ? `
               <div class="metadata-item">
                 <span class="label">IDEs:</span>
-                ${frontMatter.compatibleWith.ides.map(ide => `<span class="compatibility">${ide}</span>`).join('')}
+                ${frontMatter.compatibleWith.ides.map((ide) => `<span class="compatibility">${ide}</span>`).join('')}
               </div>
-            ` : ''}
+            `
+                : ''
+            }
 
-            ${frontMatter.compatibleWith.aiAssistants && frontMatter.compatibleWith.aiAssistants.length > 0 ? `
+            ${
+              frontMatter.compatibleWith.aiAssistants &&
+              frontMatter.compatibleWith.aiAssistants.length > 0
+                ? `
               <div class="metadata-item">
                 <span class="label">AI Assistants:</span>
-                ${frontMatter.compatibleWith.aiAssistants.map(assistant => `<span class="compatibility">${assistant}</span>`).join('')}
+                ${frontMatter.compatibleWith.aiAssistants.map((assistant) => `<span class="compatibility">${assistant}</span>`).join('')}
               </div>
-            ` : ''}
+            `
+                : ''
+            }
 
-            ${frontMatter.compatibleWith.frameworks && frontMatter.compatibleWith.frameworks.length > 0 ? `
+            ${
+              frontMatter.compatibleWith.frameworks &&
+              frontMatter.compatibleWith.frameworks.length > 0
+                ? `
               <div class="metadata-item">
                 <span class="label">Frameworks:</span>
-                ${frontMatter.compatibleWith.frameworks.map(framework => `<span class="compatibility">${framework}</span>`).join('')}
+                ${frontMatter.compatibleWith.frameworks.map((framework) => `<span class="compatibility">${framework}</span>`).join('')}
               </div>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
 
         <div class="content">
@@ -324,7 +368,7 @@ async function openHtmlPreview(frontMatter, content) {
 
       process.stdin.setRawMode(true);
       process.stdin.resume();
-      process.stdin.once('data', function() {
+      process.stdin.once('data', function () {
         server.close();
         process.exit(0);
       });

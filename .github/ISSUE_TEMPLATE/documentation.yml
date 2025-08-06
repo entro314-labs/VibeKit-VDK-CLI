@@ -1,7 +1,7 @@
 name: 📖 Documentation Issue
 description: Report issues with documentation or suggest improvements
-title: "[Docs]: "
-labels: ["documentation"]
+title: '[Docs]: '
+labels: ['documentation']
 assignees: []
 
 body:
@@ -64,7 +64,7 @@ body:
       description: What is the current content that has issues? (Copy/paste the relevant section)
       placeholder: |
         Current documentation says:
-        
+
         ```
         Copy the problematic content here
         ```
@@ -94,7 +94,7 @@ body:
         - Clarify the step where...
         - Include example for...
         - Update outdated information...
-        
+
         Proposed content:
         ```
         New or corrected content here

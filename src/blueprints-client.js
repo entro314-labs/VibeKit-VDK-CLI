@@ -5,11 +5,12 @@
  * which includes fetching rule lists, downloading rule files, and checking for updates.
  */
 
+import chalk from 'chalk';
 import https from 'https';
 import ora from 'ora';
-import chalk from 'chalk';
 
-const VDK_BLUEPRINTS_BASE_URL = 'https://api.github.com/repos/entro314-labs/VDK-Blueprints/contents/.ai';
+const VDK_BLUEPRINTS_BASE_URL =
+  'https://api.github.com/repos/entro314-labs/VDK-Blueprints/contents/.ai';
 
 /**
  * Fetches the list of available blueprints from the VDK-Blueprints repository.
@@ -19,7 +20,7 @@ async function fetchRuleList() {
   const spinner = ora('Connecting to VDK-Blueprints repository...').start();
   try {
     const headers = {
-      'Accept': 'application/vnd.github.v3+json',
+      Accept: 'application/vnd.github.v3+json',
     };
 
     // Use GitHub token if available to avoid rate limiting
@@ -38,11 +39,11 @@ async function fetchRuleList() {
 
     const data = await response.json();
     spinner.succeed('Successfully connected to VDK-Blueprints repository.');
-    return data.filter(item => item.type === 'file' && item.name.endsWith('.mdc'));
+    return data.filter((item) => item.type === 'file' && item.name.endsWith('.mdc'));
   } catch (error) {
     // Ora spinner might not be initialized if fetch fails, so check before using
     if (ora.isSpinning) {
-        ora().stop();
+      ora().stop();
     }
     console.error(chalk.red(`Error: ${error.message}`));
     return [];
@@ -67,4 +68,4 @@ async function downloadRule(downloadUrl) {
   }
 }
 
-export { fetchRuleList, downloadRule };
+export { downloadRule,fetchRuleList };

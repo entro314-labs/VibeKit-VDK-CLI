@@ -6,9 +6,9 @@
  * insights beyond just directory naming conventions.
  */
 
+import chalk from 'chalk';
 import fs from 'fs/promises';
 import path from 'path';
-import chalk from 'chalk';
 
 export class DependencyAnalyzer {
   constructor(options = {}) {
@@ -18,7 +18,17 @@ export class DependencyAnalyzer {
     this.inverseGraph = new Map(); // Map of module -> Set(dependents)
     this.fileModuleMap = new Map(); // Map of filePath -> logical module name
     this.moduleFileMap = new Map(); // Map of logical module name -> filePath
-    this.ignoredExtensions = new Set(['.json', '.md', '.txt', '.css', '.scss', '.png', '.jpg', '.gif', '.svg']);
+    this.ignoredExtensions = new Set([
+      '.json',
+      '.md',
+      '.txt',
+      '.css',
+      '.scss',
+      '.png',
+      '.jpg',
+      '.gif',
+      '.svg',
+    ]);
   }
 
   /**
@@ -49,7 +59,11 @@ export class DependencyAnalyzer {
       const graphAnalysis = this.analyzeGraph();
 
       if (this.verbose) {
-        console.log(chalk.gray(`Dependency graph built with ${this.dependencyGraph.size} modules and ${this.countEdges()} edges`));
+        console.log(
+          chalk.gray(
+            `Dependency graph built with ${this.dependencyGraph.size} modules and ${this.countEdges()} edges`
+          )
+        );
       }
 
       return {
@@ -60,7 +74,7 @@ export class DependencyAnalyzer {
         centralModules: graphAnalysis.centralModules,
         layeredStructure: graphAnalysis.layeredStructure,
         cyclesDetected: graphAnalysis.cyclesDetected,
-        architecturalHints: graphAnalysis.architecturalHints
+        architecturalHints: graphAnalysis.architecturalHints,
       };
     } catch (error) {
       if (this.verbose) {
@@ -76,7 +90,7 @@ export class DependencyAnalyzer {
         centralModules: [],
         layeredStructure: [],
         cyclesDetected: false,
-        architecturalHints: []
+        architecturalHints: [],
       };
     }
   }
@@ -92,7 +106,7 @@ export class DependencyAnalyzer {
     let files = projectStructure.files || [];
 
     // Filter out irrelevant files
-    files = files.filter(file => {
+    files = files.filter((file) => {
       const ext = path.extname(file.path || file).toLowerCase();
       return !this.ignoredExtensions.has(ext);
     });
@@ -193,7 +207,8 @@ export class DependencyAnalyzer {
     // JavaScript/TypeScript import statements
     if (['.js', '.jsx', '.ts', '.tsx'].includes(fileExtension)) {
       // ES imports
-      const esImportRegex = /import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s+from\s+)?['"]([^'"]+)['"]/g;
+      const esImportRegex =
+        /import\s+(?:(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s+from\s+)?['"]([^'"]+)['"]/g;
       let match;
       while ((match = esImportRegex.exec(content)) !== null) {
         dependencies.add(match[1]);
@@ -219,7 +234,7 @@ export class DependencyAnalyzer {
       let match;
       while ((match = pyImportRegex.exec(content)) !== null) {
         // Split multi-imports like "import os, sys"
-        const imports = match[1].split(',').map(i => i.trim());
+        const imports = match[1].split(',').map((i) => i.trim());
         for (const imp of imports) {
           dependencies.add(imp);
         }
@@ -262,12 +277,16 @@ export class DependencyAnalyzer {
    */
   resolveDependencies(dependencies, currentFilePath, projectRoot) {
     const resolvedDeps = new Set();
-    
+
     // Validate inputs
     if (!currentFilePath || !projectRoot || !Array.isArray(dependencies)) {
       // Only log warnings in verbose mode to reduce noise
       if (this.verbose) {
-        console.log(chalk.yellow(`Invalid parameters for dependency resolution: currentFilePath=${currentFilePath}, projectRoot=${projectRoot}, dependencies=${dependencies}`));
+        console.log(
+          chalk.yellow(
+            `Invalid parameters for dependency resolution: currentFilePath=${currentFilePath}, projectRoot=${projectRoot}, dependencies=${dependencies}`
+          )
+        );
       }
       return [];
     }
@@ -315,7 +334,12 @@ export class DependencyAnalyzer {
    */
   getLogicalModuleName(filePath, projectRoot) {
     // Validate inputs
-    if (!filePath || typeof filePath !== 'string' || !projectRoot || typeof projectRoot !== 'string') {
+    if (
+      !filePath ||
+      typeof filePath !== 'string' ||
+      !projectRoot ||
+      typeof projectRoot !== 'string'
+    ) {
       return null;
     }
 
@@ -345,7 +369,7 @@ export class DependencyAnalyzer {
       centralModules: this.findCentralModules(),
       layeredStructure: this.detectLayers(),
       cyclesDetected: this.detectCycles(),
-      architecturalHints: []
+      architecturalHints: [],
     };
 
     // Generate architectural hints based on analysis
@@ -353,7 +377,7 @@ export class DependencyAnalyzer {
       analysis.architecturalHints.push({
         pattern: 'Layered Architecture',
         confidence: 80,
-        evidence: `Found ${analysis.layeredStructure.length} distinct layers in the codebase.`
+        evidence: `Found ${analysis.layeredStructure.length} distinct layers in the codebase.`,
       });
     }
 
@@ -366,7 +390,7 @@ export class DependencyAnalyzer {
       analysis.architecturalHints.push({
         pattern: 'Circular Dependencies',
         confidence: 70,
-        evidence: 'Detected circular dependencies, which might indicate architectural issues.'
+        evidence: 'Detected circular dependencies, which might indicate architectural issues.',
       });
     }
 
@@ -392,7 +416,7 @@ export class DependencyAnalyzer {
           name: module,
           inDegree,
           outDegree,
-          centralityScore
+          centralityScore,
         });
       }
     }
@@ -414,21 +438,20 @@ export class DependencyAnalyzer {
     const visited = new Set();
 
     // Start with leaf nodes (those with no outgoing dependencies or only external ones)
-    let currentLayer = Array.from(this.dependencyGraph.keys())
-      .filter(module => {
-        const deps = this.dependencyGraph.get(module);
-        return deps.size === 0 || Array.from(deps).every(dep => !this.dependencyGraph.has(dep));
-      });
+    const currentLayer = Array.from(this.dependencyGraph.keys()).filter((module) => {
+      const deps = this.dependencyGraph.get(module);
+      return deps.size === 0 || Array.from(deps).every((dep) => !this.dependencyGraph.has(dep));
+    });
 
     // Mark current layer as visited
-    currentLayer.forEach(module => visited.add(module));
+    currentLayer.forEach((module) => visited.add(module));
 
     // Add layer if not empty
     if (currentLayer.length > 0) {
       layers.push({
         level: layers.length,
         modules: currentLayer,
-        name: 'Infrastructure/Utility Layer'
+        name: 'Infrastructure/Utility Layer',
       });
     }
 
@@ -436,32 +459,36 @@ export class DependencyAnalyzer {
     while (visited.size < this.dependencyGraph.size) {
       // Find modules that depend only on already visited modules
       const nextLayer = Array.from(this.dependencyGraph.keys())
-        .filter(module => !visited.has(module)) // Not already visited
-        .filter(module => {
+        .filter((module) => !visited.has(module)) // Not already visited
+        .filter((module) => {
           const deps = this.dependencyGraph.get(module);
-          return Array.from(deps).every(dep => visited.has(dep) || !this.dependencyGraph.has(dep));
+          return Array.from(deps).every(
+            (dep) => visited.has(dep) || !this.dependencyGraph.has(dep)
+          );
         });
 
       // If we can't find any more modules for the next layer, break
       if (nextLayer.length === 0) break;
 
       // Add current layer and mark as visited
-      nextLayer.forEach(module => visited.add(module));
+      nextLayer.forEach((module) => visited.add(module));
 
       // Assign a name based on layer position
       let layerName = 'Intermediate Layer';
       if (layers.length === 0) layerName = 'Infrastructure/Utility Layer';
-      else if (nextLayer.every(m => {
-        const inDegree = this.inverseGraph.has(m) ? this.inverseGraph.get(m).size : 0;
-        return inDegree === 0;
-      })) {
+      else if (
+        nextLayer.every((m) => {
+          const inDegree = this.inverseGraph.has(m) ? this.inverseGraph.get(m).size : 0;
+          return inDegree === 0;
+        })
+      ) {
         layerName = 'Entry Points/UI Layer';
       }
 
       layers.push({
         level: layers.length,
         modules: nextLayer,
-        name: layerName
+        name: layerName,
       });
     }
 
@@ -520,59 +547,61 @@ export class DependencyAnalyzer {
    */
   inferPatternFromCentralModules(centralModules) {
     // Check module names for clues
-    const moduleNames = centralModules.map(m => m.name.toLowerCase());
+    const moduleNames = centralModules.map((m) => m.name.toLowerCase());
 
-    const hasController = moduleNames.some(name => name.includes('controller'));
-    const hasService = moduleNames.some(name => name.includes('service'));
-    const hasStore = moduleNames.some(name => name.includes('store') || name.includes('redux'));
-    const hasViewModel = moduleNames.some(name => name.includes('viewmodel'));
-    const hasRepository = moduleNames.some(name => name.includes('repository') || name.includes('dao'));
-    const hasProvider = moduleNames.some(name => name.includes('provider'));
-    const hasComponent = moduleNames.some(name => name.includes('component'));
+    const hasController = moduleNames.some((name) => name.includes('controller'));
+    const hasService = moduleNames.some((name) => name.includes('service'));
+    const hasStore = moduleNames.some((name) => name.includes('store') || name.includes('redux'));
+    const hasViewModel = moduleNames.some((name) => name.includes('viewmodel'));
+    const hasRepository = moduleNames.some(
+      (name) => name.includes('repository') || name.includes('dao')
+    );
+    const hasProvider = moduleNames.some((name) => name.includes('provider'));
+    const hasComponent = moduleNames.some((name) => name.includes('component'));
 
     // Detecting patterns based on naming conventions in central modules
     if (hasController && hasService) {
       return {
         pattern: 'MVC/Service',
         confidence: 85,
-        evidence: 'Detected controller and service modules as central components.'
+        evidence: 'Detected controller and service modules as central components.',
       };
     } else if (hasViewModel) {
       return {
         pattern: 'MVVM',
         confidence: 85,
-        evidence: 'Detected viewmodel modules as central components.'
+        evidence: 'Detected viewmodel modules as central components.',
       };
     } else if (hasStore) {
       return {
         pattern: 'Flux/Redux',
         confidence: 90,
-        evidence: 'Detected store modules as central components.'
+        evidence: 'Detected store modules as central components.',
       };
     } else if (hasRepository) {
       return {
         pattern: 'Repository Pattern',
         confidence: 80,
-        evidence: 'Detected repository modules as central components.'
+        evidence: 'Detected repository modules as central components.',
       };
     } else if (hasProvider) {
       return {
         pattern: 'Provider Pattern',
         confidence: 75,
-        evidence: 'Detected provider modules as central components.'
+        evidence: 'Detected provider modules as central components.',
       };
     } else if (hasComponent && centralModules.length > 5) {
       return {
         pattern: 'Component-Based',
         confidence: 80,
-        evidence: 'Detected multiple component modules as central parts of the architecture.'
+        evidence: 'Detected multiple component modules as central parts of the architecture.',
       };
     } else {
       // Default if we can't detect a specific pattern
       return {
         pattern: 'Modular Architecture',
         confidence: 65,
-        evidence: `Detected ${centralModules.length} central modules with high interdependency.`
+        evidence: `Detected ${centralModules.length} central modules with high interdependency.`,
       };
     }
   }

@@ -65,14 +65,14 @@ vdk init --interactive
 
 ### Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `vdk init` | Initialize VDK in current directory with automatic scanning |
-| `vdk init --interactive` | Interactive setup with project scanning |
-| `vdk scan` | Analyze project and generate/update rules |
-| `vdk update` | Update rules from VDK Hub |
-| `vdk status` | Check project and integration status |
-| `vdk validate` | Validate generated rules |
+| Command                  | Description                                                 |
+| ------------------------ | ----------------------------------------------------------- |
+| `vdk init`               | Initialize VDK in current directory with automatic scanning |
+| `vdk init --interactive` | Interactive setup with project scanning                     |
+| `vdk scan`               | Analyze project and generate/update rules                   |
+| `vdk update`             | Update rules from VDK Hub                                   |
+| `vdk status`             | Check project and integration status                        |
+| `vdk validate`           | Validate generated rules                                    |
 
 ## 🧩 How It Works
 

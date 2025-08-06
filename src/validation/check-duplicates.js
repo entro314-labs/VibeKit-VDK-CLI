@@ -6,22 +6,22 @@
  * This script checks for duplicate rule IDs across the repository.
  */
 
+import chalk from 'chalk';
+import glob from 'fast-glob';
 import fs from 'fs/promises';
 import path from 'path';
-import glob from 'fast-glob';
-import chalk from 'chalk';
 
 // Rule repository paths
 const rulesRootDir = path.join(__dirname, '../..');
 const ruleDirectories = [
-  '',  // Root directory
+  '', // Root directory
   'assistants',
   'languages',
   'stacks',
   'tasks',
   'technologies',
   'tools',
-  'templates/rules'
+  'templates/rules',
 ];
 
 async function checkDuplicateRules() {
@@ -47,7 +47,7 @@ async function checkDuplicateRules() {
     // Find all MDC files in the directory
     const mdcFiles = await glob(['*.mdc', '*.md'], {
       cwd: dirPath,
-      ignore: ['README.md', 'CONTRIBUTING.md']  // Ignore non-rule files
+      ignore: ['README.md', 'CONTRIBUTING.md'], // Ignore non-rule files
     });
 
     if (mdcFiles.length === 0) continue;
@@ -83,7 +83,7 @@ async function checkDuplicateRules() {
 }
 
 // Run checker
-checkDuplicateRules().catch(err => {
+checkDuplicateRules().catch((err) => {
   console.error(chalk.red(`An error occurred: ${err.message}`));
   process.exit(1);
 });
