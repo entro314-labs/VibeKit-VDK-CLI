@@ -1841,7 +1841,6 @@ ${rule.content || 'Perform project-specific task based on established patterns.'
     return integrations;
   }
 
-
   detectsDatabase(projectContext) {
     const dbIndicators = ['prisma', 'sequelize', 'mongoose', 'postgresql', 'mysql', 'sqlite'];
     const libraries = projectContext.techStack?.libraries || [];

@@ -68,4 +68,4 @@ async function downloadRule(downloadUrl) {
   }
 }
 
-export { downloadRule,fetchRuleList };
+export { downloadRule, fetchRuleList };

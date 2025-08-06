@@ -201,4 +201,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 }
 
-export { displayInsights,generateProjectInsights };
+export { displayInsights, generateProjectInsights };

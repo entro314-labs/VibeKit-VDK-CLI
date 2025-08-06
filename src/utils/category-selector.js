@@ -3,7 +3,7 @@
  * Provides interactive category selection for command fetching
  */
 
-import { intro, multiselect, outro,select } from '@clack/prompts';
+import { intro, multiselect, outro, select } from '@clack/prompts';
 import chalk from 'chalk';
 
 /**

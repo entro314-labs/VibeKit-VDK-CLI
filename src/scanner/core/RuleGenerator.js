@@ -18,7 +18,7 @@ import yaml from 'js-yaml';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { downloadRule,fetchRuleList } from '../../blueprints-client.js';
+import { downloadRule, fetchRuleList } from '../../blueprints-client.js';
 import { createIntegrationManager } from '../../integrations/index.js';
 import { validateBlueprint } from '../../utils/schema-validator.js';
 import { applyLightTemplating, prepareTemplateVariables } from '../utils/light-templating.js';

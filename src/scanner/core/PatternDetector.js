@@ -882,7 +882,7 @@ export class PatternDetector {
       { pattern: 'javascript', key: 'javascript' },
       { pattern: 'typescript', key: 'typescript' },
       { pattern: 'python', key: 'python' },
-      { pattern: 'swift', key: 'swift' }
+      { pattern: 'swift', key: 'swift' },
     ];
 
     for (const match of partialMatches) {
