@@ -1297,6 +1297,84 @@ export class RuleGenerator {
       }
     }
 
+    // Comprehensive exclusion for completely irrelevant languages
+    // For web projects (Astro, Next.js, etc.), exclude mobile/backend languages entirely
+    if (isWebProject) {
+      // Exclude mobile development languages
+      if (
+        fileName.includes('swift') ||
+        fileName.includes('kotlin') ||
+        fileName.includes('java') ||
+        fileName.includes('dart') ||
+        fileName.includes('flutter') ||
+        fileName.includes('xamarin')
+      ) {
+        if (this.verbose) {
+          console.log(chalk.yellow(`🚫 Excluding mobile language rule for web project: ${fileName}`));
+        }
+        return 0;
+      }
+
+      // Exclude system programming languages
+      if (
+        fileName.includes('cpp') ||
+        fileName.includes('c++') ||
+        fileName.includes('rust') ||
+        fileName.includes('go') ||
+        fileName.includes('c#') ||
+        fileName.includes('csharp')
+      ) {
+        if (this.verbose) {
+          console.log(chalk.yellow(`🚫 Excluding system language rule for web project: ${fileName}`));
+        }
+        return 0;
+      }
+    }
+
+    // For documentation/content projects (Astro Starlight), be even more restrictive
+    const isContentProject = detectedFrameworks.some((framework) => {
+      const fw = framework.toLowerCase();
+      return fw.includes('astro') || fw.includes('starlight') || fw.includes('content');
+    });
+
+    if (isContentProject) {
+      // Only allow Astro, TypeScript, and basic web technologies
+      if (
+        !fileName.includes('astro') &&
+        !fileName.includes('typescript') &&
+        !fileName.includes('ts') &&
+        !fileName.includes('content') &&
+        !fileName.includes('markdown') &&
+        !fileName.includes('mcp') &&
+        !fileName.includes('common-errors') &&
+        !fileName.includes('project-context') &&
+        !fileName.startsWith('0') // Core rules
+      ) {
+        // Check if it's a completely different technology stack
+        if (
+          fileName.includes('nextjs') ||
+          fileName.includes('react') ||
+          fileName.includes('vue') ||
+          fileName.includes('supabase') ||
+          fileName.includes('trpc') ||
+          fileName.includes('ecommerce') ||
+          fileName.includes('enterprise') ||
+          fileName.includes('clerk') ||
+          fileName.includes('python') ||
+          fileName.includes('swift') ||
+          fileName.includes('kotlin') ||
+          fileName.includes('cpp') ||
+          fileName.includes('node') ||
+          fileName.includes('express')
+        ) {
+          if (this.verbose) {
+            console.log(chalk.yellow(`🚫 Excluding non-content rule for Astro content project: ${fileName}`));
+          }
+          score = Math.max(0, score - 0.8); // Heavy penalty instead of complete exclusion for backward compatibility
+        }
+      }
+    }
+
     // Language matching (important for language-specific rules)
     for (const language of projectSignature.languages || []) {
       const languageLower = language.toLowerCase();

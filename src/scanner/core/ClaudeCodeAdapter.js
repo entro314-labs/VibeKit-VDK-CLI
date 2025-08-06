@@ -1083,14 +1083,13 @@ ${await this.generateExternalServices(rules, projectContext)}
         }
       }
 
-      console.log('⚠️ No remote commands found, no fallback commands will be generated');
-      console.log(chalk.yellow('💡 To get Claude Code commands when available:'));
+      console.log('⚠️ No remote commands found, generating fallback commands');
+      console.log(chalk.yellow('💡 To get more commands when available:'));
       console.log(chalk.gray('   • Check your GitHub token: VDK_GITHUB_TOKEN in .env.local'));
-      console.log(
-        chalk.gray('   • Use --interactive for category selection when commands are available')
-      );
-      console.log(chalk.gray('   • Use --preset development for curated command sets'));
-      return [];
+      console.log(chalk.gray('   • Get a token from: https://github.com/settings/tokens'));
+      
+      // Generate fallback commands based on detected technologies
+      return this.generateFallbackCommands(rules, projectContext, categoryFilter);
     } catch (error) {
       console.log(`⚠️ Failed to fetch remote commands: ${error.message}`);
       if (error.message.includes('401')) {
@@ -1099,8 +1098,188 @@ ${await this.generateExternalServices(rules, projectContext)}
         console.log(chalk.gray('   • Get a token from: https://github.com/settings/tokens'));
         console.log(chalk.gray('   • Token needs "public_repo" access for public repositories'));
       }
-      return [];
+      
+      // Generate fallback commands even when remote fetch fails
+      return this.generateFallbackCommands(rules, projectContext, categoryFilter);
     }
+  }
+
+  /**
+   * Generate fallback commands when remote fetch fails
+   * @param {Array} rules - Available rules
+   * @param {Object} projectContext - Project context
+   * @param {Object} categoryFilter - Category filter
+   * @returns {Array} Fallback commands
+   */
+  generateFallbackCommands(rules, projectContext, categoryFilter = null) {
+    const commands = [];
+    const frameworks = projectContext.techStack?.frameworks || [];
+    const languages = projectContext.techStack?.primaryLanguages || [];
+    const isAstroProject = frameworks.some(fw => fw.toLowerCase().includes('astro'));
+    const isNextJSProject = frameworks.some(fw => fw.toLowerCase().includes('next'));
+    const isContentProject = frameworks.some(fw => 
+      fw.toLowerCase().includes('starlight') || 
+      fw.toLowerCase().includes('content')
+    );
+
+    // Core development commands (always included)
+    commands.push({
+      name: 'review-code',
+      description: 'Comprehensive code review and analysis',
+      content: `Perform a thorough code review focusing on:
+- Code quality and best practices
+- Performance optimizations
+- Security considerations
+- Architecture and design patterns
+- Testing coverage
+
+Provide specific, actionable feedback with examples.`
+    });
+
+    commands.push({
+      name: 'debug-issue',
+      description: 'Debug and troubleshoot issues',
+      content: `Help debug the current issue by:
+- Analyzing error messages and stack traces
+- Identifying potential root causes
+- Suggesting debugging strategies
+- Providing step-by-step troubleshooting
+
+Ask for relevant code, logs, or error details if needed.`
+    });
+
+    commands.push({
+      name: 'optimize-performance',
+      description: 'Analyze and optimize performance',
+      content: `Analyze performance bottlenecks and provide optimization recommendations:
+- Code performance analysis
+- Bundle size optimization
+- Runtime performance improvements
+- Best practices for ${frameworks[0] || 'the current stack'}
+
+Focus on measurable improvements with implementation examples.`
+    });
+
+    // Astro-specific commands
+    if (isAstroProject) {
+      commands.push({
+        name: 'create-astro-component',
+        description: 'Create new Astro component following project patterns',
+        content: `Create a new Astro component with:
+- Proper TypeScript typing
+- Scoped CSS styling
+- Props validation
+- SEO optimization if needed
+- Component documentation
+
+Follow established project patterns for consistency.
+
+## Arguments
+- Component name (required): $ARGUMENTS
+- Component type: page|layout|ui (default: ui)`
+      });
+
+      if (isContentProject) {
+        commands.push({
+          name: 'create-content-page',
+          description: 'Create new content page with proper frontmatter',
+          content: `Create a new content page with:
+- Proper frontmatter structure
+- SEO metadata
+- Navigation integration
+- Content structure following site patterns
+
+## Arguments
+- Page title (required): $ARGUMENTS
+- Content category: guide|reference|tutorial (default: guide)`
+        });
+
+        commands.push({
+          name: 'update-navigation',
+          description: 'Update site navigation and content structure',
+          content: `Update the site navigation to include new content:
+- Add to sidebar configuration
+- Update content collections
+- Ensure proper ordering
+- Maintain consistent navigation patterns
+
+Review current navigation structure and suggest improvements.`
+        });
+      }
+    }
+
+    // Next.js specific commands
+    if (isNextJSProject) {
+      commands.push({
+        name: 'create-nextjs-page',
+        description: 'Create new Next.js page with App Router',
+        content: `Create a new Next.js page using App Router:
+- Server Component by default
+- Proper TypeScript typing
+- SEO metadata
+- Error boundaries
+- Loading states
+
+## Arguments
+- Page path (required): $ARGUMENTS
+- Page type: static|dynamic|api (default: static)`
+      });
+
+      commands.push({
+        name: 'create-api-route',
+        description: 'Create new API route with validation',
+        content: `Create a new API route with:
+- Request/response typing
+- Input validation
+- Error handling
+- Rate limiting considerations
+- Proper HTTP status codes
+
+## Arguments
+- Route path (required): $ARGUMENTS
+- HTTP method: GET|POST|PUT|DELETE (default: GET)`
+      });
+    }
+
+    // TypeScript specific commands
+    if (languages.includes('typescript') || languages.includes('TypeScript')) {
+      commands.push({
+        name: 'improve-types',
+        description: 'Improve TypeScript types and interfaces',
+        content: `Analyze and improve TypeScript usage:
+- Add missing type annotations
+- Improve type safety
+- Reduce any usage
+- Create utility types where beneficial
+- Improve interface design
+
+Focus on making types more precise and maintainable.`
+      });
+    }
+
+    // Filter by categories if specified
+    if (categoryFilter?.categories) {
+      const allowedCategories = categoryFilter.categories;
+      return commands.filter(cmd => {
+        // Map commands to categories (simplified)
+        const commandCategories = {
+          'review-code': ['development', 'quality'],
+          'debug-issue': ['development'],
+          'optimize-performance': ['development', 'quality'],
+          'create-astro-component': ['development'],
+          'create-content-page': ['development', 'workflow'],
+          'update-navigation': ['workflow'],
+          'create-nextjs-page': ['development'],
+          'create-api-route': ['development'],
+          'improve-types': ['development', 'quality']
+        };
+        
+        const cmdCategories = commandCategories[cmd.name] || ['development'];
+        return cmdCategories.some(cat => allowedCategories.includes(cat));
+      });
+    }
+
+    return commands;
   }
 
   /**
