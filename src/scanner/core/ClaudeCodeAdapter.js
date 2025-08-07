@@ -1512,7 +1512,7 @@ Focus on making types more precise and maintainable.`
    * Generate minimal fallback commands if remote fetch fails
    * Following Claude Code command schema format
    */
-  generateFallbackCommands(projectContext) {
+  generateDefaultCommands(projectContext) {
     const frameworks = projectContext.techStack?.frameworks || [];
     const languages = projectContext.techStack?.primaryLanguages || ['JavaScript'];
 

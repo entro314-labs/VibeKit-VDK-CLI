@@ -1,10 +1,11 @@
 /**
  * Error Handling & Edge Cases Tests - Comprehensive error scenario coverage
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
-import { runCLI, createTempDir, cleanupTempDir } from './helpers/cli-helper.js';
+import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+
+import { cleanupTempDir,createTempDir, runCLI } from './helpers/cli-helper.js';
 
 describe('Error Handling & Edge Cases', () => {
   let tempDir;

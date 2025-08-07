@@ -1,7 +1,7 @@
 /**
  * Validation Module Tests - Complete rule and duplicate validation
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 describe('Validation Modules', () => {
   describe('Rule Validation', () => {

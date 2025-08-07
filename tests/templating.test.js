@@ -1,8 +1,9 @@
 /**
  * Templating Tests - Complete coverage of template rendering functionality
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { createTempDir, cleanupTempDir } from './helpers/cli-helper.js';
+import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+
+import { cleanupTempDir,createTempDir } from './helpers/cli-helper.js';
 
 describe('Template Rendering', () => {
   let tempDir;

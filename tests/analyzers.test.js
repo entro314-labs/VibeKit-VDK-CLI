@@ -1,7 +1,7 @@
 /**
  * Language Analyzers Tests - Test all language analysis modules
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 describe('Language Analyzers', () => {
   const sampleCode = {

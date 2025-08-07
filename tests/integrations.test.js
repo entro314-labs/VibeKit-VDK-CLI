@@ -1,7 +1,7 @@
 /**
  * Integration Tests - Test all IDE integration modules
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach,describe, expect, it } from 'vitest';
 
 describe('IDE Integrations', () => {
   describe('Integration Manager', () => {

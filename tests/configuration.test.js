@@ -1,10 +1,11 @@
 /**
  * Configuration & Environment Tests - Complete coverage of config handling
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
-import { createTempDir, cleanupTempDir } from './helpers/cli-helper.js';
+import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+
+import { cleanupTempDir,createTempDir } from './helpers/cli-helper.js';
 
 describe('Configuration & Environment', () => {
   let tempDir;

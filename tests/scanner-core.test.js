@@ -1,8 +1,9 @@
 /**
  * Scanner Core Tests - Project scanning and analysis functionality
  */
-import { describe, it, expect, beforeEach } from 'vitest';
-import { mockProjectStructure, mockPatterns, mockDependencyAnalysis } from './helpers/test-fixtures.js';
+import { beforeEach,describe, expect, it } from 'vitest';
+
+import { mockDependencyAnalysis,mockPatterns, mockProjectStructure } from './helpers/test-fixtures.js';
 
 describe('Scanner Core Functionality', () => {
   const testProjectPath = global.TEST_ROOT;

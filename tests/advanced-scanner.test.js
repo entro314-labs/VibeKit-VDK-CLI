@@ -1,10 +1,11 @@
 /**
  * Advanced Scanner Tests - Comprehensive scanner component testing
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
-import { createTempDir, cleanupTempDir } from './helpers/cli-helper.js';
+import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+
+import { cleanupTempDir,createTempDir } from './helpers/cli-helper.js';
 
 describe('Advanced Scanner Components', () => {
   let tempDir;

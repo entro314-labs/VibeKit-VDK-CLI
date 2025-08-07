@@ -1,10 +1,11 @@
 /**
  * Security Tests - Security aspects of VDK CLI
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import fs from 'fs/promises';
 import path from 'path';
-import { malformedCodeSamples, dangerousFilePaths } from './helpers/test-fixtures.js';
+import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+
+import { dangerousFilePaths,malformedCodeSamples } from './helpers/test-fixtures.js';
 
 describe('Security', () => {
   describe('Hub Client Security', () => {

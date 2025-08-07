@@ -1,7 +1,7 @@
 /**
  * Comprehensive Integration Tests - Complete coverage of all integration modules
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach,describe, expect, it } from 'vitest';
 
 describe('Complete Integration Coverage', () => {
   describe('Integration Manager - Full Coverage', () => {

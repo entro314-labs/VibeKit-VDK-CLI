@@ -1,7 +1,7 @@
 /**
  * Preview Functionality Tests - Rule preview and validation
  */
-import { describe, it, expect } from 'vitest';
+import { describe, expect,it } from 'vitest';
 
 describe('Preview Functionality', () => {
   describe('Preview Rule Module', () => {
