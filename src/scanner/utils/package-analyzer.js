@@ -23,6 +23,7 @@ const TECH_MAPPINGS = {
     '@remix-run/react': 'Remix',
     gatsby: 'Gatsby',
     astro: 'Astro',
+    '@astrojs/starlight': 'Starlight',
   },
 
   // Backend services and APIs

@@ -198,6 +198,13 @@ ${technologyGuidelines}
    * Determine project type based on frameworks and languages
    */
   determineProjectType(frameworks, languages) {
+    // Prioritize Astro detection first since it's more specific
+    if (frameworks.includes('Astro') && frameworks.includes('Starlight')) {
+      return 'Astro Starlight Documentation Site';
+    }
+    if (frameworks.includes('Astro')) {
+      return 'Astro Application';
+    }
     if (frameworks.includes('Next.js') && frameworks.includes('Supabase')) {
       return 'Next.js + Supabase Full-Stack Application';
     }
@@ -206,6 +213,9 @@ ${technologyGuidelines}
     }
     if (frameworks.includes('React')) {
       return 'React Application';
+    }
+    if (frameworks.includes('Vue.js')) {
+      return 'Vue.js Application';
     }
     if (languages.includes('typescript')) {
       return 'TypeScript Application';

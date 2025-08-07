@@ -1,103 +1,73 @@
-#!/usr/bin/env node
-
 /**
- * Schema Validation Test
- * ---------------------
- * Test the schema validation utility with the new schemas
+ * Schema Validation Tests
  */
+import { describe, it, expect } from 'vitest';
+import { validCommand, validBlueprint } from './helpers/test-fixtures.js';
 
-import {
-  getAvailableSchemas,
-  validateBlueprint,
-  validateCommand,
-} from '../src/utils/schema-validator.js';
+describe('Schema Validation', () => {
+  describe('Command Validation', () => {
+    it('should validate correct commands', async () => {
+      const { validateCommand } = await import('../src/utils/schema-validator.js');
 
-console.log('🧪 Testing Schema Validation...\n');
+      const result = await validateCommand(validCommand);
 
-// Test command validation
-console.log('1. Testing Command Schema Validation:');
+      expect(result.valid).toBe(true);
+      if (!result.valid) {
+        console.log('Validation errors:', result.errors);
+      }
+    });
 
-const validCommand = {
-  id: 'test-command',
-  name: 'Test Command',
-  description: 'This is a test command for validation',
-  target: 'claude-code',
-  commandType: 'slash',
-  version: '1.0.0',
-  scope: 'project',
-};
+    it('should reject invalid commands', async () => {
+      const { validateCommand } = await import('../src/utils/schema-validator.js');
 
-const invalidCommand = {
-  id: 'invalid',
-  // Missing required fields
-  target: 'invalid-platform',
-};
+      const invalidCommand = {
+        id: 'invalid',
+        target: 'invalid-platform',
+      };
 
-try {
-  const validResult = await validateCommand(validCommand);
-  console.log('✅ Valid command:', validResult.valid ? 'PASSED' : 'FAILED');
-  if (!validResult.valid) {
-    console.log('   Errors:', validResult.errors);
-  }
+      const result = await validateCommand(invalidCommand);
 
-  const invalidResult = await validateCommand(invalidCommand);
-  console.log(
-    '❌ Invalid command:',
-    !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED'
-  );
-  if (!invalidResult.valid) {
-    console.log('   Expected errors:', invalidResult.errors.slice(0, 3));
-  }
-} catch (error) {
-  console.log('Error testing command validation:', error.message);
-}
+      expect(result.valid).toBe(false);
+      expect(Array.isArray(result.errors)).toBe(true);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
 
-console.log('\n2. Testing Blueprint Schema Validation:');
+  describe('Blueprint Validation', () => {
+    it('should validate correct blueprints', async () => {
+      const { validateBlueprint } = await import('../src/utils/schema-validator.js');
 
-const validBlueprint = {
-  id: 'test-blueprint',
-  title: 'Test Blueprint',
-  description: 'This is a test blueprint for validation',
-  version: '1.0.0',
-  category: 'core',
-  platforms: {
-    claude_code: {
-      supported: true,
-      format: 'markdown',
-    },
-  },
-};
+      const result = await validateBlueprint(validBlueprint);
 
-const invalidBlueprint = {
-  id: 'invalid-blueprint',
-  // Missing required fields
-};
+      expect(result.valid).toBe(true);
+      if (!result.valid) {
+        console.log('Validation errors:', result.errors);
+      }
+    });
 
-try {
-  const validResult = await validateBlueprint(validBlueprint);
-  console.log('✅ Valid blueprint:', validResult.valid ? 'PASSED' : 'FAILED');
-  if (!validResult.valid) {
-    console.log('   Errors:', validResult.errors);
-  }
+    it('should reject invalid blueprints', async () => {
+      const { validateBlueprint } = await import('../src/utils/schema-validator.js');
 
-  const invalidResult = await validateBlueprint(invalidBlueprint);
-  console.log(
-    '❌ Invalid blueprint:',
-    !invalidResult.valid ? 'PASSED (correctly rejected)' : 'FAILED'
-  );
-  if (!invalidResult.valid) {
-    console.log('   Expected errors:', invalidResult.errors.slice(0, 3));
-  }
-} catch (error) {
-  console.log('Error testing blueprint validation:', error.message);
-}
+      const invalidBlueprint = {
+        id: 'invalid-blueprint',
+      };
 
-console.log('\n3. Available Schemas:');
-try {
-  const schemas = await getAvailableSchemas();
-  console.log('📋 Found schemas:', schemas.join(', '));
-} catch (error) {
-  console.log('Error listing schemas:', error.message);
-}
+      const result = await validateBlueprint(invalidBlueprint);
 
-console.log('\n✅ Schema validation tests completed!');
+      expect(result.valid).toBe(false);
+      expect(Array.isArray(result.errors)).toBe(true);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Schema Availability', () => {
+    it('should list available schemas', async () => {
+      const { getAvailableSchemas } = await import('../src/utils/schema-validator.js');
+
+      const schemas = await getAvailableSchemas();
+
+      expect(Array.isArray(schemas)).toBe(true);
+      expect(schemas.length).toBeGreaterThan(0);
+    });
+  });
+});

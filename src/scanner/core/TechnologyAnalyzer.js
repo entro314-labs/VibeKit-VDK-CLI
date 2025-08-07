@@ -440,11 +440,12 @@ export class TechnologyAnalyzer {
     const hasNextDependency = this.libraries.includes('next');
 
     // If any Next.js indicators are found, mark as Next.js project
+    // Note: hasPagesDir alone is not sufficient since Astro also uses pages directories
     if (
       nextjsConfigFiles.length > 0 ||
       hasNextDependency ||
       (hasAppDir && hasNextAppPageFiles) ||
-      hasPagesDir
+      (hasPagesDir && (hasNextDependency || nextjsConfigFiles.length > 0))
     ) {
       if (!this.frameworks.includes('Next.js')) {
         this.frameworks.push('Next.js');
