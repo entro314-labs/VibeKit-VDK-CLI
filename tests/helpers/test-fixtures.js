@@ -9,28 +9,28 @@ export const mockProjectStructure = {
   files: [
     { path: 'src/index.js', name: 'index.js', type: 'javascript' },
     { path: 'src/utils.js', name: 'utils.js', type: 'javascript' },
-    { path: 'package.json', name: 'package.json', type: 'json' }
+    { path: 'package.json', name: 'package.json', type: 'json' },
   ],
   directories: ['src', 'tests'],
   fileTypes: { javascript: 2, json: 1 },
   fileExtensions: ['.js', '.json'],
   directoryStructure: {
     src: { files: ['index.js', 'utils.js'] },
-    tests: { files: [] }
-  }
+    tests: { files: [] },
+  },
 };
 
 export const mockPatterns = {
   namingConventions: {
     files: { camelCase: 0.8, kebabCase: 0.2 },
-    directories: { camelCase: 0.9 }
+    directories: { camelCase: 0.9 },
   },
   architecturalPatterns: ['MVC', 'Module'],
   codePatterns: ['ES6 Modules', 'CommonJS'],
   consistencyMetrics: {
     namingConsistency: 0.85,
-    structureConsistency: 0.90
-  }
+    structureConsistency: 0.9,
+  },
 };
 
 export const mockDependencyAnalysis = {
@@ -41,7 +41,7 @@ export const mockDependencyAnalysis = {
   centralModules: ['index.js'],
   layeredStructure: [['index.js'], ['utils.js']],
   cyclesDetected: false,
-  architecturalHints: ['Clean Architecture']
+  architecturalHints: ['Clean Architecture'],
 };
 
 export const validCommand = {
@@ -51,7 +51,7 @@ export const validCommand = {
   target: 'claude-code',
   commandType: 'slash',
   version: '1.0.0',
-  scope: 'project'
+  scope: 'project',
 };
 
 export const validBlueprint = {
@@ -62,9 +62,9 @@ export const validBlueprint = {
   category: 'core',
   platforms: {
     'claude-code': {
-      compatible: true
-    }
-  }
+      compatible: true,
+    },
+  },
 };
 
 export const malformedCodeSamples = [
@@ -73,12 +73,12 @@ export const malformedCodeSamples = [
   'eval("dangerous code")',
   'require("fs").readFileSync("/etc/passwd")',
   ''.repeat(1000), // Long string
-  '\x00\x01\x02\x03' // Binary data
+  '\x00\x01\x02\x03', // Binary data
 ];
 
 export const dangerousFilePaths = [
   '/etc/passwd',
   '../../../etc/passwd',
   '/dev/null',
-  'nonexistent-directory-12345'
+  'nonexistent-directory-12345',
 ];

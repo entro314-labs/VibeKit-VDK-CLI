@@ -1,13 +1,13 @@
 /**
  * Comprehensive Integration Tests - Complete coverage of all integration modules
  */
-import { beforeEach,describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Complete Integration Coverage', () => {
   describe('Integration Manager - Full Coverage', () => {
     it('should create integration manager instance', async () => {
       const { IntegrationManager } = await import('../src/integrations/integration-manager.js');
-      
+
       const manager = new IntegrationManager(global.TEST_ROOT);
       expect(manager).toBeDefined();
       expect(manager.projectPath).toBe(global.TEST_ROOT);
@@ -18,10 +18,10 @@ describe('Complete Integration Coverage', () => {
     it('should register single integration', async () => {
       const { IntegrationManager } = await import('../src/integrations/integration-manager.js');
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       const manager = new IntegrationManager();
       const integration = new BaseIntegration('test-integration');
-      
+
       manager.register(integration);
       expect(manager.integrations.has('test-integration')).toBe(true);
     });
@@ -29,13 +29,10 @@ describe('Complete Integration Coverage', () => {
     it('should register multiple integrations', async () => {
       const { IntegrationManager } = await import('../src/integrations/integration-manager.js');
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       const manager = new IntegrationManager();
-      const integrations = [
-        new BaseIntegration('test1'),
-        new BaseIntegration('test2')
-      ];
-      
+      const integrations = [new BaseIntegration('test1'), new BaseIntegration('test2')];
+
       manager.registerMultiple(integrations);
       expect(manager.integrations.has('test1')).toBe(true);
       expect(manager.integrations.has('test2')).toBe(true);
@@ -43,9 +40,9 @@ describe('Complete Integration Coverage', () => {
 
     it('should reject non-BaseIntegration instances', async () => {
       const { IntegrationManager } = await import('../src/integrations/integration-manager.js');
-      
+
       const manager = new IntegrationManager();
-      
+
       expect(() => {
         manager.register({ name: 'invalid' });
       }).toThrow('Integration must extend BaseIntegration');
@@ -53,9 +50,9 @@ describe('Complete Integration Coverage', () => {
 
     it('should discover integrations', async () => {
       const { IntegrationManager } = await import('../src/integrations/integration-manager.js');
-      
+
       const manager = new IntegrationManager(global.TEST_ROOT);
-      
+
       try {
         const result = await manager.discoverIntegrations({ verbose: false });
         expect(result).toBeDefined();
@@ -68,21 +65,23 @@ describe('Complete Integration Coverage', () => {
 
   describe('All Integration Classes - Complete Coverage', () => {
     it('should load Claude Code integration with full methods', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration = new ClaudeCodeIntegration(global.TEST_ROOT);
-      
+
       expect(integration).toBeDefined();
       expect(integration.name).toBe('Claude Code');
       expect(typeof integration.detectUsage).toBe('function');
       expect(typeof integration.getConfigPaths).toBe('function');
-      
+
       // Test configuration paths
       const configPaths = integration.getConfigPaths();
       expect(configPaths.userSettings).toBeDefined();
       expect(configPaths.projectMemory).toBeDefined();
       expect(configPaths.projectCommands).toBeDefined();
-      
+
       // Test usage detection
       const detection = integration.detectUsage();
       expect(detection.isUsed).toBeDefined();
@@ -93,35 +92,35 @@ describe('Complete Integration Coverage', () => {
 
     it('should load Cursor integration', async () => {
       const cursorModule = await import('../src/integrations/cursor-integration.js');
-      
+
       expect(cursorModule).toBeDefined();
       expect(typeof cursorModule).toBe('object');
     });
 
     it('should load Windsurf integration', async () => {
       const windsurfModule = await import('../src/integrations/windsurf-integration.js');
-      
+
       expect(windsurfModule).toBeDefined();
       expect(typeof windsurfModule).toBe('object');
     });
 
     it('should load GitHub Copilot integration', async () => {
       const copilotModule = await import('../src/integrations/github-copilot-integration.js');
-      
+
       expect(copilotModule).toBeDefined();
       expect(typeof copilotModule).toBe('object');
     });
 
     it('should load Generic IDE integration', async () => {
       const genericModule = await import('../src/integrations/generic-ide-integration.js');
-      
+
       expect(genericModule).toBeDefined();
       expect(typeof genericModule).toBe('object');
     });
 
     it('should load integration index with exports', async () => {
       const indexModule = await import('../src/integrations/index.js');
-      
+
       expect(indexModule).toBeDefined();
       expect(typeof indexModule).toBe('object');
     });
@@ -130,9 +129,9 @@ describe('Complete Integration Coverage', () => {
   describe('Base Integration - Complete Method Coverage', () => {
     it('should provide all base functionality', async () => {
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       const integration = new BaseIntegration('test', global.TEST_ROOT);
-      
+
       expect(integration.name).toBe('test');
       expect(integration.projectPath).toBe(global.TEST_ROOT);
       expect(integration.configPath).toBeNull();
@@ -144,18 +143,18 @@ describe('Complete Integration Coverage', () => {
 
     it('should enforce abstract method implementation', async () => {
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       const integration = new BaseIntegration('test');
-      
+
       expect(() => integration.detectUsage()).toThrow('must be implemented');
       expect(() => integration.getConfigPaths()).toThrow('must be implemented');
     });
 
     it('should provide helper methods', async () => {
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       const integration = new BaseIntegration('test', global.TEST_ROOT);
-      
+
       // Test file/directory existence helpers
       const existingDir = global.TEST_ROOT;
       expect(typeof integration.directoryExists(existingDir)).toBe('boolean');
@@ -165,11 +164,13 @@ describe('Complete Integration Coverage', () => {
 
   describe('Integration Detection Results', () => {
     it('should provide consistent detection format', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration = new ClaudeCodeIntegration(global.TEST_ROOT);
       const detection = integration.detectUsage();
-      
+
       expect(typeof detection.isUsed).toBe('boolean');
       expect(typeof detection.confidence).toBe('string');
       expect(['none', 'low', 'medium', 'high']).toContain(detection.confidence);
@@ -178,13 +179,15 @@ describe('Complete Integration Coverage', () => {
     });
 
     it('should handle detection caching', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration = new ClaudeCodeIntegration(global.TEST_ROOT);
-      
+
       const detection1 = integration.detectUsage();
       const detection2 = integration.detectUsage();
-      
+
       // Results should be consistent
       expect(detection1.isUsed).toBe(detection2.isUsed);
       expect(detection1.confidence).toBe(detection2.confidence);
@@ -193,17 +196,19 @@ describe('Complete Integration Coverage', () => {
 
   describe('Configuration Path Resolution', () => {
     it('should resolve all configuration paths', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration = new ClaudeCodeIntegration(global.TEST_ROOT);
       const configPaths = integration.getConfigPaths();
-      
+
       // All paths should be strings
-      Object.values(configPaths).forEach(configPath => {
+      Object.values(configPaths).forEach((configPath) => {
         expect(typeof configPath).toBe('string');
         expect(configPath.length).toBeGreaterThan(0);
       });
-      
+
       // Should have required paths
       expect(configPaths.userSettings).toBeDefined();
       expect(configPaths.projectSettings).toBeDefined();
@@ -214,18 +219,20 @@ describe('Complete Integration Coverage', () => {
     });
 
     it('should handle different project paths', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration1 = new ClaudeCodeIntegration('/path/one');
       const integration2 = new ClaudeCodeIntegration('/path/two');
-      
+
       const paths1 = integration1.getConfigPaths();
       const paths2 = integration2.getConfigPaths();
-      
+
       // Project-specific paths should be different
       expect(paths1.projectMemory).not.toBe(paths2.projectMemory);
       expect(paths1.projectSettings).not.toBe(paths2.projectSettings);
-      
+
       // User paths should be the same
       expect(paths1.userSettings).toBe(paths2.userSettings);
       expect(paths1.userMemory).toBe(paths2.userMemory);
@@ -234,10 +241,12 @@ describe('Complete Integration Coverage', () => {
 
   describe('Integration Error Handling', () => {
     it('should handle file system errors gracefully', async () => {
-      const { ClaudeCodeIntegration } = await import('../src/integrations/claude-code-integration.js');
-      
+      const { ClaudeCodeIntegration } = await import(
+        '../src/integrations/claude-code-integration.js'
+      );
+
       const integration = new ClaudeCodeIntegration('/nonexistent/path');
-      
+
       // Should not throw errors during detection
       const detection = integration.detectUsage();
       expect(detection).toBeDefined();
@@ -246,7 +255,7 @@ describe('Complete Integration Coverage', () => {
 
     it('should handle invalid configurations', async () => {
       const { BaseIntegration } = await import('../src/integrations/base-integration.js');
-      
+
       // Test with invalid parameters
       const integration = new BaseIntegration('', '');
       expect(integration.name).toBe('');

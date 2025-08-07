@@ -10,7 +10,7 @@ The new test suite uses [Vitest](https://vitest.dev/) for modern, fast testing w
 
 - **cli.test.js** - CLI functionality tests
 - **scanner-core.test.js** - Project scanning and analysis
-- **security.test.js** - Security validation tests  
+- **security.test.js** - Security validation tests
 - **schema-validation.test.js** - Schema validation tests
 - **integrations.test.js** - IDE integration tests
 - **analyzers.test.js** - Language analyzer tests
@@ -34,7 +34,7 @@ The new test suite uses [Vitest](https://vitest.dev/) for modern, fast testing w
 # Run all tests
 pnpm test
 
-# Run tests in watch mode  
+# Run tests in watch mode
 pnpm test:watch
 
 # Run with coverage report
@@ -54,7 +54,7 @@ pnpm test:legacy
 
 # Individual legacy test suites
 pnpm test:legacy:cli
-pnpm test:legacy:scanner  
+pnpm test:legacy:scanner
 pnpm test:legacy:security
 ```
 
@@ -63,18 +63,21 @@ pnpm test:legacy:security
 The test suite provides comprehensive coverage of:
 
 ### Core Functionality ✅
+
 - CLI commands and argument parsing
-- Project scanning and analysis  
+- Project scanning and analysis
 - Pattern detection and dependency analysis
 - Blueprint and rule management
 
 ### Language Support ✅
+
 - JavaScript/TypeScript analysis
 - Python code analysis
 - Swift code analysis
 - Cross-language consistency
 
 ### IDE Integrations ✅
+
 - Claude Code integration
 - Cursor integration
 - Windsurf integration
@@ -82,12 +85,14 @@ The test suite provides comprehensive coverage of:
 - Generic IDE support
 
 ### Security ✅
+
 - Input validation and sanitization
 - Path traversal protection
 - Environment variable handling
 - Error message sanitization
 
 ### Utilities ✅
+
 - Schema validation
 - Project insights generation
 - Configuration management
@@ -110,17 +115,17 @@ Follow this structure for new tests:
 
 ```javascript
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { /* test helpers */ } from './helpers/cli-helper.js';
+import {} from /* test helpers */ './helpers/cli-helper.js';
 
 describe('Feature Name', () => {
   describe('Sub-feature', () => {
     it('should do something specific', async () => {
       // Arrange
       const input = 'test data';
-      
+
       // Act
       const result = await functionUnderTest(input);
-      
+
       // Assert
       expect(result).toBe('expected output');
     });
@@ -131,7 +136,7 @@ describe('Feature Name', () => {
 ### Best Practices
 
 1. **Descriptive test names** - Clear what is being tested
-2. **Arrange-Act-Assert** - Structure tests consistently  
+2. **Arrange-Act-Assert** - Structure tests consistently
 3. **Isolated tests** - No dependencies between tests
 4. **Mock external dependencies** - Network calls, file system
 5. **Test edge cases** - Empty inputs, errors, boundary conditions

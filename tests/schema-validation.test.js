@@ -1,9 +1,9 @@
 /**
  * Schema Validation Tests
  */
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { validBlueprint,validCommand } from './helpers/test-fixtures.js';
+import { validBlueprint, validCommand } from './helpers/test-fixtures.js';
 
 describe('Schema Validation', () => {
   describe('Command Validation', () => {

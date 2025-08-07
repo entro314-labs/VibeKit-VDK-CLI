@@ -1310,7 +1310,9 @@ export class RuleGenerator {
         fileName.includes('xamarin')
       ) {
         if (this.verbose) {
-          console.log(chalk.yellow(`🚫 Excluding mobile language rule for web project: ${fileName}`));
+          console.log(
+            chalk.yellow(`🚫 Excluding mobile language rule for web project: ${fileName}`)
+          );
         }
         return 0;
       }
@@ -1325,7 +1327,9 @@ export class RuleGenerator {
         fileName.includes('csharp')
       ) {
         if (this.verbose) {
-          console.log(chalk.yellow(`🚫 Excluding system language rule for web project: ${fileName}`));
+          console.log(
+            chalk.yellow(`🚫 Excluding system language rule for web project: ${fileName}`)
+          );
         }
         return 0;
       }
@@ -1368,7 +1372,9 @@ export class RuleGenerator {
           fileName.includes('express')
         ) {
           if (this.verbose) {
-            console.log(chalk.yellow(`🚫 Excluding non-content rule for Astro content project: ${fileName}`));
+            console.log(
+              chalk.yellow(`🚫 Excluding non-content rule for Astro content project: ${fileName}`)
+            );
           }
           score = Math.max(0, score - 0.8); // Heavy penalty instead of complete exclusion for backward compatibility
         }

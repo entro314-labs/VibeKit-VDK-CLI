@@ -47,7 +47,7 @@ console.log('🔒 VDK CLI Security Tests\n');
 
 // Test 1: Hub Client URL Validation
 await asyncTest('Hub client should use HTTPS URLs', async () => {
-  const { fetchRuleList } = await import('../src/blueprints-client.js');
+  // fetchRuleList is imported but not used in this test - only checking source code
 
   // Check that the hub client uses HTTPS by examining the source
   const hubClientSource = await import('fs').then((fs) =>
@@ -66,7 +66,7 @@ await asyncTest('Environment variables should be handled securely', async () => 
 
   // Test without token
   delete process.env.VDK_GITHUB_TOKEN;
-  const { fetchRuleList } = await import('../src/blueprints-client.js');
+  // fetchRuleList is imported but not used in this test - only testing env var handling
   // Should not throw error, just proceed without token
 
   // Test with token (mock)

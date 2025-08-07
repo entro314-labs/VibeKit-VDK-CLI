@@ -3,15 +3,15 @@
  */
 import fs from 'fs/promises';
 import path from 'path';
-import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { dangerousFilePaths,malformedCodeSamples } from './helpers/test-fixtures.js';
+import { dangerousFilePaths, malformedCodeSamples } from './helpers/test-fixtures.js';
 
 describe('Security', () => {
   describe('Hub Client Security', () => {
     it('should use HTTPS URLs', async () => {
       const hubClientSource = await fs.readFile(
-        path.join(global.TEST_ROOT, 'src/blueprints-client.js'), 
+        path.join(global.TEST_ROOT, 'src/blueprints-client.js'),
         'utf8'
       );
 
@@ -25,7 +25,7 @@ describe('Security', () => {
 
       // Test without token
       delete process.env.VDK_GITHUB_TOKEN;
-      const { fetchRuleList } = await import('../src/blueprints-client.js');
+      // fetchRuleList import not used - just testing env var handling
 
       // Test with token
       process.env.VDK_GITHUB_TOKEN = 'test-token-123';
@@ -56,10 +56,8 @@ describe('Security', () => {
 
       for (const dangerousPath of dangerousFilePaths) {
         const result = await scanner.scanProject(dangerousPath);
-        
-        expect(
-          typeof result.error === 'string' || result.files.length === 0
-        ).toBe(true);
+
+        expect(typeof result.error === 'string' || result.files.length === 0).toBe(true);
       }
     });
 
@@ -69,7 +67,7 @@ describe('Security', () => {
 
       const analyzer = new DependencyAnalyzer({
         verbose: false,
-        maxFilesToParse: 10
+        maxFilesToParse: 10,
       });
 
       const scanner = new ProjectScanner();
@@ -88,7 +86,7 @@ describe('Security', () => {
       const detector = new PatternDetector({
         verbose: false,
         sampleSize: 5,
-        maxFilesToParse: 10
+        maxFilesToParse: 10,
       });
 
       const scanner = new ProjectScanner();
@@ -144,10 +142,7 @@ describe('Security', () => {
 
   describe('CLI Argument Validation', () => {
     it('should validate command arguments', async () => {
-      const cliSource = await fs.readFile(
-        path.join(global.TEST_ROOT, 'cli.js'),
-        'utf8'
-      );
+      const cliSource = await fs.readFile(path.join(global.TEST_ROOT, 'cli.js'), 'utf8');
 
       expect(cliSource).toContain('commander');
       expect(cliSource).toMatch(/(version|Version)/);

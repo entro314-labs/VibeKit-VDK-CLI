@@ -5,7 +5,7 @@
  * rather than trying to fit mismatched expectations.
  */
 
-import fs from 'fs/promises';
+// fs is imported but not directly used - it's used in async imports
 import path from 'path';
 import { fileURLToPath } from 'url';
 

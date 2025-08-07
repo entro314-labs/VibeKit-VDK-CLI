@@ -1,9 +1,9 @@
 /**
  * Scanner Core Tests - Project scanning and analysis functionality
  */
-import { beforeEach,describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { mockDependencyAnalysis,mockPatterns, mockProjectStructure } from './helpers/test-fixtures.js';
+// Mock imports are available but not used in actual tests - kept for future test enhancement
 
 describe('Scanner Core Functionality', () => {
   const testProjectPath = global.TEST_ROOT;
@@ -74,7 +74,7 @@ describe('Scanner Core Functionality', () => {
         files: [],
         directories: [],
         fileTypes: {},
-        fileExtensions: []
+        fileExtensions: [],
       };
 
       const patterns = await detector.detectPatterns(emptyStructure);
@@ -115,7 +115,7 @@ describe('Scanner Core Functionality', () => {
 
       const analyzer = new DependencyAnalyzer({
         maxFilesToParse: 5,
-        verbose: false
+        verbose: false,
       });
 
       const analysis = await analyzer.analyzeDependencies(projectStructure);

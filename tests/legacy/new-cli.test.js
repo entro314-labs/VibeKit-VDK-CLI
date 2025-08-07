@@ -176,7 +176,7 @@ await asyncTest('CLI init should handle test scenarios', async () => {
     // Clean up test directory
     try {
       await fs.rm(testDir, { recursive: true, force: true });
-    } catch (e) {
+    } catch (_e) {
       // Ignore cleanup errors
     }
   }

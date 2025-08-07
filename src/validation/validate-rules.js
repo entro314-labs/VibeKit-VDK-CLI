@@ -80,7 +80,7 @@ function isValidYaml(yamlContent) {
       }
     }
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -103,7 +103,7 @@ async function getAllMdcFiles(dirPath) {
       }
       // Don't recursively scan subdirectories since we list them explicitly
     }
-  } catch (error) {
+  } catch (_error) {
     // Directory doesn't exist, skip
   }
 

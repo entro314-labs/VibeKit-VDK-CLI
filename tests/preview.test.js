@@ -1,13 +1,13 @@
 /**
  * Preview Functionality Tests - Rule preview and validation
  */
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Preview Functionality', () => {
   describe('Preview Rule Module', () => {
     it('should load preview rule module', async () => {
       const previewModule = await import('../src/preview/preview-rule.js');
-      
+
       expect(previewModule).toBeDefined();
       expect(typeof previewModule).toBe('object');
     });
@@ -17,7 +17,7 @@ describe('Preview Functionality', () => {
       try {
         const previewModule = await import('../src/preview/preview-rule.js');
         expect(previewModule).toBeDefined();
-        
+
         // Since this is a server module, we test import success
         expect(true).toBe(true);
       } catch (error) {
@@ -29,7 +29,7 @@ describe('Preview Functionality', () => {
     it('should export expected functionality', async () => {
       // Test that the preview module structure is correct
       const previewModule = await import('../src/preview/preview-rule.js');
-      
+
       // Module should be importable
       expect(typeof previewModule).toBe('object');
     });
@@ -39,7 +39,7 @@ describe('Preview Functionality', () => {
     it('should integrate with rule processing', async () => {
       // Test preview functionality integration
       const previewModule = await import('../src/preview/preview-rule.js');
-      
+
       // Verify module structure
       expect(previewModule).toBeDefined();
     });
@@ -48,7 +48,7 @@ describe('Preview Functionality', () => {
       // Preview module uses marked for markdown processing
       // This tests that the dependency structure is correct
       const previewModule = await import('../src/preview/preview-rule.js');
-      
+
       expect(previewModule).toBeDefined();
     });
   });

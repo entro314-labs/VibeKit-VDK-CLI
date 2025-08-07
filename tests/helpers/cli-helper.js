@@ -16,7 +16,7 @@ export function runCLI(args, options = {}) {
       cwd: options.cwd || global.TEST_ROOT,
       stdio: 'pipe',
       timeout: options.timeout || 30000,
-      env: { ...process.env, ...options.env }
+      env: { ...process.env, ...options.env },
     });
 
     let stdout = '';
@@ -51,7 +51,7 @@ export function runCLI(args, options = {}) {
 export async function createTempDir(name = 'test-temp') {
   const fs = await import('fs/promises');
   const tempPath = path.join(global.TEST_ROOT, name);
-  
+
   try {
     await fs.mkdir(tempPath, { recursive: true });
     return tempPath;
@@ -65,10 +65,10 @@ export async function createTempDir(name = 'test-temp') {
  */
 export async function cleanupTempDir(dirPath) {
   const fs = await import('fs/promises');
-  
+
   try {
     await fs.rm(dirPath, { recursive: true, force: true });
-  } catch (error) {
+  } catch (_error) {
     // Ignore cleanup errors
   }
 }

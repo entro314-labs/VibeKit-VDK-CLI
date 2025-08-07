@@ -1097,7 +1097,7 @@ ${await this.generateExternalServices(rules, projectContext)}
       console.log(chalk.yellow('💡 To get more commands when available:'));
       console.log(chalk.gray('   • Check your GitHub token: VDK_GITHUB_TOKEN in .env.local'));
       console.log(chalk.gray('   • Get a token from: https://github.com/settings/tokens'));
-      
+
       // Generate fallback commands based on detected technologies
       return this.generateFallbackCommands(rules, projectContext, categoryFilter);
     } catch (error) {
@@ -1108,7 +1108,7 @@ ${await this.generateExternalServices(rules, projectContext)}
         console.log(chalk.gray('   • Get a token from: https://github.com/settings/tokens'));
         console.log(chalk.gray('   • Token needs "public_repo" access for public repositories'));
       }
-      
+
       // Generate fallback commands even when remote fetch fails
       return this.generateFallbackCommands(rules, projectContext, categoryFilter);
     }
@@ -1125,11 +1125,10 @@ ${await this.generateExternalServices(rules, projectContext)}
     const commands = [];
     const frameworks = projectContext.techStack?.frameworks || [];
     const languages = projectContext.techStack?.primaryLanguages || [];
-    const isAstroProject = frameworks.some(fw => fw.toLowerCase().includes('astro'));
-    const isNextJSProject = frameworks.some(fw => fw.toLowerCase().includes('next'));
-    const isContentProject = frameworks.some(fw => 
-      fw.toLowerCase().includes('starlight') || 
-      fw.toLowerCase().includes('content')
+    const isAstroProject = frameworks.some((fw) => fw.toLowerCase().includes('astro'));
+    const isNextJSProject = frameworks.some((fw) => fw.toLowerCase().includes('next'));
+    const isContentProject = frameworks.some(
+      (fw) => fw.toLowerCase().includes('starlight') || fw.toLowerCase().includes('content')
     );
 
     // Core development commands (always included)
@@ -1143,7 +1142,7 @@ ${await this.generateExternalServices(rules, projectContext)}
 - Architecture and design patterns
 - Testing coverage
 
-Provide specific, actionable feedback with examples.`
+Provide specific, actionable feedback with examples.`,
     });
 
     commands.push({
@@ -1155,7 +1154,7 @@ Provide specific, actionable feedback with examples.`
 - Suggesting debugging strategies
 - Providing step-by-step troubleshooting
 
-Ask for relevant code, logs, or error details if needed.`
+Ask for relevant code, logs, or error details if needed.`,
     });
 
     commands.push({
@@ -1167,7 +1166,7 @@ Ask for relevant code, logs, or error details if needed.`
 - Runtime performance improvements
 - Best practices for ${frameworks[0] || 'the current stack'}
 
-Focus on measurable improvements with implementation examples.`
+Focus on measurable improvements with implementation examples.`,
     });
 
     // Astro-specific commands
@@ -1186,7 +1185,7 @@ Follow established project patterns for consistency.
 
 ## Arguments
 - Component name (required): $ARGUMENTS
-- Component type: page|layout|ui (default: ui)`
+- Component type: page|layout|ui (default: ui)`,
       });
 
       if (isContentProject) {
@@ -1201,7 +1200,7 @@ Follow established project patterns for consistency.
 
 ## Arguments
 - Page title (required): $ARGUMENTS
-- Content category: guide|reference|tutorial (default: guide)`
+- Content category: guide|reference|tutorial (default: guide)`,
         });
 
         commands.push({
@@ -1213,7 +1212,7 @@ Follow established project patterns for consistency.
 - Ensure proper ordering
 - Maintain consistent navigation patterns
 
-Review current navigation structure and suggest improvements.`
+Review current navigation structure and suggest improvements.`,
         });
       }
     }
@@ -1232,7 +1231,7 @@ Review current navigation structure and suggest improvements.`
 
 ## Arguments
 - Page path (required): $ARGUMENTS
-- Page type: static|dynamic|api (default: static)`
+- Page type: static|dynamic|api (default: static)`,
       });
 
       commands.push({
@@ -1247,7 +1246,7 @@ Review current navigation structure and suggest improvements.`
 
 ## Arguments
 - Route path (required): $ARGUMENTS
-- HTTP method: GET|POST|PUT|DELETE (default: GET)`
+- HTTP method: GET|POST|PUT|DELETE (default: GET)`,
       });
     }
 
@@ -1263,14 +1262,14 @@ Review current navigation structure and suggest improvements.`
 - Create utility types where beneficial
 - Improve interface design
 
-Focus on making types more precise and maintainable.`
+Focus on making types more precise and maintainable.`,
       });
     }
 
     // Filter by categories if specified
     if (categoryFilter?.categories) {
       const allowedCategories = categoryFilter.categories;
-      return commands.filter(cmd => {
+      return commands.filter((cmd) => {
         // Map commands to categories (simplified)
         const commandCategories = {
           'review-code': ['development', 'quality'],
@@ -1281,11 +1280,11 @@ Focus on making types more precise and maintainable.`
           'update-navigation': ['workflow'],
           'create-nextjs-page': ['development'],
           'create-api-route': ['development'],
-          'improve-types': ['development', 'quality']
+          'improve-types': ['development', 'quality'],
         };
-        
+
         const cmdCategories = commandCategories[cmd.name] || ['development'];
-        return cmdCategories.some(cat => allowedCategories.includes(cat));
+        return cmdCategories.some((cat) => allowedCategories.includes(cat));
       });
     }
 

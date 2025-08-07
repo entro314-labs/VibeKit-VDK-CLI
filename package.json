@@ -25,7 +25,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:md": "markdownlint-cli2 '**/*.md'",
-    "lint:md:fix": "markdownlint-cli2-fix '**/*.md'",
+    "lint:md:fix": "markdownlint-cli2 -fix '**/*.md'",
     "lint:json": "jsonlint src/schemas/*.json vdk.config.json package.json",
     "quality": "pnpm run lint && pnpm run format:check && pnpm run lint:md",
     "quality:fix": "pnpm run lint:fix && pnpm run format && pnpm run lint:md:fix",

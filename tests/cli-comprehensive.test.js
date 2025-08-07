@@ -3,9 +3,9 @@
  */
 import fs from 'fs/promises';
 import path from 'path';
-import { afterEach,beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import { cleanupTempDir,createTempDir, runCLI } from './helpers/cli-helper.js';
+import { cleanupTempDir, createTempDir, runCLI } from './helpers/cli-helper.js';
 
 describe('Complete CLI Command Coverage', () => {
   let tempDir;
@@ -20,23 +20,34 @@ describe('Complete CLI Command Coverage', () => {
   describe('Init Command - Complete Coverage', () => {
     it('should handle all init command options', async () => {
       tempDir = await createTempDir('comprehensive-init-test');
-      
-      const result = await runCLI([
-        'init',
-        '--projectPath', tempDir,
-        '--outputPath', path.join(tempDir, '.ai', 'rules'),
-        '--deep',
-        '--ignorePattern', '**/node_modules/**', '**/dist/**',
-        '--use-gitignore',
-        '--template', 'default',
-        '--overwrite',
-        '--ide-integration',
-        '--verbose',
-        '--categories', 'development', 'testing',
-        '--preset', 'development',
-        '--interactive'
-      ], { timeout: 60000 });
-      
+
+      const result = await runCLI(
+        [
+          'init',
+          '--projectPath',
+          tempDir,
+          '--outputPath',
+          path.join(tempDir, '.ai', 'rules'),
+          '--deep',
+          '--ignorePattern',
+          '**/node_modules/**',
+          '**/dist/**',
+          '--use-gitignore',
+          '--template',
+          'default',
+          '--overwrite',
+          '--ide-integration',
+          '--verbose',
+          '--categories',
+          'development',
+          'testing',
+          '--preset',
+          'development',
+          '--interactive',
+        ],
+        { timeout: 60000 }
+      );
+
       expect(result.code).toBeDefined();
       // Should complete without crashing regardless of success/failure
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
@@ -44,26 +55,19 @@ describe('Complete CLI Command Coverage', () => {
 
     it('should handle init with minimal options', async () => {
       tempDir = await createTempDir('minimal-init-test');
-      
-      const result = await runCLI([
-        'init', 
-        '--projectPath', tempDir
-      ], { timeout: 45000 });
-      
+
+      const result = await runCLI(['init', '--projectPath', tempDir], { timeout: 45000 });
+
       expect(result.code).toBeDefined();
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
     }, 50000);
 
     it('should handle init with watch mode (quickly exit)', async () => {
       tempDir = await createTempDir('watch-init-test');
-      
+
       // Run with timeout to prevent hanging
-      const result = await runCLI([
-        'init',
-        '--projectPath', tempDir,
-        '--watch'
-      ], { timeout: 5000 });
-      
+      const result = await runCLI(['init', '--projectPath', tempDir, '--watch'], { timeout: 5000 });
+
       // Will timeout, but should start properly
       expect(result.code).toBeDefined();
     });
@@ -72,14 +76,14 @@ describe('Complete CLI Command Coverage', () => {
   describe('Deploy Command - Complete Coverage', () => {
     it('should execute deploy command', async () => {
       const result = await runCLI(['deploy']);
-      
+
       expect(result.code).toBeDefined();
       expect(result.stdout).toContain('under development');
     });
 
     it('should handle deploy with help', async () => {
       const result = await runCLI(['deploy', '--help']);
-      
+
       expect(result.success || result.stdout.includes('deploy')).toBe(true);
     });
   });
@@ -87,19 +91,18 @@ describe('Complete CLI Command Coverage', () => {
   describe('Update Command - Complete Coverage', () => {
     it('should execute update command with default path', async () => {
       const result = await runCLI(['update'], { timeout: 45000 });
-      
+
       expect(result.code).toBeDefined();
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
     }, 50000);
 
     it('should execute update command with custom output path', async () => {
       tempDir = await createTempDir('update-test');
-      
-      const result = await runCLI([
-        'update',
-        '--outputPath', path.join(tempDir, 'custom-rules')
-      ], { timeout: 45000 });
-      
+
+      const result = await runCLI(['update', '--outputPath', path.join(tempDir, 'custom-rules')], {
+        timeout: 45000,
+      });
+
       expect(result.code).toBeDefined();
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
     }, 50000);
@@ -107,7 +110,7 @@ describe('Complete CLI Command Coverage', () => {
     it('should handle update network failures gracefully', async () => {
       // This will likely fail due to network/auth, but should handle gracefully
       const result = await runCLI(['update'], { timeout: 30000 });
-      
+
       expect(result.code).toBeDefined();
       // Should either succeed or fail with meaningful message
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
@@ -117,7 +120,7 @@ describe('Complete CLI Command Coverage', () => {
   describe('Status Command - Complete Coverage', () => {
     it('should execute status with default config', async () => {
       const result = await runCLI(['status']);
-      
+
       expect(result.code).toBeDefined();
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
     });
@@ -125,13 +128,15 @@ describe('Complete CLI Command Coverage', () => {
     it('should execute status with custom config path', async () => {
       tempDir = await createTempDir('status-test');
       const configPath = path.join(tempDir, 'custom-vdk.config.json');
-      
+
       const result = await runCLI([
         'status',
-        '--configPath', configPath,
-        '--outputPath', path.join(tempDir, 'rules')
+        '--configPath',
+        configPath,
+        '--outputPath',
+        path.join(tempDir, 'rules'),
       ]);
-      
+
       expect(result.code).toBeDefined();
       expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
     });
@@ -139,21 +144,18 @@ describe('Complete CLI Command Coverage', () => {
     it('should handle status with valid config file', async () => {
       tempDir = await createTempDir('status-valid-config-test');
       const configPath = path.join(tempDir, 'vdk.config.json');
-      
+
       // Create valid config
       const config = {
         project: { name: 'test-project' },
         ide: 'claude-code',
         rulesPath: './.ai/rules',
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
       await fs.writeFile(configPath, JSON.stringify(config, null, 2));
-      
-      const result = await runCLI([
-        'status',
-        '--configPath', configPath
-      ]);
-      
+
+      const result = await runCLI(['status', '--configPath', configPath]);
+
       expect(result.code).toBeDefined();
       if (result.success) {
         expect(result.stdout).toContain('Configuration: Found and valid');
@@ -163,15 +165,12 @@ describe('Complete CLI Command Coverage', () => {
     it('should handle status with malformed config file', async () => {
       tempDir = await createTempDir('status-malformed-config-test');
       const configPath = path.join(tempDir, 'vdk.config.json');
-      
+
       // Create malformed config
       await fs.writeFile(configPath, '{ invalid json }');
-      
-      const result = await runCLI([
-        'status',
-        '--configPath', configPath
-      ]);
-      
+
+      const result = await runCLI(['status', '--configPath', configPath]);
+
       expect(result.code).toBeDefined();
       expect(result.stdout + result.stderr).toMatch(/(not found|invalid|error)/i);
     });
@@ -180,7 +179,7 @@ describe('Complete CLI Command Coverage', () => {
   describe('Help and Version - Complete Coverage', () => {
     it('should display comprehensive help', async () => {
       const result = await runCLI(['--help']);
-      
+
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('VDK CLI');
       expect(result.stdout).toContain('init');
@@ -191,14 +190,14 @@ describe('Complete CLI Command Coverage', () => {
 
     it('should display version', async () => {
       const result = await runCLI(['--version']);
-      
+
       expect(result.success).toBe(true);
       expect(result.stdout.trim().length).toBeGreaterThan(0);
     });
 
     it('should display help when no arguments provided', async () => {
       const result = await runCLI([]);
-      
+
       expect(result.code).toBeDefined();
       expect(result.stdout).toContain('Usage:');
     });
@@ -207,7 +206,7 @@ describe('Complete CLI Command Coverage', () => {
   describe('Command Option Combinations', () => {
     it('should handle multiple short options', async () => {
       const result = await runCLI(['init', '--help']);
-      
+
       expect(result.success).toBe(true);
       expect(result.stdout).toContain('init');
     });
@@ -217,9 +216,9 @@ describe('Complete CLI Command Coverage', () => {
         ['init', '--help', '--verbose'],
         ['status', '--help'],
         ['update', '--help'],
-        ['deploy', '--help']
+        ['deploy', '--help'],
       ];
-      
+
       for (const cmd of commands) {
         const result = await runCLI(cmd);
         expect(result.code).toBeDefined();
@@ -229,31 +228,24 @@ describe('Complete CLI Command Coverage', () => {
 
   describe('Error Handling in Commands', () => {
     it('should handle init with invalid project path', async () => {
-      const result = await runCLI([
-        'init',
-        '--projectPath', '/invalid/path/that/does/not/exist'
-      ]);
-      
+      const result = await runCLI(['init', '--projectPath', '/invalid/path/that/does/not/exist']);
+
       expect(result.success).toBe(false);
       expect(result.stderr + result.stdout).toMatch(/(error|not found|invalid)/i);
     });
 
     it('should handle update with invalid output path', async () => {
-      const result = await runCLI([
-        'update',
-        '--outputPath', '/root/invalid/permission/path'
-      ], { timeout: 30000 });
-      
+      const result = await runCLI(['update', '--outputPath', '/root/invalid/permission/path'], {
+        timeout: 30000,
+      });
+
       expect(result.code).toBeDefined();
       // Should handle permission errors gracefully
     }, 35000);
 
     it('should handle status with invalid config path', async () => {
-      const result = await runCLI([
-        'status',
-        '--configPath', '/invalid/config/path.json'
-      ]);
-      
+      const result = await runCLI(['status', '--configPath', '/invalid/config/path.json']);
+
       expect(result.code).toBeDefined();
       expect(result.stdout + result.stderr).toMatch(/(not found|invalid|error)/i);
     });
@@ -263,7 +255,7 @@ describe('Complete CLI Command Coverage', () => {
     it('should handle process termination gracefully', async () => {
       // Test that CLI commands don't leave hanging processes
       const result = await runCLI(['--help']);
-      
+
       expect(result.success).toBe(true);
       // Command should complete and exit cleanly
     });
@@ -275,19 +267,19 @@ describe('Complete CLI Command Coverage', () => {
       const result = await runCLI(['--help'], {
         env: {
           VDK_DEBUG: 'true',
-          VDK_GITHUB_TOKEN: 'test-token'
-        }
+          VDK_GITHUB_TOKEN: 'test-token',
+        },
       });
-      
+
       expect(result.success).toBe(true);
     });
 
     it('should work without environment variables', async () => {
       // Test without any VDK env vars
       const result = await runCLI(['--version'], {
-        env: {} // Clean environment
+        env: {}, // Clean environment
       });
-      
+
       expect(result.success).toBe(true);
     });
   });

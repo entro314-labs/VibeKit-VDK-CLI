@@ -3,6 +3,7 @@
 ## [Unreleased] - 2025-08-06
 
 ### 📋 Release Summary
+
 Release latest includes 10 commits (6 chore, 2 docs, 1 style, 1 feature). Complexity: medium. Affected areas: configuration, other, source, build, documentation, assets, tests.
 
 **Business Impact**: minor
@@ -23,4 +24,4 @@ Release latest includes 10 commits (6 chore, 2 docs, 1 style, 1 feature). Comple
 
 ---
 
-*Generated using [ai-changelog-generator](https://github.com/entro314-labs/AI-changelog-generator) - AI-powered changelog generation for Git repositories*
+_Generated using [ai-changelog-generator](https://github.com/entro314-labs/AI-changelog-generator) - AI-powered changelog generation for Git repositories_
